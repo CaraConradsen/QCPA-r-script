@@ -1,0 +1,50 @@
+Chosen ROI =animal+background
+________________________________
+------Gaussian Acuity Control------
+Acuity = 3
+Distance = 500
+MRA = 0.3333
+Image angular height = 17.9066
+Image Region = animal+background
+________________________________
+________________________________
+--------------RNL-Filter--------------
+
+weber_lw=0.05
+weber_mw=0.05
+weber_sw=0.05
+lum=0.05
+iterations=5
+radius=5
+falloff=3
+________________________________
+_____________________________________________
+----------------Weber Clustering----------------
+colJND: 2.0
+lumJND: 4.0
+nLoops: 20
+radiusMultiplier: 2.0
+minClusterSize: 10
+Switch to nxn comparisons: 6
+halt on n clusters: 1
+Record from pass: 20
+Label: 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3
+weber lw: 0.05
+weber mw: 0.05
+weber sw: 0.05
+lumWeber: 0.05
+_____________________________________________
+_____________________________________________
+------------------Adjacency Analysis------------------
+Measuring selected area
+Channels found (incl Lum): 4
+Clusters found in results table: 4
+Label: 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
+weber lw: 0.05
+weber mw: 0.05
+weber sw: 0.05
+lumWeber: 0.05
+Clusters found in ROI: 4
+n (non-zero off-diagonal transition types) = 6
+_____________________________________________
+

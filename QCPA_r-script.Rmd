@@ -1,0 +1,198 @@
+---
+title: '&#32;'
+output:
+  html_document:
+    css: styles.css
+    number_sections: yes
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Setup {.unnumbered}
+The following R script uses the Trichromatic example without UV (sea slugs seen by a triggerfish, *Rhinecanthus aculeatus*), but can similarly be applied to the Tetrachromatic example with UV (spiders seen by a bluetit, *Parus major*). To make the worked example readily accessible to users, we have prioritised using base R functions. As we will be working with primarily character type data (i.e., folder names), we will introduce the user to many base functions that are for list type data structures (e.g., *lapply()*). For clarity we recommend that, you as the user, need to be comfortable with the differences data types (e.g., numerical, character, factors) and data structures such as lists (collection of mixed data types) and data frames (special type of list). We also provide different methods to extract data, ideally introducing different coding methods as well as providing ways to increase efficiency of data wrangling.  
+
+For the following R script to run, please ensure that you have implemented the QPCA batch script methods. In the following folder:
+
+    Worked example data /Example1_tri-chromat_no_UV/Test Data
+
+there should be two subfolders for the two species, *Aphelodoris varia* and *Aplysia sp*. Within these subdirectories, please confirm that data has been generated.
+
+
+# Create the foundational dataset identifying unique animal IDs and regions of interest for multiple viewing distances
+
+## Iterate over folders to extract species, animals and viewing distances
+
+First, we will specify the location that the data files are located within with respect to where your working directory has been save to. Here we have assumed that the R script was saved in the parent folder of Worked example data. The next step will be to extract the names of the two focal species using the folder names within the *Test Data* folder. 
+
+```{r Animal IDs}
+pth<-getwd() #get directory; assumes the R script is saved in the parent folder of Worked example data
+ 
+Extrct_Fold="Worked example data/Example1_tri-chromat_no_UV/Test Data" #set sub folder name containing your data
+
+loc<-paste(pth,Extrct_Fold, sep="/")#Paste the two locations together to specify your global data location
+
+Species=list.files(path=loc) #detects what species are in the data set. These could also be locations depending on your data set.
+
+Species# should contain species folders and a log file
+
+Species = Species[-length(Species)] #removes the log file
+
+Species
+```
+
+Here we will demonstrate how to extract folder information names using a for loop. First, we create an empty data frame called *Animal_Info*. Then, for each *i*$^{th}$ species (here *i* = 1 or 2), we create a path into the species folder, and record in the object *Indviduals_list* all the unique individual animal folder names using the *list.files* function. We then establish a second, nested loop, which will then iterate over each individual (*ind*) in *Indviduals_list*, to again extract all unique viewing distance folder names using *list.files*. To distinguish the viewing distance folders from other files saved within the directory, use the argument *pattern = "cm"* in *list.files*. Finally, we combine the unique species name, individual name and viewing distances into unique columns and add as a new row in *Animal_Info*.
+
+```{r Animal Loop}
+Animal_Info<-data.frame(NULL)# first create an empty data frame
+
+# Then create a loop to iterate over the species folders, extracting viewing distances and individual animal IDs 
+for (i in 1:length(Species)) {# here i will be either 1 or 2
+    Ind_pth<-paste0(loc, "/",Species[i])# this pastes the ith species name from the Species object
+    Indviduals_list<-list.files(path=Ind_pth)# extracts all individual folder names
+    for (ind in 1:length(Indviduals_list)){# iterate over the number of individuals in each species folder
+      # the variable dist lists all the unique viewing distance folder names identified by the "cm"
+      Dists<-list.files(paste0(Ind_pth,"/", Indviduals_list[ind]),pattern = "cm")
+      #we then add to Animal_Info a new row containing the species name, individual and viewing distance 
+      rbind(Animal_Info, cbind(Species[i], Indviduals_list[ind], c(Dists)))-> Animal_Info
+    }
+}
+colnames(Animal_Info)<-c("Species", "Ind", "Dist")# rename the column names in Animal_Info 
+```
+
+## Inspect data
+
+Check that the data has correctly been imported and reflects your experimental records. We convert the character data into factors. We use the *lapply* function to apply the function *factor* to each column in our data frame. We can again use the *lapply* function to apply the function *nlevels* function to our newly converted data frame, which will report the number of unique elements within each column of the data frame *Animal_Info*.
+
+```{r Check data}
+#check data
+head(Animal_Info)
+Animal_Info[,colnames(Animal_Info)] <-lapply(Animal_Info[,colnames(Animal_Info)],factor) # Convert character data into factors
+str(Animal_Info)# obeserve data
+lapply(Animal_Info, nlevels)# Check the number of unique species, individuals and viewing distances
+```
+
+## Inspect regions of interest for inconsistent labelling (additional step)
+
+The number of data files will depend on whether animal, background and/or animal+background options were selected; this will make up the prefix of the file name followed by an underscore and image analysis file type (e.g., '_*Summary Results.csv*'). For the following R code to work, regions of interest must be uniformly named and capitalised for all individuals analysed. Below is a method to ensure that these regions of interested have been correctly named by reporting all unique names across your data by examining all unique *.tif* file names. If you are confident that the naming was consistent, you may skip this step.  
+
+```{r Check ROIs}
+tmpAnidir<-apply(Animal_Info,1, function (x) paste(unlist(x), collapse = "/"))# create vector containing all the individual animal sub directories 
+tmpAnidir <- paste(loc, tmpAnidir, sep="/") # paste the global file directories to the front of the sub directory paths
+unique(unlist(strsplit(list.files(tmpAnidir, pattern=".tif"), "_"))[ c(TRUE,FALSE)])# This should highlight the unique regions of interest, if there are more than expected - look for naming inconsistencies
+```
+**How the nested line works.** *The above line can be broken down in four steps. 1. list.files() searches all the locations specified in the tmpAnidir vector for files with the ".tif" extension and puts these file names into a new character vector. 2. Knowing that file names are composed of two bits of information separated by an underscore, strsplit() cuts the filenames into two elements at the underscore and outputs a list containing these two new elements for each unique file. 3. unlist() puts all elements into a vector. As the region of interest are the prefix, it will be first element in the pair, which we can subset using: [ c(TRUE,FALSE)]. 4. Finally, the unique() function looks across all names used for each individual and retains only unique names, omitting duplicates.*
+
+## Add regions of interest to Animal information dataset
+
+To proceed with the next step, the regions of interest (ROIs) must be uniformly named across all individual specimens (see above if uncertain). We will utilise the batch script naming convention of using the ROI as the prefix of the image analysis file name followed by an underscore and image analysis file type (e.g., '_*Summary Results.csv*'). See Table 
+
+We can then extract any particular image analysis csv data files 
+
+```{r ROI}
+# Here we create a character vector determining whether animal, background and/or animal+background options were used
+# Using the first row of Animal_Info to specify the location to examine the number and types of _Summary Results.csv files 
+ROI<- gsub("_Summary Results.csv", "",
+           list.files(paste(loc,paste(unlist(Animal_Info[1,]), collapse = "/"),
+                            sep="/"), pattern = "_Summary Results.csv"))
+Animal_Info_ROI<-merge(Animal_Info, ROI)# Expand each unique row of the Animal_Info data frame to included a unique ROI value
+colnames(Animal_Info_ROI)[4]<-"ROI" #Name column 4 to ROI
+Animal_Info_ROI$ROI<-factor(Animal_Info_ROI$ROI)
+head(Animal_Info_ROI)# check data
+str(Animal_Info_ROI)# check that ROI is a factor
+```
+
+```{r kable table exn out}
+library("kableExtra")
+exns<-sort(unique(gsub("^.*?_", "", list.files(
+  paste0(loc,"/Aphelodoris varia/3_AphelodorisVaria_10_NF_D_RAW"),
+  pattern=".csv", recursive = TRUE))))
+
+exns<-as.data.frame(cbind(c(rep("Particle analysis",2), "GabRat","Particle analysis","LEIA","Particle analysis","CAA, VCA, BSA"), exns))
+colnames(exns)<-c("Image Analysis", "File Name")
+knitr::kable(exns, align="l",
+             caption = "A tale of two tables",
+             format = "pipe", padding = 2)
+```
+
+
+```{r Import Data}
+dim(Animal_Info_ROI)# 18 rows, 4 columns
+# Explain mechanics of the function below
+nfile="_Summary Results.csv"
+Ani_Data_list<-lapply(1:nrow(Animal_Info_ROI), function (x){
+    tmpLoc<- paste(unlist(Animal_Info_ROI[x,]), collapse = "/")
+    tmpLoc<-paste0(paste(loc,tmpLoc, sep="/"), nfile)
+    data <- read.csv(tmpLoc)
+    data <- merge(Animal_Info_ROI[x,], data)
+    data
+  })
+# the above code produces a list, but we need to convert the data into a data frame 
+class(Ani_Data_list)
+Ani_Data_list[1:2]# Look at the structure for the first two elements in Ani_Data_list, note the [[]] notation
+
+#Convert data from list into dataframe by binding the rows together
+# using do.call allows us to pass the rbind function across each list element
+Ani_Data_list<-do.call(rbind, Ani_Data_list)
+class(Ani_Data_list)
+head(Ani_Data_list)
+dim(Ani_Data_list)
+str(Ani_Data_list)
+
+# Remove unnecessary columns, e.g., excel row numbers under column name 'X' and/or Image name
+colnames(Ani_Data_list)
+Ani_Data_list = Ani_Data_list[,!(names(Ani_Data_list) %in% c("X", "Image"))]# subset all names that aren't present in the vector - "X" or "Image"
+colnames(Ani_Data_list)# "X" and "Image" have been removed
+```
+
+
+# Get a csv list from VCA,BSA,CAA data, with options for particle analysis
+
+## Generate a csv file with ONLY VCA,BSA,CAA data
+As before, you could use a series of nested loops to extract the data in the csv files. Here, we have instead defined a function to determine the data location using the data listed in the *Animal_Info_ROI* data file.
+
+```{r readDat function}
+readDatFile<- function(Ani_ID_dat,filetype="NA",path=loc){
+  #loc is assigned by default, but can be changed
+  if(filetype=="VCA"){
+    exnfile="_Summary Results.csv"
+  } else if (filetype=="PartAn"){
+    exnfile="_Cluster Particle Analysis Summary Results.csv"
+  } else if (filetype=="Clust"){
+    exnfile="_Cluster Results.csv"
+  } else if (filetype=="IndParticle"){
+    exnfile="_Individual Particle Results.csv"
+  } else {
+    stop("Please specify analysis output type: e.g.,\nVCA\nPartA\nClust\nIndParticle")
+  }
+  data_list<-lapply(1:nrow(Ani_ID_dat), function (x){
+    tmpLoc<- paste(unlist(Ani_ID_dat[x,]), collapse = "/")
+    tmpLoc<-paste0(paste(path,tmpLoc, sep="/"), exnfile)
+    data <- read.csv(tmpLoc)
+    data <- merge(Ani_ID_dat[x,], data)
+    data
+  })
+  data_list<-do.call(rbind, data_list)
+  return(data_list)
+}
+
+# readDatFile(Animal_Info_ROI)#VSA data
+# readDatFile(Animal_Info_ROI, filetype = "P")#VSA data
+```
+
+# Get a csv list from LEIA output
+# Get a csv list from GabRat output
+# Combine data output into csv lists across analyses
+Here we demonstrate how to collate data across the VCA,BSA,CAA data, LEIA output and GabRat output. We have excluded the particle analysis outcome from this step.  
+# Standardise data output
+# Data visualisation
+
+
+
+
+
+```{r}
+print("hello")
+```

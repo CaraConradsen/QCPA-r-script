@@ -1,0 +1,9 @@
+________________________________
+------Gaussian Acuity Control------
+Acuity = 1
+Distance = 300
+MRA = 1
+Image angular width = 29.5187
+Image Region = whole image
+________________________________
+C:\Users\cedvd\Dropbox\EMPIRI~1\BATCHS~1\Coding\ImageJ\plugins\micaToolbox/Batch QCPA/Settings/Batch-GABRAT_ROI-disruption.txt
