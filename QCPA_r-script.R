@@ -207,7 +207,7 @@ readQCPA<- function(Ani_ID_dat,filetype="NA",path=loc){
 
 
 ## ----empty readQCPA, error=TRUE-----------------------------------------------
-readQCPA(Animal_Info_ROI)# We include only the animal id dataset
+readQCPA(Animal_Info_ROI)# We include only the animal id data set
 
 
 ## ----implementing readQCPA----------------------------------------------------
@@ -393,6 +393,92 @@ VCA_LEIA_GabRat_analysis[1:2,]# Inspect data again
 dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
 
 
+## ----Removing NAs-------------------------------------------------------------
+# Specify column names
+ColumnNames<-c("Species","Ind","Dist","ROI","BSA.BsL.Hrz","Lum.mean",
+               "CAA.Scpl","Lum.CoV","BSA.BML","Col.mean","GabRat")
+
+# Subset data by column names
+V.L.GbRt_subset<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
+                                          %in% ColumnNames]
+
+dim(V.L.GbRt_subset)# 18 rows by 11 columns
+summary(V.L.GbRt_subset) # Initial summary of the data
+
+# View the data frame
+View(V.L.GbRt_subset)
+
+# Replace infinite values with NA using sapply
+V.L.GbRt_subset[sapply(V.L.GbRt_subset, is.infinite)] <- NA
+
+View(V.L.GbRt_subset)# Observe change the data frame
+
+# Remove NA/NaNs
+V.L.GbRt_subset<-na.omit(V.L.GbRt_subset)
+
+View(V.L.GbRt_subset)# Observe change the data frame
+
+dim(V.L.GbRt_subset)# 11 rows by 11 columns
+
+summary(V.L.GbRt_subset)
+apply(V.L.GbRt_subset[,5:11], 2, var) # Determine the colour variable variances
+
+
+## ----Normalising and standardising data---------------------------------------
+par(mfrow=c(3,3))
+Colnames_subset<-colnames(V.L.GbRt_subset[,5:11])
+for (i in Colnames_subset) {
+  hist(V.L.GbRt_subset[,i], breaks = 10, 
+       main=i, xlab="")
+}
+
+# Test for normality
+lapply(V.L.GbRt_subset[,5:11], shapiro.test)
+
+
+
+# Inspect scaled values and column means
+scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+
+# Update the V.L.GbRt_subset data frame with the standardised values 
+V.L.GbRt_subset[,5:11]<-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+
+# Check standardisation
+summary(V.L.GbRt_subset)# Mean values are zero
+apply(V.L.GbRt_subset[,5:11], 2, var) # Confirm variances are 1
+
+# # Correlation panel
+# panel.cor <- function(x, y){
+#     usr <- par("usr"); on.exit(par(usr))
+#     par(usr = c(0, 1, 0, 1))
+#     r <- round(cor(x, y), digits=2)
+#     txt <- paste0("R = ", r)
+#     text(0.5, 0.5, txt, cex=1.5)
+# }
+# 
+# my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
+# # Scatterplot panel
+# panel.scat <- function(x, y){
+# points(x,y, col=my_cols[subset$ROI],
+#     cex=1.1, pch=19)
+# }
+# 
+# par(oma=c(0,0,0,10), xpd=TRUE)
+# pairs(subset[,5:10],
+#       main="Six colour variables for two viewing distances",
+#       upper.panel = panel.cor,
+#       lower.panel = panel.scat,  gap=0)
+# 
+# Colour_ID<-unique(data.frame(as.character(subset$ROI),my_cols[subset$ROI]))
+# legend(0.7, 0.8,Colour_ID[,1], pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
+# 
+# library(corrplot)
+# corrplot(cor(subset[,5:10]))
+# 
+# dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
+# summary(VCA_LEIA_GabRat_analysis)
+
+
 ## ----Output files-------------------------------------------------------------
 dir.create(paste(c(loc, "Output"), collapse = "/"))# Create the Output directory
 
@@ -423,4 +509,9 @@ for (i in savefile_list){
 
 # Check that your files have saved
 list.files(Out_path)
+
+
+## ----data.table---------------------------------------------------------------
+library(data.table)
+
 

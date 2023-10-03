@@ -1,22 +1,22 @@
 ---
 title: "Quantitative Colour Pattern Analysis (QCPA): R script for post batch processing"
 output:
+  html_document:
+    css: styles.css
+    number_sections: yes
+    toc: true
   word_document:
     reference_docx: QCPA_r-script-doc-styles.docx
     number_sections: no
     toc: true
     highlight: "tango"
-  html_document:
-    css: styles.css
-    number_sections: yes
-    toc: true
 toc-title: "Contents"
+bibliography: QCPA_r_bib.bib
 editor_options:
   chunk_output_type: console
 ---
 ```{r setup, include=FALSE, purl=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-unlink(list.dirs()[endsWith(list.dirs(), "Output")], recursive=TRUE)
 #rmarkdown::render("QCPA_r-script.Rmd", output_format = "all")
 ```
 \newpage
@@ -153,6 +153,11 @@ ROI<-c("animal","animal+background","background")# Add the names of ROIs
 ### Extract ROIs from the data
 
 Here, we will utilise the batch script naming convention of using the ROI as the prefix of the image analysis file name followed by an underscore and image analysis file type (e.g., '_*Summary Results.csv*'). See Table 1 below for all QCPA analyses and associated file names. 
+
+---
+nocite: |
+  @van2020
+---
 
 \newpage
 ```{r kable table exn out, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
@@ -341,7 +346,7 @@ readQCPA<- function(Ani_ID_dat,filetype="NA",path=loc){
 To demonstrate how the stop warning works, we have implemented the *readQCPA* function here without specifying the image analysis file type. 
 
 ```{r empty readQCPA, error=TRUE}
-readQCPA(Animal_Info_ROI)# We include only the animal id dataset
+readQCPA(Animal_Info_ROI)# We include only the animal id data set
 ```
 
 We can then import our data using our function and do some data cleaning by removing unnecessary columns.  
@@ -513,7 +518,7 @@ dim(GabRat_Res_analysis)# 18 rows by 5 columns
 GabRat_Res_analysis[1:2,]# Observe the first two rows of data
 ```
 
-# Combine data output into csv lists across analyses and output data
+# Combing data sets and data preparation
 
 ## Merging data sets
 
@@ -553,8 +558,110 @@ VCA_LEIA_GabRat_analysis[1:2,]# Inspect data again
 dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
 ```
 
+## Data cleaning
 
-## Output files
+In this tutorial, we are using a minimal working example, where the data used does not have proper replication (i.e., we have 3 individuals in total). For those considering using linear mixed effects models (LMMs) in downstream analyses, we recommend reading @Harrison2018. Please consider the number of data points ($n$) to parameters ($k$); where ideally $n/k > 3$ [but see discussion in @Harrison2018]. 
+
+### Omitting rows based on values 
+
+To demonstrate some data cleaning methods, we have created a smaller data frame *V.L.GbRt_subset*, subset from *VCA_LEIA_GabRat_analysis* by selecting the columns names. In this data set, there are both *NaN* (not a number) and *Inf* (infinite) entries. Using *summary*, by retaining *NaN* and *Infs*, functions like *mean* and *maximum* can not calculated values correctly. To remove *Inf* values, we first first convert them to *NA*s. To do so, we can use the *is.infinite* function to detect *Inf* values, however this only works on vectors (i.e., data frame columns), so we can loop over our data frame using a variant of *lapply*, the *sapply* function which returns a vector (not list). 
+
+
+```{r Removing NAs}
+# Specify column names
+ColumnNames<-c("Species","Ind","Dist","ROI","BSA.BsL.Hrz","Lum.mean",
+               "CAA.Scpl","Lum.CoV","BSA.BML","Col.mean","GabRat")
+
+# Subset data by column names
+V.L.GbRt_subset<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
+                                          %in% ColumnNames]
+
+dim(V.L.GbRt_subset)# 18 rows by 11 columns
+summary(V.L.GbRt_subset) # Initial summary of the data
+
+# View the data frame
+View(V.L.GbRt_subset)
+
+# Replace infinite values with NA using sapply
+V.L.GbRt_subset[sapply(V.L.GbRt_subset, is.infinite)] <- NA
+
+View(V.L.GbRt_subset)# Observe change the data frame
+
+# Remove NA/NaNs
+V.L.GbRt_subset<-na.omit(V.L.GbRt_subset)
+
+View(V.L.GbRt_subset)# Observe change the data frame
+
+dim(V.L.GbRt_subset)# 11 rows by 11 columns
+
+summary(V.L.GbRt_subset)
+apply(V.L.GbRt_subset[,5:11], 2, var) # Determine the colour variable variances
+```
+
+
+The p-value of the Shapiro-Wilk test for Height is less than 0.05, so we reject the null hypothesis and conclude that Height is not normally distributed. Therefore we should use Spearman’s test for this analysis.
+
+When implementing multivariate models, it is best to standardize data to facilitate model convergence. Here we variance standardised (mean = 0, standard
+deviation = 1) each colour pattern variable across both viewing distances and ROIs using the *scale* function. 
+
+```{r Normalising and standardising data}
+par(mfrow=c(3,3))
+Colnames_subset<-colnames(V.L.GbRt_subset[,5:11])
+for (i in Colnames_subset) {
+  hist(V.L.GbRt_subset[,i], breaks = 10, 
+       main=i, xlab="")
+}
+
+# Test for normality
+lapply(V.L.GbRt_subset[,5:11], shapiro.test)
+
+
+
+# Inspect scaled values and column means
+scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+
+# Update the V.L.GbRt_subset data frame with the standardised values 
+V.L.GbRt_subset[,5:11]<-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+
+# Check standardisation
+summary(V.L.GbRt_subset)# Mean values are zero
+apply(V.L.GbRt_subset[,5:11], 2, var) # Confirm variances are 1
+
+# # Correlation panel
+# panel.cor <- function(x, y){
+#     usr <- par("usr"); on.exit(par(usr))
+#     par(usr = c(0, 1, 0, 1))
+#     r <- round(cor(x, y), digits=2)
+#     txt <- paste0("R = ", r)
+#     text(0.5, 0.5, txt, cex=1.5)
+# }
+# 
+# my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
+# # Scatterplot panel
+# panel.scat <- function(x, y){
+# points(x,y, col=my_cols[subset$ROI],
+#     cex=1.1, pch=19)
+# }
+# 
+# par(oma=c(0,0,0,10), xpd=TRUE)
+# pairs(subset[,5:10],
+#       main="Six colour variables for two viewing distances",
+#       upper.panel = panel.cor,
+#       lower.panel = panel.scat,  gap=0)
+# 
+# Colour_ID<-unique(data.frame(as.character(subset$ROI),my_cols[subset$ROI]))
+# legend(0.7, 0.8,Colour_ID[,1], pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
+# 
+# library(corrplot)
+# corrplot(cor(subset[,5:10]))
+# 
+# dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
+# summary(VCA_LEIA_GabRat_analysis)
+```
+
+
+
+# Export files
 
 Depending on what image analysis sets you are using, we have provided multiple ways to save the image analysis data files as csvs in the folder 'Output'. First, we use *dir.create* to create the folder 'Output' in the Test Data folder, and save this new folder location as *Out_path*. To save a single file, you can use *write.csv*, where we have used the argument *row.names = FALSE* to make sure that the row numbers in the dataframe aren't included in the csv file. 
 
@@ -592,30 +699,22 @@ for (i in savefile_list){
 list.files(Out_path)
 ```
 
-
 # Fast import for large data sets using data.table (optional - advanced)
 
-Ced: As you see fit. If you think this is useful and can easily be added, please do so. 
+For very large data sets we would recommend importing data using the *data.table* package [@datatable].  
 
-# Data cleaning
+```{r data.table}
+library(data.table)
 
-Ced: - i.e. mean centring, normalising, removing NA values (i.e. removing rows or columns with NA)
-
-# Data visualisation
-
-Ced: Not sure if needed, probably beyond the scope of the paper. Could do corr plot, plotting the value of a parameter over viewing distances by species. Nothing hardcore
-
-
+```
 
 
 
 \newpage
 # References
-van den Berg, C.P., Troscianko, J., Endler, J.A., Marshall, N.J. and Cheney, K.L., 2020. Quantitative Colour Pattern Analysis (QCPA): A comprehensive framework for the analysis of colour patterns in nature. Methods in Ecology and Evolution, 11(2), pp.316-332.
-
-
 
 ```{r hidden, include=FALSE, purl=FALSE}
+unlink(list.dirs()[endsWith(list.dirs(), "Output")], recursive=TRUE)
 # Run this at the end to create a R file
 options(knitr.duplicate.label = "allow")
 knitr::purl('QCPA_r-script.Rmd')

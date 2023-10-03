@@ -251,6 +251,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
 
 <style type="text/css">div#TOC li {list-style:none;background-image:none;background-repeat:none;background-position:0;}.header-section-number::after {content: ".";}h1{font-size: 16pt;color:#315697;}h2{font-size: 14pt;color:#315697;}h3{font-size: 12pt;color:#315697;}</style>
 
@@ -390,8 +412,8 @@ various image analysis files</a></li>
 output</a></li>
 <li><a href="#get-a-.csv-list-from-gabrat-output" id="toc-get-a-.csv-list-from-gabrat-output"><span class="toc-section-number">5</span> Get a .csv list from GabRat
 output</a></li>
-<li><a href="#combine-data-output-into-csv-lists-across-analyses-and-output-data" id="toc-combine-data-output-into-csv-lists-across-analyses-and-output-data"><span class="toc-section-number">6</span> Combine data output into csv lists
-across analyses and output data</a>
+<li><a href="#combing-data-sets-and-data-preparation" id="toc-combing-data-sets-and-data-preparation"><span class="toc-section-number">6</span> Combing data sets and data
+preparation</a>
 <ul>
 <li><a href="#merging-data-sets" id="toc-merging-data-sets"><span class="toc-section-number">6.1</span> Merging data sets</a>
 <ul>
@@ -399,13 +421,16 @@ across analyses and output data</a>
 <li><a href="#vcabsacaa-data-leia-output-and-gabrat-analyses" id="toc-vcabsacaa-data-leia-output-and-gabrat-analyses"><span class="toc-section-number">6.1.2</span> VCA,BSA,CAA data, LEIA output
 and GabRat analyses</a></li>
 </ul></li>
-<li><a href="#output-files" id="toc-output-files"><span class="toc-section-number">6.2</span> Output files</a></li>
+<li><a href="#data-cleaning" id="toc-data-cleaning"><span class="toc-section-number">6.2</span> Data cleaning</a>
+<ul>
+<li><a href="#omitting-rows-based-on-values" id="toc-omitting-rows-based-on-values"><span class="toc-section-number">6.2.1</span> Omitting rows based on
+values</a></li>
 </ul></li>
-<li><a href="#fast-import-for-large-data-sets-using-data.table-optional---advanced" id="toc-fast-import-for-large-data-sets-using-data.table-optional---advanced"><span class="toc-section-number">7</span> Fast import for large data sets
+</ul></li>
+<li><a href="#export-files" id="toc-export-files"><span class="toc-section-number">7</span> Export files</a></li>
+<li><a href="#fast-import-for-large-data-sets-using-data.table-optional---advanced" id="toc-fast-import-for-large-data-sets-using-data.table-optional---advanced"><span class="toc-section-number">8</span> Fast import for large data sets
 using data.table (optional - advanced)</a></li>
-<li><a href="#data-cleaning" id="toc-data-cleaning"><span class="toc-section-number">8</span> Data cleaning</a></li>
-<li><a href="#data-visualisation" id="toc-data-visualisation"><span class="toc-section-number">9</span> Data visualisation</a></li>
-<li><a href="#references" id="toc-references"><span class="toc-section-number">10</span> References</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
@@ -796,20 +821,20 @@ dim(Sum_Res_df)# 18 rows by 133 columns</code></pre>
 ## 4 Aphelodoris varia 3_AphelodorisVaria_11_NF_D_RAW 50cm animal 1
 ## 5        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 30cm animal 1
 ## 6        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 50cm animal 1
-##                                                                                  Image   CAA.Sc    CAA.Jc
-## 1 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0 1.000000 1.0000000
-## 2 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0 1.000000 1.0000000
-## 3 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0 3.407769 0.8519422
-## 4 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0 3.321784 0.8304460
-## 5    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0 2.095732 0.6985775
-## 6    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0 1.020302 0.5101512
-##     CAA.St    CAA.Jt     CAA.Hc     CAA.Qc
-## 1      Inf       NaN 0.00000000        NaN
-## 2      Inf       NaN 0.00000000        NaN
-## 3 3.086572 0.5144287 1.29367056 0.93318605
-## 4 2.706124 0.4510207 1.28003640 0.92335109
-## 5 1.219512 0.4065041 0.80674082 0.73432714
-## 6 1.000000 1.0000000 0.05623232 0.08112609</code></pre>
+##                                                                                  Image
+## 1 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0
+## 2 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
+## 3 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0
+## 4 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
+## 5    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0
+## 6    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
+##     CAA.Sc    CAA.Jc   CAA.St    CAA.Jt     CAA.Hc     CAA.Qc
+## 1 1.000000 1.0000000      Inf       NaN 0.00000000        NaN
+## 2 1.000000 1.0000000      Inf       NaN 0.00000000        NaN
+## 3 3.407769 0.8519422 3.086572 0.5144287 1.29367056 0.93318605
+## 4 3.321784 0.8304460 2.706124 0.4510207 1.28003640 0.92335109
+## 5 2.095732 0.6985775 1.219512 0.4065041 0.80674082 0.73432714
+## 6 1.020302 0.5101512 1.000000 1.0000000 0.05623232 0.08112609</code></pre>
 <pre class="r"><code># Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path 
 # from the global environment because we&#39;ll be recycling them in the second function
 rm(exnfile); rm(Ani_ID_dat); rm(path)</code></pre>
@@ -911,7 +936,7 @@ arguments</caption>
 <p>To demonstrate how the stop warning works, we have implemented the
 <em>readQCPA</em> function here without specifying the image analysis
 file type.</p>
-<pre class="r"><code>readQCPA(Animal_Info_ROI)# We include only the animal id dataset</code></pre>
+<pre class="r"><code>readQCPA(Animal_Info_ROI)# We include only the animal id data set</code></pre>
 <pre><code>## Error in readQCPA(Animal_Info_ROI): Specify analysis output type: e.g., 
 ##          filetype =
 ## &quot;VCA&quot;
@@ -932,54 +957,69 @@ VCA_analysis&lt;-VCA_analysis[, !colnames(VCA_analysis) %in% c(&quot;X&quot;, &q
 dim(VCA_analysis)# 18 rows, by 131 columns</code></pre>
 <pre><code>## [1]  18 131</code></pre>
 <pre class="r"><code>VCA_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI CAA.Sc CAA.Jc CAA.St CAA.Jt CAA.Hc CAA.Qc
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal      1      1    Inf    NaN      0    NaN
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal      1      1    Inf    NaN      0    NaN
-##   CAA.Ht CAA.Qt CAA.Scpl CAA.Qcpl CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt
-## 1      0    NaN      Inf      NaN     0          1          1          1          1        Inf        Inf
-## 2      0    NaN      Inf      NaN     0          1          1          1          1        Inf        Inf
-##   CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz
-## 1        NaN        NaN          0          0        NaN        NaN          0          0        NaN
-## 2        NaN        NaN          0          0        NaN        NaN          0          0        NaN
-##   CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt CAA.C.Hrz CAA.C.Vrt CAA.PT CAA.PT.Hrz
-## 1        NaN          Inf          Inf          NaN          NaN         0         0    Inf        Inf
-## 2        NaN          Inf          Inf          NaN          NaN         0         0    Inf        Inf
-##   CAA.PT.Vrt CAA.Asp     VCA.ML VCA.sL VCA.CVL  VCA.MDmax VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat
-## 1        Inf     NaN 0.07415875    NaN     NaN 0.08914595       NaN        NaN  2.695919       NaN
-## 2        Inf     NaN 0.07259081    NaN     NaN 0.08963545       NaN        NaN  2.723553       NaN
-##   VCA.CVSsat VCA.MSL VCA.sSL VCA.CVSL VCA.MS VCA.sS VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz VCA.ML.Vrt
-## 1        NaN     NaN     NaN      NaN    NaN    NaN     NaN 0.07415875        NaN         NaN 0.07415875
-## 2        NaN     NaN     NaN      NaN    NaN    NaN     NaN 0.07259081        NaN         NaN 0.07259081
-##   VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz VCA.MDmax.Vrt VCA.sDmax.Vrt
-## 1        NaN         NaN    0.08914595           NaN            NaN    0.08914595           NaN
-## 2        NaN         NaN    0.08963545           NaN            NaN    0.08963545           NaN
-##   VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt
-## 1            NaN      2.695919           NaN            NaN      2.695919           NaN            NaN
-## 2            NaN      2.723553           NaN            NaN      2.723553           NaN            NaN
-##   VCA.MSL.Hrz VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz VCA.sS.Hrz
-## 1         NaN         NaN          NaN         NaN         NaN          NaN        NaN        NaN
-## 2         NaN         NaN          NaN         NaN         NaN          NaN        NaN        NaN
-##   VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt BSA.BML BSA.BsL BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax
-## 1         NaN        NaN        NaN         NaN       0       0      NaN          0          0         NaN
-## 2         NaN        NaN        NaN         NaN       0       0      NaN          0          0         NaN
-##   BSA.BMSsat BSA.BsSsat BSA.BCVSsat BSA.BMSL BSA.BsSL BSA.BCVSL BSA.BMS BSA.BsS BSA.BCVS BSA.BML.Hrz
-## 1          0          0         NaN        0        0       NaN       0       0      NaN           0
-## 2          0          0         NaN        0        0       NaN       0       0      NaN           0
-##   BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz BSA.BsDmax.Hrz
-## 1           0          NaN           0           0          NaN              0              0
-## 2           0          NaN           0           0          NaN              0              0
-##   BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt BSA.BMSsat.Hrz BSA.BsSsat.Hrz
-## 1             NaN              0              0             NaN              0              0
-## 2             NaN              0              0             NaN              0              0
-##   BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz
-## 1             NaN              0              0             NaN            0            0           NaN
-## 2             NaN              0              0             NaN            0            0           NaN
-##   BSA.BMSL.Vrt BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt BSA.BsS.Vrt
-## 1            0            0           NaN           0           0          NaN           0           0
-## 2            0            0           NaN           0           0          NaN           0           0
-##   BSA.BCVS.Vrt
-## 1          NaN
-## 2          NaN</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI CAA.Sc CAA.Jc
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal      1      1
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal      1      1
+##   CAA.St CAA.Jt CAA.Hc CAA.Qc CAA.Ht CAA.Qt CAA.Scpl CAA.Qcpl CAA.C CAA.Sc.Hrz
+## 1    Inf    NaN      0    NaN      0    NaN      Inf      NaN     0          1
+## 2    Inf    NaN      0    NaN      0    NaN      Inf      NaN     0          1
+##   CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt
+## 1          1          1          1        Inf        Inf        NaN        NaN
+## 2          1          1          1        Inf        Inf        NaN        NaN
+##   CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz
+## 1          0          0        NaN        NaN          0          0        NaN
+## 2          0          0        NaN        NaN          0          0        NaN
+##   CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt CAA.C.Hrz
+## 1        NaN          Inf          Inf          NaN          NaN         0
+## 2        NaN          Inf          Inf          NaN          NaN         0
+##   CAA.C.Vrt CAA.PT CAA.PT.Hrz CAA.PT.Vrt CAA.Asp     VCA.ML VCA.sL VCA.CVL
+## 1         0    Inf        Inf        Inf     NaN 0.07415875    NaN     NaN
+## 2         0    Inf        Inf        Inf     NaN 0.07259081    NaN     NaN
+##    VCA.MDmax VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat VCA.MSL
+## 1 0.08914595       NaN        NaN  2.695919       NaN        NaN     NaN
+## 2 0.08963545       NaN        NaN  2.723553       NaN        NaN     NaN
+##   VCA.sSL VCA.CVSL VCA.MS VCA.sS VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz
+## 1     NaN      NaN    NaN    NaN     NaN 0.07415875        NaN         NaN
+## 2     NaN      NaN    NaN    NaN     NaN 0.07259081        NaN         NaN
+##   VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz
+## 1 0.07415875        NaN         NaN    0.08914595           NaN            NaN
+## 2 0.07259081        NaN         NaN    0.08963545           NaN            NaN
+##   VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz
+## 1    0.08914595           NaN            NaN      2.695919           NaN
+## 2    0.08963545           NaN            NaN      2.723553           NaN
+##   VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz
+## 1            NaN      2.695919           NaN            NaN         NaN
+## 2            NaN      2.723553           NaN            NaN         NaN
+##   VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz
+## 1         NaN          NaN         NaN         NaN          NaN        NaN
+## 2         NaN          NaN         NaN         NaN          NaN        NaN
+##   VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt BSA.BML BSA.BsL
+## 1        NaN         NaN        NaN        NaN         NaN       0       0
+## 2        NaN         NaN        NaN        NaN         NaN       0       0
+##   BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat
+## 1      NaN          0          0         NaN          0          0         NaN
+## 2      NaN          0          0         NaN          0          0         NaN
+##   BSA.BMSL BSA.BsSL BSA.BCVSL BSA.BMS BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz
+## 1        0        0       NaN       0       0      NaN           0           0
+## 2        0        0       NaN       0       0      NaN           0           0
+##   BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz
+## 1          NaN           0           0          NaN              0
+## 2          NaN           0           0          NaN              0
+##   BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt
+## 1              0             NaN              0              0             NaN
+## 2              0             NaN              0              0             NaN
+##   BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt
+## 1              0              0             NaN              0              0
+## 2              0              0             NaN              0              0
+##   BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt
+## 1             NaN            0            0           NaN            0
+## 2             NaN            0            0           NaN            0
+##   BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
+## 1            0           NaN           0           0          NaN           0
+## 2            0           NaN           0           0          NaN           0
+##   BSA.BsS.Vrt BSA.BCVS.Vrt
+## 1           0          NaN
+## 2           0          NaN</code></pre>
 <pre class="r"><code># Cluster Particle Analysis:
 # Read in and assign analysis
 Particle_analysis&lt;-readQCPA(Animal_Info_ROI, filetype = &quot;PartAn&quot;) 
@@ -994,15 +1034,15 @@ dim(Particle_analysis)# 52 rows, by 20 columns</code></pre>
 colnames(Particle_analysis)[5]&lt;-&quot;ClusterID&quot; 
 
 Particle_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI ClusterID Count Total.Area Average.Size
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal         1     4       2953     738.2500
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal         1     7       1084     154.8571
-##     X.Area    Perim.    Major     Minor    Angle     Circ.  Solidity    Feret   FeretX   FeretY FeretAngle
-## 1 24.46764 204.91169 52.96716 17.837978 79.13099 0.2135263 0.5150810 83.09385 19.25000 60.25000   79.74821
-## 2 24.31038  66.67049 19.45619  6.734171 60.18813 0.4806954 0.7693886 27.63505 23.42857 30.42857  105.63732
-##   MinFeret
-## 1 31.79423
-## 2 10.86412</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI ClusterID Count
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal         1     4
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal         1     7
+##   Total.Area Average.Size   X.Area    Perim.    Major     Minor    Angle
+## 1       2953     738.2500 24.46764 204.91169 52.96716 17.837978 79.13099
+## 2       1084     154.8571 24.31038  66.67049 19.45619  6.734171 60.18813
+##       Circ.  Solidity    Feret   FeretX   FeretY FeretAngle MinFeret
+## 1 0.2135263 0.5150810 83.09385 19.25000 60.25000   79.74821 31.79423
+## 2 0.4806954 0.7693886 27.63505 23.42857 30.42857  105.63732 10.86412</code></pre>
 <pre class="r"><code># Cluster Results:
 # Read in and assign analysis
 Cluster_analysis&lt;-readQCPA(Animal_Info_ROI, filetype = &quot;Clust&quot;)
@@ -1015,15 +1055,18 @@ Cluster_analysis&lt;-Cluster_analysis[, !colnames(Cluster_analysis) %in% c(&quot
 dim(Cluster_analysis)# 52 rows, by 21 columns</code></pre>
 <pre><code>## [1] 52 21</code></pre>
 <pre class="r"><code>Cluster_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI Pass ClusterID    lw_mean      lw_sd
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal    7         1 0.07855250 0.01874494
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal    6         1 0.07697873 0.01535109
-##      mw_mean      mw_sd    sw_mean      sw_sd   dbl_mean     dbl_sd Area Coverage..pc.    RNL.X     RNL.Y
-## 1 0.06783328 0.01802219 0.06569355 0.01396244 0.07415875 0.01840701 9116           100 2.074853 -1.721327
-## 2 0.06627374 0.01422326 0.06431390 0.01060753 0.07259081 0.01485467 3375           100 2.117579 -1.712775
-##   RNL.Saturation Dmax.Chromaticity Dmax.channel
-## 1       2.695919        0.08914595        lw:sw
-## 2       2.723553        0.08963545        lw:sw</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI Pass ClusterID
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal    7         1
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal    6         1
+##      lw_mean      lw_sd    mw_mean      mw_sd    sw_mean      sw_sd   dbl_mean
+## 1 0.07855250 0.01874494 0.06783328 0.01802219 0.06569355 0.01396244 0.07415875
+## 2 0.07697873 0.01535109 0.06627374 0.01422326 0.06431390 0.01060753 0.07259081
+##       dbl_sd Area Coverage..pc.    RNL.X     RNL.Y RNL.Saturation
+## 1 0.01840701 9116           100 2.074853 -1.721327       2.695919
+## 2 0.01485467 3375           100 2.117579 -1.712775       2.723553
+##   Dmax.Chromaticity Dmax.channel
+## 1        0.08914595        lw:sw
+## 2        0.08963545        lw:sw</code></pre>
 <pre class="r"><code># Individual Particle Analysis:
 # Read in and assign analysis
 IndParticle_analysis&lt;-readQCPA(Animal_Info_ROI, filetype = &quot;IndParticle&quot;)
@@ -1036,15 +1079,18 @@ IndParticle_analysis&lt;-IndParticle_analysis[,colnames(IndParticle_analysis)!=&
 dim(IndParticle_analysis)# 143 rows, by 23 columns</code></pre>
 <pre><code>## [1] 143  23</code></pre>
 <pre class="r"><code>IndParticle_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI ClusterID_Particle.         X        Y
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal                 1_1  9.001362 10.64169
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal                 1_2 71.712538 16.22783
-##          XM       YM   Perim.    Major    Minor     Angle     Circ.    Feret FeretX FeretY FeretAngle
-## 1  9.001362 10.64169 160.6690 29.94767 15.60318  47.74661 0.1786535 60.82763      0     42   43.66778
-## 2 71.712538 16.22783 173.4975 45.31033 18.37768 109.97441 0.2730243 71.11259     50      0  115.84439
-##   MinFeret       AR     Round  Solidity Area..px.
-## 1 31.08705 1.919332 0.5210147 0.3797206       367
-## 2 28.42651 2.465509 0.4055958 0.6285440       654</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal
+##   ClusterID_Particle.         X        Y        XM       YM   Perim.    Major
+## 1                 1_1  9.001362 10.64169  9.001362 10.64169 160.6690 29.94767
+## 2                 1_2 71.712538 16.22783 71.712538 16.22783 173.4975 45.31033
+##      Minor     Angle     Circ.    Feret FeretX FeretY FeretAngle MinFeret
+## 1 15.60318  47.74661 0.1786535 60.82763      0     42   43.66778 31.08705
+## 2 18.37768 109.97441 0.2730243 71.11259     50      0  115.84439 28.42651
+##         AR     Round  Solidity Area..px.
+## 1 1.919332 0.5210147 0.3797206       367
+## 2 2.465509 0.4055958 0.6285440       654</code></pre>
 </div>
 </div>
 <div id="get-a-.csv-list-from-leia-output" class="section level1" number="4">
@@ -1094,21 +1140,27 @@ LEIA_Res_analysis&lt;-LEIA_Res_analysis[, !colnames(LEIA_Res_analysis) %in% c(&q
 dim(LEIA_Res_analysis)# 18 rows by 37 columns</code></pre>
 <pre><code>## [1] 18 37</code></pre>
 <pre class="r"><code>LEIA_Res_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI  Col.mean    Col.sd  Col.CoV Col.skew
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 0.1736449 0.2851837 1.642339 2.351301
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 0.1663600 0.2695337 1.620183 2.286320
-##   Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz Col.CoV.hrz
-## 1     9.700354 0.8928419 1.431054 1.602808 2.255974     9.558368   0.08770301  0.1856711    2.117043
-## 2     9.671851 0.8987935 1.380676 1.536144 2.060313     8.282279   0.08205933  0.1756506    2.140532
-##   Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt Col.skew.vrt Col.kurtosis.vrt
-## 1     3.926095         22.61682   0.08907545  0.1942661    2.180916     3.913759         22.07321
-## 2     3.887552         22.67175   0.08694090  0.1873940    2.155418     3.881844         22.90526
-##   Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt
-## 1    0.4355562  0.8958863    2.056879     3.612730         20.01520    0.4563516  0.9904756    2.170422
-## 2    0.4406635  0.8761384    1.988225     3.493638         19.45551    0.4573795  0.9806892    2.144148
-##   Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
-## 1     3.852029         22.42973      none          0          0
-## 2     3.690217         20.01364      none          0          0</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI  Col.mean
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 0.1736449
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 0.1663600
+##      Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV Lum.skew
+## 1 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808 2.255974
+## 2 0.2695337 1.620183 2.286320     9.671851 0.8987935 1.380676 1.536144 2.060313
+##   Lum.kurtosis Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz
+## 1     9.558368   0.08770301  0.1856711    2.117043     3.926095
+## 2     8.282279   0.08205933  0.1756506    2.140532     3.887552
+##   Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt Col.skew.vrt
+## 1         22.61682   0.08907545  0.1942661    2.180916     3.913759
+## 2         22.67175   0.08694090  0.1873940    2.155418     3.881844
+##   Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz Lum.skew.hrz
+## 1         22.07321    0.4355562  0.8958863    2.056879     3.612730
+## 2         22.90526    0.4406635  0.8761384    1.988225     3.493638
+##   Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt
+## 1         20.01520    0.4563516  0.9904756    2.170422     3.852029
+## 2         19.45551    0.4573795  0.9806892    2.144148     3.690217
+##   Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
+## 1         22.42973      none          0          0
+## 2         20.01364      none          0          0</code></pre>
 </div>
 <div id="get-a-.csv-list-from-gabrat-output" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Get a .csv list from
@@ -1169,13 +1221,20 @@ dim(GabRat_Res_analysis)# 72 rows by 7 columns</code></pre>
 ## 4 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 4
 ## 5 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 5
 ## 6 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 6
-##                                                                                   ID Sigma    GabRat
-## 1            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_lw     3 0.1666780
-## 2            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_mw     3 0.1774265
-## 3            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_sw     3 0.1902168
-## 4           3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_dbl     3 0.1682120
-## 5 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_lw     3 0.5320508
-## 6 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_mw     3 0.5181680</code></pre>
+##                                                                                   ID
+## 1            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_lw
+## 2            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_mw
+## 3            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_sw
+## 4           3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_dbl
+## 5 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_lw
+## 6 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_mw
+##   Sigma    GabRat
+## 1     3 0.1666780
+## 2     3 0.1774265
+## 3     3 0.1902168
+## 4     3 0.1682120
+## 5     3 0.5320508
+## 6     3 0.5181680</code></pre>
 <pre class="r"><code># Set up a true/false condition on whether row has the pattern &quot;_dbl&quot;,
 # then subset data on this condition
 GabRat_Res_analysis&lt;-GabRat_Res_analysis[endsWith(GabRat_Res_analysis$ID, &quot;_dbl&quot;),]
@@ -1198,13 +1257,16 @@ GabRat_Res_analysis&lt;-GabRat_Res_analysis[, !colnames(GabRat_Res_analysis)
 dim(GabRat_Res_analysis)# 18 rows by 5 columns</code></pre>
 <pre><code>## [1] 18  5</code></pre>
 <pre class="r"><code>GabRat_Res_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    GabRat               ROI
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.1682120            animal
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.5332068 animal+background</code></pre>
+<pre><code>##             Species                            Ind Dist    GabRat
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.1682120
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.5332068
+##                 ROI
+## 1            animal
+## 2 animal+background</code></pre>
 </div>
-<div id="combine-data-output-into-csv-lists-across-analyses-and-output-data" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Combine data output
-into csv lists across analyses and output data</h1>
+<div id="combing-data-sets-and-data-preparation" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Combing data sets and
+data preparation</h1>
 <div id="merging-data-sets" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Merging data
 sets</h2>
@@ -1219,18 +1281,24 @@ Cluster_Particle_analysis&lt;-merge(Cluster_analysis, Particle_analysis,
 dim(Cluster_Particle_analysis)# 52 rows and 36 columns</code></pre>
 <pre><code>## [1] 52 36</code></pre>
 <pre class="r"><code>Cluster_Particle_analysis[1:2,]# Inspect data</code></pre>
-<pre><code>##             Species                            Ind Dist               ROI ClusterID Pass    lw_mean
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal         1    7 0.07855250
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background         1   20 0.03184927
-##         lw_sd    mw_mean       mw_sd    sw_mean       sw_sd   dbl_mean      dbl_sd  Area Coverage..pc.
-## 1 0.018744942 0.06783328 0.018022186 0.06569355 0.013962437 0.07415875 0.018407013  9116     100.00000
-## 2 0.006353116 0.02877177 0.004386119 0.03404231 0.006827025 0.03058787 0.005537348 32133      71.76229
-##      RNL.X     RNL.Y RNL.Saturation Dmax.Chromaticity Dmax.channel Count Total.Area Average.Size   X.Area
-## 1 2.074853 -1.721327       2.695919        0.08914595        lw:sw     4       2953       738.25 24.46764
-## 2 1.437122  1.917127       2.395975        0.08390701        mw:sw     2      32133     16066.50 45.13759
-##     Perim.     Major     Minor    Angle     Circ.  Solidity     Feret FeretX FeretY FeretAngle  MinFeret
-## 1 204.9117  52.96716  17.83798 79.13099 0.2135263 0.5150810  83.09385  19.25  60.25   79.74821  31.79423
-## 2 740.6488 113.31427 101.73291 73.06783 0.4666892 0.7740756 150.38945  51.50 173.00   91.85460 119.27169</code></pre>
+<pre><code>##             Species                            Ind Dist               ROI
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background
+##   ClusterID Pass    lw_mean       lw_sd    mw_mean       mw_sd    sw_mean
+## 1         1    7 0.07855250 0.018744942 0.06783328 0.018022186 0.06569355
+## 2         1   20 0.03184927 0.006353116 0.02877177 0.004386119 0.03404231
+##         sw_sd   dbl_mean      dbl_sd  Area Coverage..pc.    RNL.X     RNL.Y
+## 1 0.013962437 0.07415875 0.018407013  9116     100.00000 2.074853 -1.721327
+## 2 0.006827025 0.03058787 0.005537348 32133      71.76229 1.437122  1.917127
+##   RNL.Saturation Dmax.Chromaticity Dmax.channel Count Total.Area Average.Size
+## 1       2.695919        0.08914595        lw:sw     4       2953       738.25
+## 2       2.395975        0.08390701        mw:sw     2      32133     16066.50
+##     X.Area   Perim.     Major     Minor    Angle     Circ.  Solidity     Feret
+## 1 24.46764 204.9117  52.96716  17.83798 79.13099 0.2135263 0.5150810  83.09385
+## 2 45.13759 740.6488 113.31427 101.73291 73.06783 0.4666892 0.7740756 150.38945
+##   FeretX FeretY FeretAngle  MinFeret
+## 1  19.25  60.25   79.74821  31.79423
+## 2  51.50 173.00   91.85460 119.27169</code></pre>
 </div>
 <div id="vcabsacaa-data-leia-output-and-gabrat-analyses" class="section level3" number="6.1.2">
 <h3><span class="header-section-number">6.1.2</span> VCA,BSA,CAA data,
@@ -1243,66 +1311,87 @@ VCA_LEIA_GabRat_analysis&lt;-merge(VCA_analysis, LEIA_Res_analysis,
                                 by=c(&quot;Species&quot;,&quot;Ind&quot;,&quot;Dist&quot;,&quot;ROI&quot;))
 
 VCA_LEIA_GabRat_analysis[1:2,]# Inspect data</code></pre>
-<pre><code>##             Species                            Ind Dist               ROI   CAA.Sc    CAA.Jc   CAA.St
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal 1.000000 1.0000000      Inf
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background 1.763881 0.5879602 2.098908
-##      CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt  CAA.Scpl  CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt
-## 1       NaN 0.00000       NaN 0.0000000       NaN       Inf       NaN 0.00000000   1.000000   1.000000
-## 2 0.6996359 0.76058 0.6923097 0.8373184 0.7621601 0.6437981 0.7272349 0.01618755   1.763113   1.764646
-##   CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz
-## 1  1.0000000  1.0000000        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN
-## 2  0.5877043  0.5882152   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457
-##   CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt
-## 1        NaN  0.0000000  0.0000000        NaN        NaN          Inf          Inf          NaN          NaN
-## 2  0.6925724  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989    0.6472219    0.7277313    0.7239647
-##    CAA.C.Hrz  CAA.C.Vrt   CAA.PT CAA.PT.Hrz CAA.PT.Vrt   CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax
-## 1 0.00000000 0.00000000      Inf        Inf        Inf       NaN 0.07415875       NaN       NaN 0.08914595
-## 2 0.01768539 0.01469036 60.77585   55.54384   67.07187 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733
-##     VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL  VCA.CVSL   VCA.MS   VCA.sS
-## 1         NaN        NaN  2.695919       NaN        NaN      NaN     NaN       NaN      NaN      NaN
-## 2 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111 0.3753171 3.334727 1.209654
-##     VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz
-## 1       NaN 0.07415875        NaN         NaN 0.07415875        NaN         NaN    0.08914595           NaN
-## 2 0.3627445 0.04129542 0.02296875   0.5562057 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942
-##   VCA.CVDmax.Hrz VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz VCA.CVSsat.Hrz
-## 1            NaN    0.08914595           NaN            NaN      2.695919           NaN            NaN
-## 2      0.1148605    0.08556912   0.009826575      0.1148379      2.467878     0.2756307      0.1116873
-##   VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt
-## 1      2.695919           NaN            NaN         NaN         NaN          NaN         NaN         NaN
-## 2      2.467834     0.2755308      0.1116488    16.01783    6.010669    0.3752486    16.01434    6.011548
-##   VCA.CVSL.Vrt VCA.MS.Hrz VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL
-## 1          NaN        NaN        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000
-## 2    0.3753854    3.33508   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583
-##    BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat BSA.BMSL BSA.BsSL BSA.BCVSL
-## 1       NaN 0.00000000 0.00000000         NaN 0.00000000 0.00000000         NaN  0.00000 0.000000       NaN
-## 2 0.3279133 0.07865894 0.08357918    1.062552 0.06068302 0.08350352    1.376061 11.98163 4.230545 0.3530861
-##    BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt
-## 1 0.000000 0.0000000      NaN   0.0000000  0.00000000          NaN   0.0000000  0.00000000          NaN
-## 2 2.522453 0.8547204 0.338845   0.2939087  0.09529334    0.3242277   0.2827497  0.09347208    0.3305825
-##   BSA.BMDmax.Hrz BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt BSA.BMSsat.Hrz
-## 1     0.00000000     0.00000000             NaN     0.00000000     0.00000000             NaN     0.00000000
-## 2     0.07536487     0.08251804        1.094914     0.08262291     0.08458379        1.023733     0.05763893
-##   BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz
-## 1      0.0000000             NaN     0.00000000     0.00000000             NaN      0.00000      0.00000
-## 2      0.0828074        1.436658     0.06434617     0.08411479        1.307223     12.20617      4.27166
-##   BSA.BCVSL.Hrz BSA.BMSL.Vrt BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
-## 1           NaN      0.00000     0.000000           NaN    0.000000   0.0000000          NaN    0.000000
-## 2     0.3499591     11.71142     4.156481     0.3549083    2.567851   0.8627548    0.3359832    2.467822
-##   BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV
-## 1   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808
-## 2   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901 0.7599581 1.631294 2.146557
-##   Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt
-## 1 2.255974     9.558368   0.08770301  0.1856711    2.117043     3.926095         22.61682   0.08907545
-## 2 4.713521    38.984497   0.11245671  0.2857060    2.540587     5.473994         47.54446   0.10647940
-##   Col.sd.vrt Col.CoV.vrt Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz Lum.skew.hrz
-## 1  0.1942661    2.180916     3.913759         22.07321    0.4355562  0.8958863    2.056879     3.612730
-## 2  0.2643248    2.482403     5.224416         45.33121    0.3860825  1.0964629    2.839970     7.414604
-##   Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh
-## 1         20.01520    0.4563516  0.9904756    2.170422     3.852029         22.42973      none          0
-## 2         84.33807    0.3751880  1.0664402    2.842415     7.844373         98.05338      none          0
-##   Lum.thresh
-## 1          0
-## 2          0</code></pre>
+<pre><code>##             Species                            Ind Dist               ROI
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background
+##     CAA.Sc    CAA.Jc   CAA.St    CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt
+## 1 1.000000 1.0000000      Inf       NaN 0.00000       NaN 0.0000000       NaN
+## 2 1.763881 0.5879602 2.098908 0.6996359 0.76058 0.6923097 0.8373184 0.7621601
+##    CAA.Scpl  CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt
+## 1       Inf       NaN 0.00000000   1.000000   1.000000  1.0000000  1.0000000
+## 2 0.6437981 0.7272349 0.01618755   1.763113   1.764646  0.5877043  0.5882152
+##   CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz
+## 1        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN
+## 2   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457
+##   CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz
+## 1        NaN  0.0000000  0.0000000        NaN        NaN          Inf
+## 2  0.6925724  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989
+##   CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt  CAA.C.Hrz  CAA.C.Vrt   CAA.PT
+## 1          Inf          NaN          NaN 0.00000000 0.00000000      Inf
+## 2    0.6472219    0.7277313    0.7239647 0.01768539 0.01469036 60.77585
+##   CAA.PT.Hrz CAA.PT.Vrt   CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax
+## 1        Inf        Inf       NaN 0.07415875       NaN       NaN 0.08914595
+## 2   55.54384   67.07187 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733
+##     VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL
+## 1         NaN        NaN  2.695919       NaN        NaN      NaN     NaN
+## 2 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111
+##    VCA.CVSL   VCA.MS   VCA.sS   VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz
+## 1       NaN      NaN      NaN       NaN 0.07415875        NaN         NaN
+## 2 0.3753171 3.334727 1.209654 0.3627445 0.04129542 0.02296875   0.5562057
+##   VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz
+## 1 0.07415875        NaN         NaN    0.08914595           NaN            NaN
+## 2 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942      0.1148605
+##   VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz
+## 1    0.08914595           NaN            NaN      2.695919           NaN
+## 2    0.08556912   0.009826575      0.1148379      2.467878     0.2756307
+##   VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz
+## 1            NaN      2.695919           NaN            NaN         NaN
+## 2      0.1116873      2.467834     0.2755308      0.1116488    16.01783
+##   VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz
+## 1         NaN          NaN         NaN         NaN          NaN        NaN
+## 2    6.010669    0.3752486    16.01434    6.011548    0.3753854    3.33508
+##   VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL
+## 1        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000
+## 2   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583
+##    BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat
+## 1       NaN 0.00000000 0.00000000         NaN 0.00000000 0.00000000         NaN
+## 2 0.3279133 0.07865894 0.08357918    1.062552 0.06068302 0.08350352    1.376061
+##   BSA.BMSL BSA.BsSL BSA.BCVSL  BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz
+## 1  0.00000 0.000000       NaN 0.000000 0.0000000      NaN   0.0000000
+## 2 11.98163 4.230545 0.3530861 2.522453 0.8547204 0.338845   0.2939087
+##   BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz
+## 1  0.00000000          NaN   0.0000000  0.00000000          NaN     0.00000000
+## 2  0.09529334    0.3242277   0.2827497  0.09347208    0.3305825     0.07536487
+##   BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt
+## 1     0.00000000             NaN     0.00000000     0.00000000             NaN
+## 2     0.08251804        1.094914     0.08262291     0.08458379        1.023733
+##   BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt
+## 1     0.00000000      0.0000000             NaN     0.00000000     0.00000000
+## 2     0.05763893      0.0828074        1.436658     0.06434617     0.08411479
+##   BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt
+## 1             NaN      0.00000      0.00000           NaN      0.00000
+## 2        1.307223     12.20617      4.27166     0.3499591     11.71142
+##   BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
+## 1     0.000000           NaN    0.000000   0.0000000          NaN    0.000000
+## 2     4.156481     0.3549083    2.567851   0.8627548    0.3359832    2.467822
+##   BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis
+## 1   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354
+## 2   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901
+##    Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz
+## 1 0.8928419 1.431054 1.602808 2.255974     9.558368   0.08770301  0.1856711
+## 2 0.7599581 1.631294 2.146557 4.713521    38.984497   0.11245671  0.2857060
+##   Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt
+## 1    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916
+## 2    2.540587     5.473994         47.54446   0.10647940  0.2643248    2.482403
+##   Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz
+## 1     3.913759         22.07321    0.4355562  0.8958863    2.056879
+## 2     5.224416         45.33121    0.3860825  1.0964629    2.839970
+##   Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt
+## 1     3.612730         20.01520    0.4563516  0.9904756    2.170422
+## 2     7.414604         84.33807    0.3751880  1.0664402    2.842415
+##   Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
+## 1     3.852029         22.42973      none          0          0
+## 2     7.844373         98.05338      none          0          0</code></pre>
 <pre class="r"><code>dim(VCA_LEIA_GabRat_analysis)# 18 rows and 164 columns</code></pre>
 <pre><code>## [1]  18 164</code></pre>
 <pre class="r"><code># Merge the new data frame (VCA_LEIA_GabRat_analysis) with GabRat_Res_analysis
@@ -1310,72 +1399,366 @@ VCA_LEIA_GabRat_analysis&lt;-merge(VCA_LEIA_GabRat_analysis, GabRat_Res_analysis
                                 by=c(&quot;Species&quot;,&quot;Ind&quot;,&quot;Dist&quot;,&quot;ROI&quot;))
 
 VCA_LEIA_GabRat_analysis[1:2,]# Inspect data again</code></pre>
-<pre><code>##             Species                            Ind Dist               ROI   CAA.Sc    CAA.Jc   CAA.St
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal 1.000000 1.0000000      Inf
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background 1.763881 0.5879602 2.098908
-##      CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt  CAA.Scpl  CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt
-## 1       NaN 0.00000       NaN 0.0000000       NaN       Inf       NaN 0.00000000   1.000000   1.000000
-## 2 0.6996359 0.76058 0.6923097 0.8373184 0.7621601 0.6437981 0.7272349 0.01618755   1.763113   1.764646
-##   CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz
-## 1  1.0000000  1.0000000        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN
-## 2  0.5877043  0.5882152   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457
-##   CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt
-## 1        NaN  0.0000000  0.0000000        NaN        NaN          Inf          Inf          NaN          NaN
-## 2  0.6925724  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989    0.6472219    0.7277313    0.7239647
-##    CAA.C.Hrz  CAA.C.Vrt   CAA.PT CAA.PT.Hrz CAA.PT.Vrt   CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax
-## 1 0.00000000 0.00000000      Inf        Inf        Inf       NaN 0.07415875       NaN       NaN 0.08914595
-## 2 0.01768539 0.01469036 60.77585   55.54384   67.07187 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733
-##     VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL  VCA.CVSL   VCA.MS   VCA.sS
-## 1         NaN        NaN  2.695919       NaN        NaN      NaN     NaN       NaN      NaN      NaN
-## 2 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111 0.3753171 3.334727 1.209654
-##     VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz
-## 1       NaN 0.07415875        NaN         NaN 0.07415875        NaN         NaN    0.08914595           NaN
-## 2 0.3627445 0.04129542 0.02296875   0.5562057 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942
-##   VCA.CVDmax.Hrz VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz VCA.CVSsat.Hrz
-## 1            NaN    0.08914595           NaN            NaN      2.695919           NaN            NaN
-## 2      0.1148605    0.08556912   0.009826575      0.1148379      2.467878     0.2756307      0.1116873
-##   VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt
-## 1      2.695919           NaN            NaN         NaN         NaN          NaN         NaN         NaN
-## 2      2.467834     0.2755308      0.1116488    16.01783    6.010669    0.3752486    16.01434    6.011548
-##   VCA.CVSL.Vrt VCA.MS.Hrz VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL
-## 1          NaN        NaN        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000
-## 2    0.3753854    3.33508   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583
-##    BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat BSA.BMSL BSA.BsSL BSA.BCVSL
-## 1       NaN 0.00000000 0.00000000         NaN 0.00000000 0.00000000         NaN  0.00000 0.000000       NaN
-## 2 0.3279133 0.07865894 0.08357918    1.062552 0.06068302 0.08350352    1.376061 11.98163 4.230545 0.3530861
-##    BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt
-## 1 0.000000 0.0000000      NaN   0.0000000  0.00000000          NaN   0.0000000  0.00000000          NaN
-## 2 2.522453 0.8547204 0.338845   0.2939087  0.09529334    0.3242277   0.2827497  0.09347208    0.3305825
-##   BSA.BMDmax.Hrz BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt BSA.BMSsat.Hrz
-## 1     0.00000000     0.00000000             NaN     0.00000000     0.00000000             NaN     0.00000000
-## 2     0.07536487     0.08251804        1.094914     0.08262291     0.08458379        1.023733     0.05763893
-##   BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz
-## 1      0.0000000             NaN     0.00000000     0.00000000             NaN      0.00000      0.00000
-## 2      0.0828074        1.436658     0.06434617     0.08411479        1.307223     12.20617      4.27166
-##   BSA.BCVSL.Hrz BSA.BMSL.Vrt BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
-## 1           NaN      0.00000     0.000000           NaN    0.000000   0.0000000          NaN    0.000000
-## 2     0.3499591     11.71142     4.156481     0.3549083    2.567851   0.8627548    0.3359832    2.467822
-##   BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV
-## 1   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808
-## 2   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901 0.7599581 1.631294 2.146557
-##   Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt
-## 1 2.255974     9.558368   0.08770301  0.1856711    2.117043     3.926095         22.61682   0.08907545
-## 2 4.713521    38.984497   0.11245671  0.2857060    2.540587     5.473994         47.54446   0.10647940
-##   Col.sd.vrt Col.CoV.vrt Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz Lum.skew.hrz
-## 1  0.1942661    2.180916     3.913759         22.07321    0.4355562  0.8958863    2.056879     3.612730
-## 2  0.2643248    2.482403     5.224416         45.33121    0.3860825  1.0964629    2.839970     7.414604
-##   Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh
-## 1         20.01520    0.4563516  0.9904756    2.170422     3.852029         22.42973      none          0
-## 2         84.33807    0.3751880  1.0664402    2.842415     7.844373         98.05338      none          0
-##   Lum.thresh    GabRat
-## 1          0 0.1682120
-## 2          0 0.5332068</code></pre>
+<pre><code>##             Species                            Ind Dist               ROI
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background
+##     CAA.Sc    CAA.Jc   CAA.St    CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt
+## 1 1.000000 1.0000000      Inf       NaN 0.00000       NaN 0.0000000       NaN
+## 2 1.763881 0.5879602 2.098908 0.6996359 0.76058 0.6923097 0.8373184 0.7621601
+##    CAA.Scpl  CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt
+## 1       Inf       NaN 0.00000000   1.000000   1.000000  1.0000000  1.0000000
+## 2 0.6437981 0.7272349 0.01618755   1.763113   1.764646  0.5877043  0.5882152
+##   CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz
+## 1        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN
+## 2   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457
+##   CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz
+## 1        NaN  0.0000000  0.0000000        NaN        NaN          Inf
+## 2  0.6925724  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989
+##   CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt  CAA.C.Hrz  CAA.C.Vrt   CAA.PT
+## 1          Inf          NaN          NaN 0.00000000 0.00000000      Inf
+## 2    0.6472219    0.7277313    0.7239647 0.01768539 0.01469036 60.77585
+##   CAA.PT.Hrz CAA.PT.Vrt   CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax
+## 1        Inf        Inf       NaN 0.07415875       NaN       NaN 0.08914595
+## 2   55.54384   67.07187 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733
+##     VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL
+## 1         NaN        NaN  2.695919       NaN        NaN      NaN     NaN
+## 2 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111
+##    VCA.CVSL   VCA.MS   VCA.sS   VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz
+## 1       NaN      NaN      NaN       NaN 0.07415875        NaN         NaN
+## 2 0.3753171 3.334727 1.209654 0.3627445 0.04129542 0.02296875   0.5562057
+##   VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz
+## 1 0.07415875        NaN         NaN    0.08914595           NaN            NaN
+## 2 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942      0.1148605
+##   VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz
+## 1    0.08914595           NaN            NaN      2.695919           NaN
+## 2    0.08556912   0.009826575      0.1148379      2.467878     0.2756307
+##   VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz
+## 1            NaN      2.695919           NaN            NaN         NaN
+## 2      0.1116873      2.467834     0.2755308      0.1116488    16.01783
+##   VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz
+## 1         NaN          NaN         NaN         NaN          NaN        NaN
+## 2    6.010669    0.3752486    16.01434    6.011548    0.3753854    3.33508
+##   VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL
+## 1        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000
+## 2   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583
+##    BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat
+## 1       NaN 0.00000000 0.00000000         NaN 0.00000000 0.00000000         NaN
+## 2 0.3279133 0.07865894 0.08357918    1.062552 0.06068302 0.08350352    1.376061
+##   BSA.BMSL BSA.BsSL BSA.BCVSL  BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz
+## 1  0.00000 0.000000       NaN 0.000000 0.0000000      NaN   0.0000000
+## 2 11.98163 4.230545 0.3530861 2.522453 0.8547204 0.338845   0.2939087
+##   BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz
+## 1  0.00000000          NaN   0.0000000  0.00000000          NaN     0.00000000
+## 2  0.09529334    0.3242277   0.2827497  0.09347208    0.3305825     0.07536487
+##   BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt
+## 1     0.00000000             NaN     0.00000000     0.00000000             NaN
+## 2     0.08251804        1.094914     0.08262291     0.08458379        1.023733
+##   BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt
+## 1     0.00000000      0.0000000             NaN     0.00000000     0.00000000
+## 2     0.05763893      0.0828074        1.436658     0.06434617     0.08411479
+##   BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt
+## 1             NaN      0.00000      0.00000           NaN      0.00000
+## 2        1.307223     12.20617      4.27166     0.3499591     11.71142
+##   BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
+## 1     0.000000           NaN    0.000000   0.0000000          NaN    0.000000
+## 2     4.156481     0.3549083    2.567851   0.8627548    0.3359832    2.467822
+##   BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis
+## 1   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354
+## 2   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901
+##    Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz
+## 1 0.8928419 1.431054 1.602808 2.255974     9.558368   0.08770301  0.1856711
+## 2 0.7599581 1.631294 2.146557 4.713521    38.984497   0.11245671  0.2857060
+##   Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt
+## 1    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916
+## 2    2.540587     5.473994         47.54446   0.10647940  0.2643248    2.482403
+##   Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz
+## 1     3.913759         22.07321    0.4355562  0.8958863    2.056879
+## 2     5.224416         45.33121    0.3860825  1.0964629    2.839970
+##   Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt
+## 1     3.612730         20.01520    0.4563516  0.9904756    2.170422
+## 2     7.414604         84.33807    0.3751880  1.0664402    2.842415
+##   Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh    GabRat
+## 1     3.852029         22.42973      none          0          0 0.1682120
+## 2     7.844373         98.05338      none          0          0 0.5332068</code></pre>
 <pre class="r"><code>dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns</code></pre>
 <pre><code>## [1]  18 165</code></pre>
 </div>
 </div>
-<div id="output-files" class="section level2" number="6.2">
-<h2><span class="header-section-number">6.2</span> Output files</h2>
+<div id="data-cleaning" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Data cleaning</h2>
+<p>In this tutorial, we are using a minimal working example, where the
+data used does not have proper replication (i.e., we have 3 individuals
+in total). For those considering using linear mixed effects models
+(LMMs) in downstream analyses, we recommend reading <span class="citation">Harrison et al. (2018)</span>. Please consider the
+number of data points (<span class="math inline">\(n\)</span>) to
+parameters (<span class="math inline">\(k\)</span>); where ideally <span class="math inline">\(n/k &gt; 3\)</span> <span class="citation">(but
+see discussion in Harrison et al. 2018)</span>.</p>
+<div id="omitting-rows-based-on-values" class="section level3" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Omitting rows based
+on values</h3>
+<p>To demonstrate some data cleaning methods, we have created a smaller
+data frame <em>V.L.GbRt_subset</em>, subset from
+<em>VCA_LEIA_GabRat_analysis</em> by selecting the columns names. In
+this data set, there are both <em>NaN</em> (not a number) and
+<em>Inf</em> (infinite) entries. Using <em>summary</em>, by retaining
+<em>NaN</em> and <em>Infs</em>, functions like <em>mean</em> and
+<em>maximum</em> can not calculated values correctly. To remove
+<em>Inf</em> values, we first first convert them to <em>NA</em>s. To do
+so, we can use the <em>is.infinite</em> function to detect <em>Inf</em>
+values, however this only works on vectors (i.e., data frame columns),
+so we can loop over our data frame using a variant of <em>lapply</em>,
+the <em>sapply</em> function which returns a vector (not list).</p>
+<pre class="r"><code># Specify column names
+ColumnNames&lt;-c(&quot;Species&quot;,&quot;Ind&quot;,&quot;Dist&quot;,&quot;ROI&quot;,&quot;BSA.BsL.Hrz&quot;,&quot;Lum.mean&quot;,
+               &quot;CAA.Scpl&quot;,&quot;Lum.CoV&quot;,&quot;BSA.BML&quot;,&quot;Col.mean&quot;,&quot;GabRat&quot;)
+
+# Subset data by column names
+V.L.GbRt_subset&lt;-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
+                                          %in% ColumnNames]
+
+dim(V.L.GbRt_subset)# 18 rows by 11 columns</code></pre>
+<pre><code>## [1] 18 11</code></pre>
+<pre class="r"><code>summary(V.L.GbRt_subset) # Initial summary of the data</code></pre>
+<pre><code>##               Species                               Ind      Dist  
+##  Aphelodoris varia:12   3_AphelodorisVaria_10_NF_D_RAW:6   30cm:9  
+##  Aplysia sp       : 6   3_AphelodorisVaria_11_NF_D_RAW:6   50cm:9  
+##                         4_Aplysiasp_1_NL_N_RAW        :6           
+##                                                                    
+##                                                                    
+##                                                                    
+##                                                                    
+##                 ROI       CAA.Scpl         BSA.BML        BSA.BsL.Hrz     
+##  animal           :6   Min.   :0.3013   Min.   :0.0000   Min.   :0.00000  
+##  animal+background:6   1st Qu.:0.5280   1st Qu.:0.2007   1st Qu.:0.04736  
+##  background       :6   Median :0.6423   Median :0.2774   Median :0.07755  
+##                        Mean   :   Inf   Mean   :0.2503   Mean   :0.07439  
+##                        3rd Qu.:0.8069   3rd Qu.:0.3371   3rd Qu.:0.10934  
+##                        Max.   :   Inf   Max.   :0.4793   Max.   :0.15655  
+##                                                          NA&#39;s   :4        
+##     Col.mean         Lum.mean         Lum.CoV          GabRat      
+##  Min.   :0.1542   Min.   :0.5980   Min.   :1.483   Min.   :0.1624  
+##  1st Qu.:0.1827   1st Qu.:0.7779   1st Qu.:1.709   1st Qu.:0.2622  
+##  Median :0.1937   Median :0.8958   Median :1.864   Median :0.3781  
+##  Mean   :0.2068   Mean   :0.9352   Mean   :1.904   Mean   :0.3521  
+##  3rd Qu.:0.2291   3rd Qu.:1.0017   3rd Qu.:2.062   3rd Qu.:0.4386  
+##  Max.   :0.2857   Max.   :1.5512   Max.   :2.450   Max.   :0.5332  
+## </code></pre>
+<pre class="r"><code># View the data frame
+View(V.L.GbRt_subset)
+
+# Replace infinite values with NA using sapply
+V.L.GbRt_subset[sapply(V.L.GbRt_subset, is.infinite)] &lt;- NA
+
+View(V.L.GbRt_subset)# Observe change the data frame
+
+# Remove NA/NaNs
+V.L.GbRt_subset&lt;-na.omit(V.L.GbRt_subset)
+
+View(V.L.GbRt_subset)# Observe change the data frame
+
+dim(V.L.GbRt_subset)# 11 rows by 11 columns</code></pre>
+<pre><code>## [1] 11 11</code></pre>
+<pre class="r"><code>summary(V.L.GbRt_subset)</code></pre>
+<pre><code>##               Species                              Ind      Dist  
+##  Aphelodoris varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7  
+##  Aplysia sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4  
+##                        4_Aplysiasp_1_NL_N_RAW        :5           
+##                                                                   
+##                                                                   
+##                                                                   
+##                 ROI       CAA.Scpl         BSA.BML        BSA.BsL.Hrz     
+##  animal           :3   Min.   :0.3013   Min.   :0.1332   Min.   :0.04544  
+##  animal+background:5   1st Qu.:0.4786   1st Qu.:0.2402   1st Qu.:0.06180  
+##  background       :3   Median :0.5396   Median :0.2888   Median :0.09529  
+##                        Mean   :0.5261   Mean   :0.2831   Mean   :0.09468  
+##                        3rd Qu.:0.5966   3rd Qu.:0.3348   3rd Qu.:0.11521  
+##                        Max.   :0.6832   Max.   :0.3966   Max.   :0.15655  
+##     Col.mean         Lum.mean         Lum.CoV          GabRat      
+##  Min.   :0.1542   Min.   :0.5980   Min.   :1.483   Min.   :0.1906  
+##  1st Qu.:0.1881   1st Qu.:0.8488   1st Qu.:1.769   1st Qu.:0.2678  
+##  Median :0.2161   Median :0.9803   Median :2.040   Median :0.4105  
+##  Mean   :0.2179   Mean   :1.0176   Mean   :1.983   Mean   :0.3775  
+##  3rd Qu.:0.2534   3rd Qu.:1.0842   3rd Qu.:2.104   3rd Qu.:0.4647  
+##  Max.   :0.2857   Max.   :1.5512   Max.   :2.450   Max.   :0.5332</code></pre>
+<pre class="r"><code>apply(V.L.GbRt_subset[,5:11], 2, var) # Determine the colour variable variances</code></pre>
+<pre><code>##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
+## 0.012682464 0.006015432 0.001430767 0.002207957 0.087193128 0.090558647 
+##      GabRat 
+## 0.015336849</code></pre>
+<p>The p-value of the Shapiro-Wilk test for Height is less than 0.05, so
+we reject the null hypothesis and conclude that Height is not normally
+distributed. Therefore we should use Spearman’s test for this
+analysis.</p>
+<p>When implementing multivariate models, it is best to standardize data
+to facilitate model convergence. Here we variance standardised (mean =
+0, standard deviation = 1) each colour pattern variable across both
+viewing distances and ROIs using the <em>scale</em> function.</p>
+<pre class="r"><code>par(mfrow=c(3,3))
+Colnames_subset&lt;-colnames(V.L.GbRt_subset[,5:11])
+for (i in Colnames_subset) {
+  hist(V.L.GbRt_subset[,i], breaks = 10, 
+       main=i, xlab=&quot;&quot;)
+}
+
+# Test for normality
+lapply(V.L.GbRt_subset[,5:11], shapiro.test)</code></pre>
+<pre><code>## $CAA.Scpl
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.95222, p-value = 0.6724
+## 
+## 
+## $BSA.BML
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.97579, p-value = 0.9383
+## 
+## 
+## $BSA.BsL.Hrz
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.94014, p-value = 0.5222
+## 
+## 
+## $Col.mean
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.92552, p-value = 0.3674
+## 
+## 
+## $Lum.mean
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.90032, p-value = 0.1865
+## 
+## 
+## $Lum.CoV
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.95266, p-value = 0.6781
+## 
+## 
+## $GabRat
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  X[[i]]
+## W = 0.90139, p-value = 0.1922</code></pre>
+<pre class="r"><code># Inspect scaled values and column means
+scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)</code></pre>
+<pre><code>##      CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean    Lum.CoV
+## 2   1.0447329  0.07370189  0.01615151 -0.03748558 -0.87259277  0.5434126
+## 3  -1.1591094 -0.04606569 -1.04912193 -0.50269435 -1.42120580 -0.4793016
+## 7   1.3944807 -0.67822953 -0.68927858  1.44389073  1.80698261 -1.2187555
+## 8  -1.9965592  0.72545366  0.46902751  0.30774049 -0.03805163  1.5533929
+## 10  1.0175188 -1.19110556 -1.09924489  1.30323751  1.73650453 -1.6615115
+## 11 -0.1664538  0.60802358  1.47594374  0.21417235  0.27164927  1.3104953
+## 13  0.2343956 -1.93327402 -0.21669972  1.20297119 -0.62888125 -0.9445464
+## 14 -0.6773729 -0.42764791  0.14299748 -0.74177818 -0.39271849  0.2623784
+## 15  0.1198638  1.46361125  1.63571008 -1.30800444 -0.51469509  0.1861873
+## 17  0.2065297  0.41346282  0.61625213 -0.52704120  0.17954864  0.1893369
+## 18 -0.0180262  0.99206954 -1.30173733 -1.35500854 -0.12654002  0.2589115
+##        GabRat
+## 2   1.2575825
+## 3   0.2949464
+## 7  -1.3922980
+## 8   1.1835279
+## 10 -1.5085298
+## 11  0.2588835
+## 13  0.2669827
+## 14  0.7306342
+## 15  0.6787438
+## 17 -0.9760417
+## 18 -0.7944315
+## attr(,&quot;scaled:center&quot;)
+##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
+##   0.5261440   0.2831279   0.0946824   0.2178738   1.0176215   1.9830285 
+##      GabRat 
+##   0.3774653 
+## attr(,&quot;scaled:scale&quot;)
+##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
+##  0.11261644  0.07755922  0.03782548  0.04698890  0.29528483  0.30092964 
+##      GabRat 
+##  0.12384203</code></pre>
+<pre class="r"><code># Update the V.L.GbRt_subset data frame with the standardised values 
+V.L.GbRt_subset[,5:11]&lt;-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+
+# Check standardisation
+summary(V.L.GbRt_subset)# Mean values are zero</code></pre>
+<pre><code>##               Species                              Ind      Dist  
+##  Aphelodoris varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7  
+##  Aplysia sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4  
+##                        4_Aplysiasp_1_NL_N_RAW        :5           
+##                                                                   
+##                                                                   
+##                                                                   
+##                 ROI       CAA.Scpl          BSA.BML         BSA.BsL.Hrz      
+##  animal           :3   Min.   :-1.9966   Min.   :-1.9333   Min.   :-1.30174  
+##  animal+background:5   1st Qu.:-0.4219   1st Qu.:-0.5529   1st Qu.:-0.86920  
+##  background       :3   Median : 0.1199   Median : 0.0737   Median : 0.01615  
+##                        Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.00000  
+##                        3rd Qu.: 0.6260   3rd Qu.: 0.6667   3rd Qu.: 0.54264  
+##                        Max.   : 1.3945   Max.   : 1.4636   Max.   : 1.63571  
+##     Col.mean           Lum.mean          Lum.CoV            GabRat       
+##  Min.   :-1.35501   Min.   :-1.4212   Min.   :-1.6615   Min.   :-1.5085  
+##  1st Qu.:-0.63441   1st Qu.:-0.5718   1st Qu.:-0.7119   1st Qu.:-0.8852  
+##  Median :-0.03749   Median :-0.1265   Median : 0.1893   Median : 0.2670  
+##  Mean   : 0.00000   Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.0000  
+##  3rd Qu.: 0.75536   3rd Qu.: 0.2256   3rd Qu.: 0.4029   3rd Qu.: 0.7047  
+##  Max.   : 1.44389   Max.   : 1.8070   Max.   : 1.5534   Max.   : 1.2576</code></pre>
+<pre class="r"><code>apply(V.L.GbRt_subset[,5:11], 2, var) # Confirm variances are 1</code></pre>
+<pre><code>##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
+##           1           1           1           1           1           1 
+##      GabRat 
+##           1</code></pre>
+<pre class="r"><code># # Correlation panel
+# panel.cor &lt;- function(x, y){
+#     usr &lt;- par(&quot;usr&quot;); on.exit(par(usr))
+#     par(usr = c(0, 1, 0, 1))
+#     r &lt;- round(cor(x, y), digits=2)
+#     txt &lt;- paste0(&quot;R = &quot;, r)
+#     text(0.5, 0.5, txt, cex=1.5)
+# }
+# 
+# my_cols &lt;- c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;, &quot;#FC4E07&quot;)
+# # Scatterplot panel
+# panel.scat &lt;- function(x, y){
+# points(x,y, col=my_cols[subset$ROI],
+#     cex=1.1, pch=19)
+# }
+# 
+# par(oma=c(0,0,0,10), xpd=TRUE)
+# pairs(subset[,5:10],
+#       main=&quot;Six colour variables for two viewing distances&quot;,
+#       upper.panel = panel.cor,
+#       lower.panel = panel.scat,  gap=0)
+# 
+# Colour_ID&lt;-unique(data.frame(as.character(subset$ROI),my_cols[subset$ROI]))
+# legend(0.7, 0.8,Colour_ID[,1], pch =19,cex=1.1,bty=&quot;n&quot;, col=Colour_ID[,2])
+# 
+# library(corrplot)
+# corrplot(cor(subset[,5:10]))
+# 
+# dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
+# summary(VCA_LEIA_GabRat_analysis)</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAA9lBMVEUAAAAAAEgAAHQASEgASHQASJwAdJwAdL9IAABIAEhISABISEhISHRISJxIdHRIdJxIdL9InJxInL9InN90AAB0AEh0SAB0SEh0dAB0dEh0dHR0dJx0nHR0nJx0nL90v990v/+cSACcSEicdEicdHScnEicnHScnL+cv5ycv7+cv9+cv/+c39+c3/+/dAC/dEi/nEi/nHS/nJy/v5y/v7+/v9+/37+/39+/3/+//7+//9+////T09PfnEjfnHTfv3Tfv5zfv7/fv9/f35zf37/f39/f3//f/7/f/9/f////v3T/v5z/35z/37//39///7///9////9bIG+OAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAgAElEQVR4nO3df2Pbxp3n8aEtnXiWLnZirXxRtrZU53qtd03FqXP1NquV0tZJxZVM8Pk/mcMAIAkQv2a+GGAG0Pv1hy1RxACYL+dD/CTVGgAgonwvAACMFQEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAhNJEC/fHimlHr6+m77yP08fuAo95TSA6l/vNKPH7/+tX0mq1OlXjpYWOTpXs0cb+tXrkpV+cqTLvXPs/e5v76kbu44rVX57+Ui5R69VurJz47Ww6FpBOj1pjazN4WH8j1eekCLLstT1mIg9iE3spQ6SOpTVZWq8pUnTQI0K9L2Z+rmitNalZsmQD1Z5GqTdXdW111JSg+Uprxomw0DsQ+FkZVut1RUpbJ85UmXu0ayVghQh5zWqtw0AeqHfsObvYsLd7V744v3Ip78b6UOtzsLpQeyB9Xhp3jKHyqLuoeB2Iddrz6cpbvfVVWpLF950jRAk9fAbhhTN1ec1qqu6ZpHCdC+6E7OuvZ6+8YX/3R4ky9U6QFtuX1gsWkjutFHU0/eZX8+/OdV/BJ5/mkzIwaia7leXW5TcL8q1eWrnFR9NU82heJhfEyAuuW0VusoOXExe/6Xvb9XT5UFqB6Tv8URfPD/dpu0PoN1AgG63O0urP7l+U/JD3rz42W+JqUHtpMefso/sjrb7GTcJX8+SH9PCs5A7ENxZGVjZK8qNeWrnvTr02RT6Fo9+T8EqFtOa7UdasnjFgGajMkn/0GAOrKo2COINz/ixxa7/YjSA4n0wEy6uZnYHRLXdVuqQo0YiH3Y9eo/TtO9wFJVmspXnFRX7JtL/ay4koc/EKBuOa1V/Ixv7tYPl+nwtQjQdHiuCFA3dOaVevA6Kd9u/6L8wPbhxPPsTXSZbnvezpM29W+zN+towUDsT+HsQjrm9qtSV77ypMneyLV+Vvy3oyV1c8tlreIHkifcH//u07opQItbMUmA7q6YSa6Y8lncaQTo4V35saN8UUoPbGwvgDpI3kQ375vXB//3193BAT1Z/DADsQ/5MXKQbcnsVaWufOVJk4ot9bPify4IUMdc1ko/8OKu8HfTAD0q/r317G+fphmg+n1Jn0jY7keUHtj6ok8SJV5ui7+xfRdND5AzEPtQHCMv0gcLVaktX3lSPbwu4ocP7xZx6QhQx1zWKj1adrC5/t4mQLfPS9rYH/zDmkaA7u/Cby552CZg6YG8Lz8mh7PT/b58FZeblq8J0N7kDo7pMmyvxt1VpbZ85UmTAI1fEU/+qg+EEqCOua1Vlruz5MYkm2Og2/kulPdrm8YfoPmTSNHl83frwqmgtP9LD+yL0vMN5QDN5y8DsQ+5Xs0OlWxlVaktX3nSdHjF5frdPN6V0BtDBKhDTmuVXBCaOKg9Q9scoNeqantoWBMI0NxGvR4xR9mR5fx2f+mBVK486c47u/DD2yvC4V2pKnXlK0+aDa/0TO0FAeqa01rpn358lTyv8vTE3lS7AN1k5lIpg/sHezaBAN1dSJ+8+13kjmtnA6n8QCq3979Kr63YXA28TE4NbqI5qzgDsQ+lTZNyVWrKV7sFmhw5i4cZAeqY01pl/t50hrYpQL2fgE9MIEC3t3I+ZIeUc6eV0k3S0gMberwlpwTzx9DiZ2Z3m2WXTHAZU59y9/hdphsj+1WpLV/lpHHdNucWCFDHnNbqH3/4n5vdO8kWaPIu6b+sUwjQ/AcabO7Pze0tPPm59MDmVGHhgI2ue+6BbHsmtzPCQOxD8USrrt9+VWrLV540G17Xars7+bL4NN+HzMbNZa2S6I13827Lf892Hi4aAzQ3OH2OykkEaO5atOw8YOE480Xpge21Frn6px+xtcof2NbF+nY37gjQPhRHVlKmvarUlq88ae6W+N2mJwHqitNa7Xb2X64JUM/SD1Q+ead3HgrXNelC/I/9B462ARrvSLxNPoo5/USD9ebDRI7fZPe1zN7fnvFhIn3KjZyn29tZ8lUp1fOoYlBmky639wXmbg8kQF1xWqts0OY+TIQAnZjKq0YBIEOANiBAATQhQBsQoACaEKANCFAATQjQBgQogCYEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAglA/Q1enJO28Lgs6o37hRvxEqBOilUur5X7wtC7qhfuNG/UaouAsffXim1Oz5J08Lg46o37hRv9EpHQP98mEe1/D1rz4WBt1Rv3GjfuNSdRLp4ffxrsQJb4NjRf3GjfqNSClAo9szpZ7+6zM1uzBtY/Xq5Ge3SwUxu/r98vEum+z77+56XS6YoX7jsncMVFdv9kLvP9yoQ9OKrE6fEKBBsKzfTby3qA6STR1qGALqNzr5AI2SXYfsSor2iqxeHaeexW+Zx8dshfpmWb/1Mn72+ZmavTd7OnpG/UaoeB3o7PX2XW/16puWd8DkqosdCuibZf3WC/VyrTd19AhkAPpH/UaosAVqeeovulRJkeuKl49X+RL2RrXyvYSWLOsXj1e97RJvyMTlq6rhiLuiWaCl9ly/MMZAf0Oxn5a7TX+dHKgxCdAgXqF5Nd0Z9DK7tS2brmLbAJxQX0yl1G7rF8YY6G8o9tVyxfTRZ/PJ7+fxu6DB7kN4r1Cl/rNFeMtsxrR+0WW6BZPsC7bUcKx9UaWi8kGtnp/6VY+H4QO0r6HYV8vF6R/Okr2B2Rvj6ePd+LbiJbMJ6RWamGSA2tUvPYa2Tor4NQEaAI/1I0CF7eZ/Wc714ZTorVLG14Cuoyv1dE6ABsGyfvfzzZm/1VnLScDx9UW9cAPUZ/0IUGG7uZ/11mTyw9L8GtB1cjUaARoC6/olGzzppFcEqHde60eACtvN/bzdFbe8JuKh/S6IMF6heRMMUGn9EtHfmmo4ur5oEGyAeq0fASpsN/fz5rqIeN/A9UVlYbxC8yYZoI+ofnIBB6jH+hGgwnbzvyzSXYd4V+KoY7Ol2QTxCs2bYIA+qvrJBRugXutHgArbzf+yOtU3ZT7r4a6iQF6hOVMM0MdUP7lwA9Rn/QhQYbuF36Ir/fEEsxfOP9glkFdozhQD9DHVTy7cAPVZPwJU2G7pEYvL6C1mE8grdGeSAao9kvrJBRygmqf6EaDCdjsvmdlsAnqFpiYboL2YUl8EHqC9IEAHCtDoc8r1NwqE9wqdZoA+nvrJhRyg/upHgArbzf+i74FITf8ymCkG6GOqn1y4AeqzfgSosN38LwulDs4Trr8fIJBXaM4UA/Qx1U8u3AD1WT8CVNhu7ufVqcU98JazCeMVmjPBAH1U9ZMLNkC91o8AFbab+7nHT7UO4xWaN8kAfUT1kws4QD3WjwAVtpv7Obp8RANwggH6qOonF2yAeq0fASpsN//L9eYDBp0L4xWaN8EAfVT1kws2QL3WjwAVtpv/5eFSPf+Y+MnFQeygvzNhigHquH454+uLeuEGqM/6EaDCdnM/61txXV5GQYAOy3X9ckbXFw2CDVCv9SNAhe3mfo6+P9+Y/mUwEwzQR1U/uWAD1Gv9CFBhu52XzGw2QbxC8yYYoD2aUl8EG6A9IkAJUMcIUBtT6gsCtPoZIYyB0Qdo9GO89xC5PoQd4gCcZoA+nvrJhRyg/upHgArbLfx2M9fHr1enNt8pZzabUF6hW5MM0EdUP7mAA9Rj/QhQYbv5X5Zq9kd9N8TC+fVoobxCd6YYoI+pfnLhBqjP+hGgwnZzP0eX6iK5nex+7votMJBXaM4EA/RR1U8u2AD1Wj8CVNhu7mddvKSA7m/KDeMVmjfBAH1U9ZMLNkC91o8AFbab+/lRDUAC1Mbo+qIBAVr9jBDGwLgDNLqcvU9qt1TT3wWcYIA+qvrJBRugXutHgArbzf9yrQ5/iwt4O38EJyEmGKCPqn5ywQao1/oRoMJ2C79dZbfiHnVstTybMF6hOVMM0MdUP7lwA9Rn/QhQYbvFX29fxeU7ftOx0YrZBPIK3ZlkgD6i+skFHKAe60eACtvtvGRmswnlFbo1zQDty5T6IuQA7QsBGmiA/vIxO9odfd/4ATLhvUIJUBtT6gsCtPoZIYyBkQfol8+frb6XWt95pg4+6R9brrwI7xU6xQC1rZ+58fVFvXAD1Gf9CFBhu7mfbT/QdanUyfmZmr1fE6Ah4AOVjQQboHyg8sgDNPtA12/n6iujD3RNb9m9SRKUAPXPsn6rV8d5J+Oqn1ywAeq1fgSosN2Kx6LFgckb4Oo02faMN0Rrbp6Y/ld6qFYDrEmJYf2it4UlNa+ffDXNpmzv1Y7MSm3YmOGqW/BQv8peSTrGaq0Nu6zJFAJ0fT83uRBtm5nX6vDuMQaoyethkHXZZ1Y/XbjG51WviHw1zaY06dWOTEpt3JjRqtsZvn6VvWIboMZd1mQSAWp2L66+8yz9Kd6Xf4y78MEeBTC+l3qhLsxaLAxA6WqaJldVP7p7qPppZgtb1ZhZB1oZun51K1f3aM1aWzbReX5WBt4CNSrg9mMLo0v1NQHaT+ElDOunC2f4RAK0tjGjVbczdP3qVo4ANWg393P0S/ql1H+em91Ldj/fHHhZnbWcOCRAB2Bbv9h/n/+b0fMI0NrGjFbdiLf61a0cAWrQbu7n3WUUm33zFg9nm9SMrgjQfgpvwbp+5gjQ2sbknbrPW/3qVo4ANWg39/Pme6m/+5Pgw7Sivz26O5FCC9BO9WtGgNY2Ju/Ufd7qV7dyBKhBu52XzGw2BOioEaC1jck7dUAEKAHqGAFqgwCtbUzeqQMiQAcJ0N29uK7vxw3vdTbFAB2kfgRoy5RyvupXt3IEqEG7uZ9z9+JqLu/HJUAHMEz9CNCWKcW81a9u5QhQg3ZzP0fff6vUV/pe3IPkWLbDQ9kE6ACGqR8B2jKlmLf61a0cAWrQbv6X7Puoo0Wfl1EEYoIBOkz9CNCWKeV81a9u5QhQg3ZzP2/vzcwK6RABOoBh6keAtkwp5q1+dStHgBq0m/t5ewvuY/he8QkG6DD1I0BbphTzVr+6lSNADdrN/bz5fDq2QM36NrwAZQu0/aGQA5Qt0FEH6Hqh0mMwl4/ge8UnGKDD1I8AbZlSzlf96laOADVoN/+Lvo7i5PyVUq7fAAnQQQxSPwK0ZUo5X/WrWzkC1KDdwm8PyYdcz170eS9uIKYYoIPUjwBtmbIDT/WrWzkC1KDd/QfcfyNgMhsCdCC9148AbZmyGx/1q1s5AtSg3c5L1tB2Xt3jfWlfuMoOLfRtKwdNBPfOUokArW1M3qkDIkAHCtDox/Pv7qKf3OxCVOeEJA0F2heuskMLfdvKQRNuB6DT+uUQoLWNyTu1gp/61a0cAWrQbuG3m7m+BXd16uEgdnsv2jzDTYD2v5yOB6Cn+hGgjngcfwSosN38L0s1+6O+hnfh4TKK9l60ecbjDFBf9SNA3fA5/ghQYbu5n6NLdZHcBOHjQt72XrR5xqMMUG/1I0Cd8Dr+CFBhu7mfdfGSAvq4lay9F22e8SgD1Fv9CFAnvI4/AlTYbu5nAtR2Jp2bmMYAJECdIEBHHqD602CS2i2d3wpBgIoX1Jy3+hGgTngdfwSosN38L9fq8Le4gLdzTiKZzaRzE25PQviqHwHqhs/xR4AK2y38dpVdm3jUsdXybAhQ6YLa8FQ/AtQRj+OPABW2W/z19lVcvuM3HRutmA0BKl1QK37qR4C64m/8EaDCdjsvmdlsCFDpggaBAK1tTN6pAyJAhzmJ5Prk3242BKh0Qc15qx8B6oTX8UeACtvN/ez+6ondbAhQ6YKa81Y/AtQJr+OPABW2m/t5+6VW7hGg4gU1561+BKgTXscfASpsN/9L9Hb2/GPC9efBEKDiBbXgq34EqBs+xx8BKmw397P+RoGM6b7Ewx/Oj4+Pz19/apsNASpdUHPe6keAOuF1/BGgwnZzP0ffn298Z/QOeH+2rfhB884HASpeUHPe6keAOuF1/BGgwnY7THs/Vwd/+qz9+Uw1H74hQMUL2h9n9SNAvXA6/ghQYbsdpl3k7phYNN89QYCKF7Q/zupHgHrhdPwRoMJ2s/9Xr05sL6EoXHVRdQlG9TdXmHzNxWMiqVpFMaifJ+KSFYtB/TwRlyzrzkIBou/NDr6Ua0YBpeS1KxeD+g2vY+EK/U/9htexcMUAtbqUV3+A9vYX95/ABRvUb9yo30h1CFD9FS5v0qpFN/NcMVvniRyLYjUYsn6NfHfn4Nx0G+PPF9tK7Xdm9r+kgOtrvQDHx8f6P+NPMPTbXeGxq1ed4erXyG9XeuGk3xh/3giKVejO7H9RAddfPjxLFuLp79qu5M3N0cFLzslZuRCacNKGNlz9GtmuztifP8L6WS0xT25tIPtfVkDRHMOInTCa8DwAnQst4CYeoBKBhNEYn1zZQPZ/oAXsr40wmhjhAGwUWsARoCWBhNEYn1zZQPb/6nT21fn5t3P9r/GtZLI5hhE7YTThcAAOVb9GoQXciAI0yPHHk1sbyP7PfZCB1uMbYSCxE0YTDgfgUPVrFFrAjShAgxx/PLm1gez/6JePea4/Tis/xzBiJ4wmnA3A4erXKLSAG02ABjr+eHJrAx2nF8wxjNgJowlnAzAQoQXcaAJ0OIGE0RifXNlAx+kFcwwjdsJoYoQDsFFoAUeAlgQSRmN8cmUDHacXzDGM2AmjiREOwEahBRwBWhJIGI3xyZUNdJxeMMcwYieMJkY4ABuFFnAEaEkgYTTGJ1c20HF6wRzDiJ0wmhjhAGwUWsARoCWBhNEYn1zZQMfpBXMMI3bCaGKEA7BRaAFHgJYEEkZjfHJlAx2nF8wxjNgJo4kRDsBGoQUcAVoSSBiN8cmVDXScHgAeLQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAYK0NszpQ7e5R6IPsyVOvnUqY3EYva+QxNLlbBoo7wUt6/iBl7fmS/FfhurU5V58rNFKwGoLMl1thb2fdve/per+GXz9E1v7edflg7aD0DF63XvEasRZNzyzbNtoRy0vN69rPIvAbctC0byUAF6nb4WX24fiC7TRy46tJE9alH+chPXtoOktolD837fb2O0AVpZkpvNWlj3bXv7D1lPHfXUfuFl2b39ANS+Xl/ufpetYXPLi8rRKm15vXtZFV4CTlsWjOT1QAF6P1dv9ILuKrVUB5/W0Q8WiVFuI23HovwVTdi++5abuJ/P3iRlNX4vqF6TZPRavJ8EoGpF4ppuiirdsmlof6Fe/Bo/Mk86qof2Cy/Lzu0HoOr1WnzEagQZt7xUs3e6UJKmm19WhZeA05btR7I2SIBep5l/vY3+6DJdB4vXaKkN7X5+cNaliejScpuv3MQi7e+l+Vti5ZpUPRC6ihW5P1MHZ2mfWvdte/ur03Tr4Fp3dg/tF16W3dsPQLlEe4/YjSDjlute47KWcy+rwkvAacuCkawNEaCb1+X9fG/rePMHaRvxa/yvnZpYndqVodzEpqBd2kiVeid0VSuymL3+ZxY8tn1r1H7qfn7UZ/vpHzq3H4DyKu49YjeCzFveRpX9dmLLyyqTvASctmw/khPDBOhmSBXf06Mr87CvbCPeUrDK4FITS/Xiam5x3LjcRFzI6K3Voeea3hjdDnzliny+2z5s27dG7aeS4dlb+9nLsnP7ASiv4t4jdiPIvOV4dzjehb+dCzbiW15WGcm2bXPL9iM5MUSAbrK92Af3c6W+MV7Yqjb0+5tF+SuayA4bGx83LjexVF+f2h16ru6NuKGRbYDWrcjmV9u+NW1fv3L0Az21v31Zdm4/AOVVLD5iOYIsWo53jWMHTlpel3+9l0Rzc8v2IznhMUCPj5V63iF2lumRsC4BulDPP+k3StO3s6oAVel7rfE7YnVvjG8DtO2Vbtu3pu3riLvor/3ty7Jz+wFoiTnbEWTe8vq/5skVDIKrjUwC9F50DqktQG1HcsJfgOoHFsb78OU20iMZ3QJ0nW9K1MRS1R2os1uM0R0BNdxU6LBiNe3fJKdS+2t/72U5wsLsNMec9QgybjnetD1I333sc87gZbX3EnDTsv1ITvg8Blr1iHkbm10s46sn6xfD+IRr1THQulS2W4zRnYJvOJjb9GvX9qMrNbuoepaj9tf7j4z6ZHzzkUrrEWTc8uZnybtP68uq9BJw07L9SE54PQtvFTv7bQgCtPNilJuQBGjl9QTju+iwpj8dBmi5/egy2bTprf1ymyMP0KZz5d0CtKnl+p09ScvrQlPll4CblgMO0KoL+qzfoWquLLNJntrFMD+BU3HpYLqX0nFNhNdQ+FVdkmhzVYht3xq0H/f2i+31Y+7bz78sHbQfgNbrQMXv3Y0tr05Fu8N1LaeLmdYj9xJw27JgJGue7kRabI6RGO+41ty/Y1P+usWwuK2h6uYVfaTc5mhP1ZpYXr0bhuqS7E4iWfatQfv5l34f7edflt3bD0D7nUjSAG1uOe68f1+v/34mOTDV/LLqcqyruWX7kawNfi98+ua0uen4SHQH+eYNbm1Z/lITqzPbW3bLS3FlfW9uxZqM8BDouqYk2yNN1n3b2v7uQwPijYQe2i+8LB20H4ByifbvB5cePWpsedORoq33ppdV4SXgtGXJSF57+DSmbMGTj72x+0yVUhuaXfnLi6E/2qX8EU9WS2H/uTPlNiS3bASgqiS7g1XWfdvW/lLlR4/79osvSwftB6Bcor1PJBIffm9sOfqgR4XwLoSGl1XxJeCy5bXsE6T4PFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQChiQTolw/PlFJPX99V/XF1qtTLoZcIBqjMJHQrY8PYjS6Vmr3PfrmfK3UknktfphGg1yoze1PxV4ZpqKjMJHQqY+PY1X98mfv5QjqX3kwiQBdqp6KQDNNQUZlJ6FLG5rGrtzoP001TvTV6WLmH6dUUAlS/Nc3exV18Ff/w5OfS3xmmoaIyk9ChjG1jd7Hdh9dZGuBrZQIBqsuXdf1ui//2VfzjybvtE3ZdH5fk5cNbpQ7iutzM1eyb7A3uap47EJNMPjv5lE0+e68feFp1fAAd7I28ZTZa9Fi5qK1UgioGRF7G1rG73D56nTscGpAJBOiuj9erf3n+k/5fb+4nXuhilQL0eJ4cc/n3q+Q5yYHp+3k6wUFSze1xmYt08tm3tccH0EHryKuoVIoqBkReRqOxe1j4ITATCNBF+a1pd2BFF6sUoEV6Yv2UlC5SXPn4wYfL9N1x97eqfQx00DryypXKUMWAdCpj89jdPiMXtUEZf4BGl6UhoTv78FMydnQFywF6dJe8z8WVyXYc0v+iH9R2p2O93WlIht436RThnQUctfaRV6pUhioGRFzG9rG7Dc5FoG980wjQvW37TWfrwh5VBKj+Y1bI9NC0buMoa2u3g7HcDT09gyVDz7XWkVeq1AZVDIi4jO1jd1O3za/BmWKA7jp7se38wtDLDaT0b/rfZFRdb9v6cvt2vht6evLs9QB3WkdeqVIbVDEg4jK2j93NPnyw73vTCNDixv2uRtfJn+qG3m5cbU4+bI6Q6ZOGhSNrDL1emI68fBlSVDEg4jK2j93NPnyoe/ATCND8gejo8vk7BwG61L+evLth6PWs1wClikPpVMbmsZuF7H8Ee8HwBAI0d34uvV3WdBd+V8/tzl9is2OxZOj1rGbkLZUoQKmiJ/Iyto7ddXrw9DzMi0DXkwjQ3cW4m1OsbSeRSvUsnnbYjLFrhl7PyiNv0/GSAKWKnsjL2Dp219uLe0O8CHQ9iQDd3g6WXPqwOV6dXQphNvSSJr65W9/O9W7EZowtGHo92xt5yZ3Pn/TtKqIApYqeyMvYOnbX2yvrw9yDn0SA5i/VTTp9ezND4UL6pkMyucus013BJ5+SywkZer3Kdbvu6vyvdZWiiuGRl7F17GrX2z8GaBIBurtp76DwpqXUC/2bwdDbnYB4kb0L7l4ADL3e7I28TeGcI74AACAASURBVMcfnMkClCr6IS/jum3saklVg7wIdD2VAM0+lPXk3fY4SfqBBH9JfjYZeusvV8/0B0+kH2FwG5d+9uKueA6Koefc/shLOv7pm39eCgOUKnohL6PWOHa1oO8em0iAAsDwCFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAKB+gq9OTd94WBJ1Rv3GjfiNUCNBLpdTzv3hbFnRD/caN+o1QcRc++vBMqdnzT54WBh1Rv3GjfqNTOgb65cM8ruHrX30sDLqjfuNG/cal6iTSw+/jXYkT3gbHivqNG/UbkVKARrdnSj3912dqdmEw+S8f77LJvv/uzvGiQcKufgiNoH6rVyc/97lIaLB3DFRXb/ZC7z/cqMPWRLyJ9zbUQfJWuTp9QhG9s6wfAiOrH2PPo3yARsmuQ3YlhUFVlvGzz8/U7L3Z09Ez2/ohLJb1W706Tj2LN1mPj9kK9aJ4Hejs9fZdb/Xqm7Z3wIV6udZvlTpBGa/+2dYPYbGsX3LV0w7jz4vCFqjdqb+43nrbM94QjWtXFaD58tY9XvFnO04bc2rwJbOsX6tx9GlIi9eNbf2iS5WEbN3Gy4g6qK6uoS93p1s5t3W7Vod3bQGqqh/t2k/hdnq4S2YsuEWvHWZBLJ0H18mBUpMADbqH6usa9GInKpYw+mw2aXSZboEm+/Itu/CFAP3PfV0C1GFjTvlbMtP62QijUyv6NKSSO2JTv/t5PAYNDp+F3UN1dR1DYYtL+HCW7I3P3hhNmx4DXSf7El8ToEVelsyufhbC6NTJB6h9/eKh17bxooXdQ5MJ0OVcH86M3ipldA3a/Xxz5Hp11nIQmwAdYsks62chjE6deoBK6hddqadzAtSbwkmky2yTcml4DVryhplOekWAFnlYMuv6mQujUyceoML63czbz8CH3UNTCdDtroDkmqTob001J0AHWLJO9WsWRqdOPECl9Xtovwsw7B6aToBmZ4Xu2/cJbGdDgA4RoEPUz6PJB+jE61dnKgG6XqS7DvGuxJHr2RCgAyzZIPXzaOIBOvn61ZlMgK5O9U1hz3q4q4EAHWLJBqmfR1MP0KnXr85kAnQdXemPB5m9cH4TIAE6yJINUT+Pph6gU69fnekEqNbDZdgE6IBL1nf9PJp8gGoTrl+daQVoP7MhQINZMokwFv1RBGgvwu6hCQVo9Dnl+hsFCNBhlmyA+nk0/QCddv3qTCZA9T0QKS5j6srHkg1SP4+mHqBTr1+dyQToQqmD84Tr7+cgQIdYskHq59HUA3Tq9aszlQBdnTq/h3o7GwJ0iAvph6ifRxMP0MnXr850ArS3T7UmQAcJ0CHq59HkA3Ti9aszlQCNLglQZ7x8mMjEB+DEA3Ty9aszlQBdX28+4NP9bAjQAZZskPp5NPEAnXz96kwmQB8u1fOPiZ84idSRjyUbpH4eTT1AHddvNN+NMZUA1bfichmTI35OIk37MpiJB6jr+hGgAygcA/3+fIPLmLrycQzUvn6/fLzbTNs4SRidOvEAHWb8BWgqAdrnbAjQYJZs50Z/dMXBJ/2j+ZcCejTxAO1R2D1EgLbPhgANZsm2lkqdnJ+p5FN8CdBJC7uHJhSg0Y/x3kPk+hQEATrUklnVL/1W1ZskQQnQIAww/gI0nQDV+3RPfl6duv5OMgJ0mCWzqt/mGySWKvku3XKA9n8SQtnyN85qF8nlTIYYfwGaTIAu1eyPeiAtnF+PRoAOsWR29dtm5rU6vPMRoNbx6S9AGxbJ4VwGGX8BmkqARpfqIhlI9/MevxaXAO2LZf2iy+w7zPSA9bELX5+HtePJX4AOMMSHGX8BmkqA6uIlBez1a3EJ0L7Y1m+7oROP3K8JUMmiOp31MOMvQARo+2wI0PAC9H6+uWB7ddZy7TYBOsAQJ0ADHctNirvws/dJ7ZaKXfiuvOzCW9bv4WwzUKMrAlSyqI534YcYfwGaSoDqswm/xQW8nXMSqTM/HyYir1/0t8HvRCJA9wwy/gI0mQBdX2VnFo+cz4YAHWLJhqify0btcnLyATqy+jkznQBd376Ky3f8xv1sCNBBlmyA+rls1C4npx+g46qfMxMK0N5mQ4AGs2QSBOh4h7gW9mKOuXcJ0J6Eu2QSBGiYQ3xcn6ZVJ9TeNVFYwi+fP/O98I74WLJB6ueyUbucnHyA2tZvbJ+mVWcqAcoHKjvEByobNGqXk1MPUNv6je7TtOpMJUCzD3T9dq6+MvlA19Wr47wTwwISoH2xrJ8NAnSAIW5bv9F9mladqQToRrQ4MHkDjN4WPlTB9MMouiSLycdLVDfW8GkQzQyXrGKGFUvmcgb1DOtngwAdcIgb1m+4T9NyPjhK7Q/Yu45VLuH93OxCtOvmC9aq+1oeoJU1NGrMLjOdvEY8Bqhx/cwRoEMOcbP6DfVpWj0MjtIchuxdtyqX0Phe3IW6MJyNmwA1GVLVAWo2pcMKmrXfz0tkJPdSE6A1zOo31Kdp9b/ukwvQ+7nhAIwuDZ9IgFa339cWDAE6zKJ6rd9An6ZFgDYpnET6Jf1S6j/Pje8l++/zfzObDQHaf4AK6meKAK1dJHczsa3fQJ+mRYA2qb6MabNv4G42BGj/ATpM/Vw2Wu6Pun5q/MNEAtS6fsN8mhYB2qTiMqbz7/4U5pfKEaDNhqmfy0bL/VHXT41/mEiAdqpff5+mRYA2GdOtnASoNwRo7SL1PWsnCNC+EKDWjZmusUn7Y3iJaARo7SL1PWsnCNC+FJZwdy+u6/upCdDq9t2+RAapn8tGy/1R10+Nf5hKgIZZPwK0SfVJpITLS2EI0Or2ezoJ0Wf9XDZa7o+6fmr8w0QCNND6EaBNiieRvlXqK30v7kFyLNvhqQgCtLp9xychhqify0bL/VHXT41/mEiABlo/ArRJYQmz76OOFlzG1LmCPnbhB6mfy0bL/VHXT41/mEiABlo/ArRJYQt0c29YVkiXsyFAB9gCdVy/utuerW+Nrp2g3B91/dT4h4kE6DDjTzBt3+s+lQDd3k8b6PfCE6DNXNevOhxr07BuVRomKPdHXT81/mEiATrM+BNM2/e6TydA2QJ1VkEvAeqpfs2rIshD6wncrq3VOribyTD1E0zb97pPJUDXC5Ueg7kM83vhCdAWvurXvCoEqKlB6ieYtu91n0yA6usoTs5fKeX6DZAArWnf7UvEV/2aV4UANTVI/QTT9r3ukwnQ9UPyIfOzF9wL37mCPgLUV/2aV4UANTZE/QTT9r3u0wnQmPtvdExmQ4AOEaBrP/VrXhUC1Ebv9RNM2/e6TypAe5oNATpQgPaDALVc6RA4ugxNsO7u5mDXUNOsrVsyszd99OP5d3fRT+zC2y2ZeGFdD0A/9WteFQLUnNP6VeeEdZYICu5uDpaxZxWdjS2ZKk5/M9e34K5OOYlkt2TihXU8AD3Vr3lVCFBjY6tf/xNY9rrgJWXeidVzzP+yVLM/6mt4F1zG1Ll/fQSor/o1rwoBamp09et/Aste9xug0aW6SG6C4EL67v3rIUC91a95VQhQQ+OrX/8TWPa63wDVxUsKyK2c3fvXQ4B6q1/zqhCghsZXv/4nsOx1ArS5EZOOIUDHMwDtHidAxQhQy0UyVtyFn71Pard0fisEAVpTRbe7gJ7q17wqBKih8dWv/wkse93zSaRrdfhbXMDbOSeROvevj5NIvurXvCoEqKnR1a//CSx73XOArq+ya6OOOrZang0BOkCA+qpf86oQoMbGVr/+J7Dsdd8Bur59FZfv+E3HRitmQ4AOEaCe6te8KgSouZHVr/8JLHvde4D2hQCtqWL/Y98JAtRypQNDgFoukrHiSSTXJ/92syFAhziJ5Kl+zatCgBoaX/36n8Cy1/0GqPurJ3azIUD7D1Bv9WteFQLU0Pjq1/8Elr3uewvU+bcBbmdDgA6xBeqpfs2rQoAaGl/9+p/Astc9HwON3s6ef0y4/jwfArSmik7Hvq/6Na8KAWpqdPXrfwLLXve9C7/9jCfTfYmHP5wfHx+fv/7UNhsCdIhdeE/1a14VAtTQ+OrX/wSWve55F/77843vjN4B78+2FT9o3vkgQGuq6HQX0Ff9mleFADU0vvr1P4Flr3vehbd0P1cHf/qs/flMNR++IUBrqujzMhhn9WteFQK0J/7r1/8Elr0+rgBd5O6YWDTfPUGA1lTR5wB0Vr/mVSFAe+K/fv1PYNnr/gJ09erE9hKKwlUXVZdgVH9yvuBT9ydNUrWKYlA/T8QlKxaD+nkiLlnWnYUCRN+bHXwp14wCSslrVy4G9Rtex8IV+p/6Da9j4YoBanUpr/4A7e0v7j+BCzao37hRv5HqEKD6K1zepFWLbua5YkoW43Ho0kXNPNcv5bt7vejebdqQ9fPdY17YFsS4M7P/JQVcX+slOz4+1v91+QRDv107oA591MJr/VJ+u9abzv2WGK5+fnvLG0FNzLoz+19UwPWXD8+SpXv6u7YreZsXwvQs/KNoTMRr/VLWq/coJ6gxXP0C7JMAJzBvOftfVkBXCzH2zBtrgDoV4DAIcIIaw9UvwD4JcALzlrP/CdBgGhMhQEcyQQ0CNKwJzFvO/l+dzr46P/92rv81vpXM2UKMPfNCCFCP9UsFOAwCnKDGcPULsE8CnMC85ez/3AcZaMNuyIw+80IIUI/1SwU4DAKcoMZw9QuwTwKcwLzl7P/ol495rj9Oq2Uhxp55/gPUa/1SAQ6DACeoMVz9AuyTACcwb7mvhm2MPvP8B2gAAhwGAU7gXYB9EuAE5i331bCN0WceAboOchgEOIF3AfZJgBOYt9xXwzZGn3kE6DrIYRDgBN4F2CcBTmDecl8N2xh95hGg6yCHQYATeBdgnwQ4gXnLfTVsY/SZR4CugxwGAU7gXYB9EuAE5i331bCN0WceAboOchgEOIF3AfZJgBOYt9xXwzZGn3kE6DrIYRDgBN4F2CcBTmDecl8NA8DUEaAAIESAAoAQAQoAQgQoAAgRoAAgRIACgBABCgBCBCgACBGgACBEgAKAEAEKAEIEKAAIEaAAIESAAoAQAQoAQgQoAAgRoAAg5CNAb8+UOni39+D1k5+zv75Savb6TtzYl6u5Uk/fNMxK2pi2mL1309jNs2LDI1Xu4Jb6lSdo74nta6OuieYJSkVsnYPWXOn9RbJ70frQ/yruTdBc14qiNNe1PEFLXWv+bDGCTXgI0GuVeFl48EZlvZ/99dDwxVhq7OE0feSodlbSxtJnGHd/c2MLuyULVbmDW+pXnqC9J7avjbommicoFbF1DulcmipdvUimL1of+l/FvQma61pRlOa6lidoqWvNny1GsJHhA/R+rt7o3s6vR/SDynr/fj57k6z8hbCxhXrxa/zIXDdQNStxY9pSGXd/c2NLNXunf3ZbzMGVV7KlfuUJWnti99qoa6Jlgv0itk6QLlZDpcuLZPWi9aD/VdyfoKWu5aK01LU8QUtdq/9sMYLNDB+g1+l7zHXureb+TB2cpb2/SNd32bS90NTY6jR9j7zWDVTMSt6YXs75wZlp9ztdslCVV6OlfuUJ2noi99qQTbBfxPY5rFsqXZrA8kU7vP5X0bJMFUWxnaClrtV/thnBZgYP0OgyXYH7+W5vYDF7/c/LpPc3q92hsdT9/Kjhr4LGkic8+eulYfe3NLZ9tQS7zWKivJIt9avolbae2L02aptonmAjK6LRBM2V3p/A8kXrQf+rWJqD2St8VxTDwVquYm1dK/5sM4INeQjQtJtXp7vu/ny3eThe3eit+fH4qsZSun71fxU0tk4OP0fmAdrYWLxHFO/g3M6NFixY5ZVsqV9Fr7T1xO61UdtE8wQbtZusFRM0V3p/AssXrQf9r2JpDmav8F1RDAdruYote3GFP9uMYEODB+jmvWyvoNmvS/X1qcXx+JrGdPniB2r/KmksfTM17v62xuJdntjBuA+BlleypX5VvdLeE1HVtlBTUav+dt80lPcmaK90YQLLF60f/a/i3hxMXuG5opgN1nIVG+u692erEWwouABV6RuX2cHBul6/Tw4dOwrQtLH08E/nAM0aW//XXL+8ZuO+jqkqQBvrV9Ur7T3hIkDv688hlSYwqPReuli9aP3ofxX3et3gFZ4vitFgLVexua7FP9uNYEPBBajVYcuaxm6SE3qOAjRrLF2irgGaNRa/Fx58Sl6Poz4GWhWgjfWr6BWDnnAQoJt+N5nApNJ76WL1ovWj/1Us9rpBXQtFMalruYotdS382XIEGwriGOju4U2BDDOvsrHoSs0uGmYlayy7Sk2VLwfpsGRBD7l2VcdAG+tXnsCkJ+yOgVbMfdvvRhOYVLoijoxftH70v4qVZaqv615R2utarmJLXff+bDmCDQVxFn4tD9ByY9Fl8t5XPytZY9YB2tSY5bZxqMor2RqgdaftLUam7bZQrt+NJiBAyxNYB2hrXfeL0lrXchVb6rr/54kEaM31XllHxyudvGeYbpqVG4tbeFG6REZ4HWihsewB8XWg+cZWpyPY6TNQWsm2+lVcHWu/b9ha1OIEpSK2TZA9ZLx/a/ui9aL/VdwL0Oa6lovSUtfyBC11rfnz6Hfha+442PT+MjnsbHxwsNxY4QL9rncilapp3v3NjS3Uwb+v138/C/m0g4HKG4ua6ld1f1ZrT+xfH9Na1MrEbdItXWxftF70v4rFCVrqWi5KS127Xb+UX8qxB2j+ntfN+1Su969ab1xubGx1utlO1+988nvhKxpLF1NyL3y5sfjtMfgLX0yUa9lSv9IEBj2xOzyWzKG9qIUJykVsnUP6kEm6mK10CPpfxeIEzXUtFMWkruUJWupaNYf2lbbn99OYKgLU9mOK9hpbqkK3ij+NqaqxtV33NzYWfdCrGe6l16bKtWypX2mC9p7YH/utRS1MUC5i+xzWlukygs/W6n8V9yZorGuhKCZ1LU/QUtfKObSutD0+DxQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUCIAAUAIQIUAIQIUAAQIkABQIgABQAhAhQAhAhQABAiQAFAiAAFACECFACECFAAECJAAUBoggEafThWSs1O3t1V/PFaqSc/735dnaqN49e/Vrf2bz0tJ4Cxm16A/td8E4mz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" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="export-files" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Export files</h1>
 <p>Depending on what image analysis sets you are using, we have provided
 multiple ways to save the image analysis data files as csvs in the
 folder ‘Output’. First, we use <em>dir.create</em> to create the folder
@@ -1405,8 +1788,9 @@ write.csv(GabRat_Res_analysis, row.names = FALSE, # Remove row names
 savefile_list&lt;-ls(pattern = &quot;analysis&quot;)# Save all objects with &quot;analysis&quot; in the name
 
 savefile_list# Inspect object names</code></pre>
-<pre><code>## [1] &quot;Cluster_analysis&quot;          &quot;Cluster_Particle_analysis&quot; &quot;GabRat_Res_analysis&quot;      
-## [4] &quot;IndParticle_analysis&quot;      &quot;LEIA_Res_analysis&quot;         &quot;Particle_analysis&quot;        
+<pre><code>## [1] &quot;Cluster_analysis&quot;          &quot;Cluster_Particle_analysis&quot;
+## [3] &quot;GabRat_Res_analysis&quot;       &quot;IndParticle_analysis&quot;     
+## [5] &quot;LEIA_Res_analysis&quot;         &quot;Particle_analysis&quot;        
 ## [7] &quot;VCA_analysis&quot;              &quot;VCA_LEIA_GabRat_analysis&quot;</code></pre>
 <pre class="r"><code># Iterate over each data frame in savefile_list
 for (i in savefile_list){
@@ -1423,37 +1807,47 @@ for (i in savefile_list){
 
 # Check that your files have saved
 list.files(Out_path)</code></pre>
-<pre><code>## [1] &quot;Cluster_data_29_Sep_2023.csv&quot;          &quot;Cluster_Particle_data_29_Sep_2023.csv&quot;
-## [3] &quot;GabRat_Res_analysis.csv&quot;               &quot;GabRat_Res_data_29_Sep_2023.csv&quot;      
-## [5] &quot;IndParticle_data_29_Sep_2023.csv&quot;      &quot;LEIA_Res_data_29_Sep_2023.csv&quot;        
-## [7] &quot;Particle_data_29_Sep_2023.csv&quot;         &quot;VCA_data_29_Sep_2023.csv&quot;             
-## [9] &quot;VCA_LEIA_GabRat_data_29_Sep_2023.csv&quot;</code></pre>
+<pre><code>## [1] &quot;Cluster_data_03_Oct_2023.csv&quot;         
+## [2] &quot;Cluster_Particle_data_03_Oct_2023.csv&quot;
+## [3] &quot;GabRat_Res_analysis.csv&quot;              
+## [4] &quot;GabRat_Res_data_03_Oct_2023.csv&quot;      
+## [5] &quot;IndParticle_data_03_Oct_2023.csv&quot;     
+## [6] &quot;LEIA_Res_data_03_Oct_2023.csv&quot;        
+## [7] &quot;Particle_data_03_Oct_2023.csv&quot;        
+## [8] &quot;VCA_data_03_Oct_2023.csv&quot;             
+## [9] &quot;VCA_LEIA_GabRat_data_03_Oct_2023.csv&quot;</code></pre>
 </div>
-</div>
-<div id="fast-import-for-large-data-sets-using-data.table-optional---advanced" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Fast import for large
+<div id="fast-import-for-large-data-sets-using-data.table-optional---advanced" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Fast import for large
 data sets using data.table (optional - advanced)</h1>
-<p>Ced: As you see fit. If you think this is useful and can easily be
-added, please do so.</p>
-</div>
-<div id="data-cleaning" class="section level1" number="8">
-<h1><span class="header-section-number">8</span> Data cleaning</h1>
-<p>Ced: - i.e. mean centring, normalising, removing NA values
-(i.e. removing rows or columns with NA)</p>
-</div>
-<div id="data-visualisation" class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Data visualisation</h1>
-<p>Ced: Not sure if needed, probably beyond the scope of the paper.
-Could do corr plot, plotting the value of a parameter over viewing
-distances by species. Nothing hardcore</p>
+<p>For very large data sets we would recommend importing data using the
+<em>data.table</em> package <span class="citation">(Dowle and Srinivasan
+2023)</span>.</p>
+<pre class="r"><code>library(data.table)</code></pre>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="references" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> References</h1>
-<p>van den Berg, C.P., Troscianko, J., Endler, J.A., Marshall, N.J. and
-Cheney, K.L., 2020. Quantitative Colour Pattern Analysis (QCPA): A
-comprehensive framework for the analysis of colour patterns in nature.
-Methods in Ecology and Evolution, 11(2), pp.316-332.</p>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-datatable" class="csl-entry">
+Dowle, Matt, and Arun Srinivasan. 2023. <em>Data.table: Extension of
+‘Data.frame‘</em>. <a href="https://CRAN.R-project.org/package=data.table">https://CRAN.R-project.org/package=data.table</a>.
+</div>
+<div id="ref-Harrison2018" class="csl-entry">
+Harrison, Xavier A, Lynda Donaldson, Maria Eugenia Correa-Cano, Julian
+Evans, David N Fisher, Cecily ED Goodwin, Beth S Robinson, David J
+Hodgson, and Richard Inger. 2018. <span>“A Brief Introduction to Mixed
+Effects Modelling and Multi-Model Inference in Ecology.”</span>
+<em>PeerJ</em> 6: e4794.
+</div>
+<div id="ref-van2020" class="csl-entry">
+van den Berg, Cedric P, Jolyon Troscianko, John A Endler, N Justin
+Marshall, and Karen L Cheney. 2020. <span>“Quantitative Colour Pattern
+Analysis (QCPA)<span>:</span> A Comprehensive Framework for the Analysis
+of Colour Patterns in Nature.”</span> <em>Methods in Ecology and
+Evolution</em> 11 (2): 316–32.
+</div>
+</div>
 </div>
 
 
