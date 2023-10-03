@@ -814,27 +814,20 @@ Sum_Res_df&lt;-do.call(rbind, Sum_Res_list)
 dim(Sum_Res_df)# 18 rows by 133 columns</code></pre>
 <pre><code>## [1]  18 133</code></pre>
 <pre class="r"><code>head(Sum_Res_df)[,1:12]# check the first six rows and first twelve columns</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI X
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 1
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 1
-## 3 Aphelodoris varia 3_AphelodorisVaria_11_NF_D_RAW 30cm animal 1
-## 4 Aphelodoris varia 3_AphelodorisVaria_11_NF_D_RAW 50cm animal 1
-## 5        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 30cm animal 1
-## 6        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 50cm animal 1
-##                                                                                  Image
-## 1 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0
-## 2 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
-## 3 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0
-## 4 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
-## 5    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0
-## 6    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0
-##     CAA.Sc    CAA.Jc   CAA.St    CAA.Jt     CAA.Hc     CAA.Qc
-## 1 1.000000 1.0000000      Inf       NaN 0.00000000        NaN
-## 2 1.000000 1.0000000      Inf       NaN 0.00000000        NaN
-## 3 3.407769 0.8519422 3.086572 0.5144287 1.29367056 0.93318605
-## 4 3.321784 0.8304460 2.706124 0.4510207 1.28003640 0.92335109
-## 5 2.095732 0.6985775 1.219512 0.4065041 0.80674082 0.73432714
-## 6 1.020302 0.5101512 1.000000 1.0000000 0.05623232 0.08112609</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI X                                                                                Image   CAA.Sc
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 1 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0 1.000000
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 1 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0 1.000000
+## 3 Aphelodoris varia 3_AphelodorisVaria_11_NF_D_RAW 30cm animal 1 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0 3.407769
+## 4 Aphelodoris varia 3_AphelodorisVaria_11_NF_D_RAW 50cm animal 1 3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0 3.321784
+## 5        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 30cm animal 1    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist300_0_WeberFiltered_itr5_rad5_fall3_0 2.095732
+## 6        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 50cm animal 1    4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0 1.020302
+##      CAA.Jc   CAA.St    CAA.Jt     CAA.Hc     CAA.Qc
+## 1 1.0000000      Inf       NaN 0.00000000        NaN
+## 2 1.0000000      Inf       NaN 0.00000000        NaN
+## 3 0.8519422 3.086572 0.5144287 1.29367056 0.93318605
+## 4 0.8304460 2.706124 0.4510207 1.28003640 0.92335109
+## 5 0.6985775 1.219512 0.4065041 0.80674082 0.73432714
+## 6 0.5101512 1.000000 1.0000000 0.05623232 0.08112609</code></pre>
 <pre class="r"><code># Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path 
 # from the global environment because we&#39;ll be recycling them in the second function
 rm(exnfile); rm(Ani_ID_dat); rm(path)</code></pre>
@@ -957,69 +950,36 @@ VCA_analysis&lt;-VCA_analysis[, !colnames(VCA_analysis) %in% c(&quot;X&quot;, &q
 dim(VCA_analysis)# 18 rows, by 131 columns</code></pre>
 <pre><code>## [1]  18 131</code></pre>
 <pre class="r"><code>VCA_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI CAA.Sc CAA.Jc
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal      1      1
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal      1      1
-##   CAA.St CAA.Jt CAA.Hc CAA.Qc CAA.Ht CAA.Qt CAA.Scpl CAA.Qcpl CAA.C CAA.Sc.Hrz
-## 1    Inf    NaN      0    NaN      0    NaN      Inf      NaN     0          1
-## 2    Inf    NaN      0    NaN      0    NaN      Inf      NaN     0          1
-##   CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt
-## 1          1          1          1        Inf        Inf        NaN        NaN
-## 2          1          1          1        Inf        Inf        NaN        NaN
-##   CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz
-## 1          0          0        NaN        NaN          0          0        NaN
-## 2          0          0        NaN        NaN          0          0        NaN
-##   CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt CAA.C.Hrz
-## 1        NaN          Inf          Inf          NaN          NaN         0
-## 2        NaN          Inf          Inf          NaN          NaN         0
-##   CAA.C.Vrt CAA.PT CAA.PT.Hrz CAA.PT.Vrt CAA.Asp     VCA.ML VCA.sL VCA.CVL
-## 1         0    Inf        Inf        Inf     NaN 0.07415875    NaN     NaN
-## 2         0    Inf        Inf        Inf     NaN 0.07259081    NaN     NaN
-##    VCA.MDmax VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat VCA.MSL
-## 1 0.08914595       NaN        NaN  2.695919       NaN        NaN     NaN
-## 2 0.08963545       NaN        NaN  2.723553       NaN        NaN     NaN
-##   VCA.sSL VCA.CVSL VCA.MS VCA.sS VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz
-## 1     NaN      NaN    NaN    NaN     NaN 0.07415875        NaN         NaN
-## 2     NaN      NaN    NaN    NaN     NaN 0.07259081        NaN         NaN
-##   VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz
-## 1 0.07415875        NaN         NaN    0.08914595           NaN            NaN
-## 2 0.07259081        NaN         NaN    0.08963545           NaN            NaN
-##   VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz
-## 1    0.08914595           NaN            NaN      2.695919           NaN
-## 2    0.08963545           NaN            NaN      2.723553           NaN
-##   VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz
-## 1            NaN      2.695919           NaN            NaN         NaN
-## 2            NaN      2.723553           NaN            NaN         NaN
-##   VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz
-## 1         NaN          NaN         NaN         NaN          NaN        NaN
-## 2         NaN          NaN         NaN         NaN          NaN        NaN
-##   VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt BSA.BML BSA.BsL
-## 1        NaN         NaN        NaN        NaN         NaN       0       0
-## 2        NaN         NaN        NaN        NaN         NaN       0       0
-##   BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat
-## 1      NaN          0          0         NaN          0          0         NaN
-## 2      NaN          0          0         NaN          0          0         NaN
-##   BSA.BMSL BSA.BsSL BSA.BCVSL BSA.BMS BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz
-## 1        0        0       NaN       0       0      NaN           0           0
-## 2        0        0       NaN       0       0      NaN           0           0
-##   BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz
-## 1          NaN           0           0          NaN              0
-## 2          NaN           0           0          NaN              0
-##   BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt
-## 1              0             NaN              0              0             NaN
-## 2              0             NaN              0              0             NaN
-##   BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt
-## 1              0              0             NaN              0              0
-## 2              0              0             NaN              0              0
-##   BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt
-## 1             NaN            0            0           NaN            0
-## 2             NaN            0            0           NaN            0
-##   BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
-## 1            0           NaN           0           0          NaN           0
-## 2            0           NaN           0           0          NaN           0
-##   BSA.BsS.Vrt BSA.BCVS.Vrt
-## 1           0          NaN
-## 2           0          NaN</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI CAA.Sc CAA.Jc CAA.St CAA.Jt CAA.Hc CAA.Qc CAA.Ht CAA.Qt CAA.Scpl CAA.Qcpl CAA.C CAA.Sc.Hrz
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal      1      1    Inf    NaN      0    NaN      0    NaN      Inf      NaN     0          1
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal      1      1    Inf    NaN      0    NaN      0    NaN      Inf      NaN     0          1
+##   CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz
+## 1          1          1          1        Inf        Inf        NaN        NaN          0          0        NaN        NaN          0          0        NaN
+## 2          1          1          1        Inf        Inf        NaN        NaN          0          0        NaN        NaN          0          0        NaN
+##   CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt CAA.C.Hrz CAA.C.Vrt CAA.PT CAA.PT.Hrz CAA.PT.Vrt CAA.Asp     VCA.ML VCA.sL VCA.CVL  VCA.MDmax
+## 1        NaN          Inf          Inf          NaN          NaN         0         0    Inf        Inf        Inf     NaN 0.07415875    NaN     NaN 0.08914595
+## 2        NaN          Inf          Inf          NaN          NaN         0         0    Inf        Inf        Inf     NaN 0.07259081    NaN     NaN 0.08963545
+##   VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat VCA.MSL VCA.sSL VCA.CVSL VCA.MS VCA.sS VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz VCA.ML.Vrt VCA.sL.Vrt
+## 1       NaN        NaN  2.695919       NaN        NaN     NaN     NaN      NaN    NaN    NaN     NaN 0.07415875        NaN         NaN 0.07415875        NaN
+## 2       NaN        NaN  2.723553       NaN        NaN     NaN     NaN      NaN    NaN    NaN     NaN 0.07259081        NaN         NaN 0.07259081        NaN
+##   VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz VCA.CVSsat.Hrz VCA.MSsat.Vrt
+## 1         NaN    0.08914595           NaN            NaN    0.08914595           NaN            NaN      2.695919           NaN            NaN      2.695919
+## 2         NaN    0.08963545           NaN            NaN    0.08963545           NaN            NaN      2.723553           NaN            NaN      2.723553
+##   VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt
+## 1           NaN            NaN         NaN         NaN          NaN         NaN         NaN          NaN        NaN        NaN         NaN        NaN
+## 2           NaN            NaN         NaN         NaN          NaN         NaN         NaN          NaN        NaN        NaN         NaN        NaN
+##   VCA.sS.Vrt VCA.CVS.Vrt BSA.BML BSA.BsL BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat BSA.BMSL BSA.BsSL BSA.BCVSL BSA.BMS
+## 1        NaN         NaN       0       0      NaN          0          0         NaN          0          0         NaN        0        0       NaN       0
+## 2        NaN         NaN       0       0      NaN          0          0         NaN          0          0         NaN        0        0       NaN       0
+##   BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt
+## 1       0      NaN           0           0          NaN           0           0          NaN              0              0             NaN              0
+## 2       0      NaN           0           0          NaN           0           0          NaN              0              0             NaN              0
+##   BSA.BsDmax.Vrt BSA.BCVDmax.Vrt BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz
+## 1              0             NaN              0              0             NaN              0              0             NaN            0            0
+## 2              0             NaN              0              0             NaN              0              0             NaN            0            0
+##   BSA.BCVSL.Hrz BSA.BMSL.Vrt BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt BSA.BsS.Vrt BSA.BCVS.Vrt
+## 1           NaN            0            0           NaN           0           0          NaN           0           0          NaN
+## 2           NaN            0            0           NaN           0           0          NaN           0           0          NaN</code></pre>
 <pre class="r"><code># Cluster Particle Analysis:
 # Read in and assign analysis
 Particle_analysis&lt;-readQCPA(Animal_Info_ROI, filetype = &quot;PartAn&quot;) 
@@ -1034,15 +994,12 @@ dim(Particle_analysis)# 52 rows, by 20 columns</code></pre>
 colnames(Particle_analysis)[5]&lt;-&quot;ClusterID&quot; 
 
 Particle_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI ClusterID Count
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal         1     4
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal         1     7
-##   Total.Area Average.Size   X.Area    Perim.    Major     Minor    Angle
-## 1       2953     738.2500 24.46764 204.91169 52.96716 17.837978 79.13099
-## 2       1084     154.8571 24.31038  66.67049 19.45619  6.734171 60.18813
-##       Circ.  Solidity    Feret   FeretX   FeretY FeretAngle MinFeret
-## 1 0.2135263 0.5150810 83.09385 19.25000 60.25000   79.74821 31.79423
-## 2 0.4806954 0.7693886 27.63505 23.42857 30.42857  105.63732 10.86412</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI ClusterID Count Total.Area Average.Size   X.Area    Perim.    Major     Minor    Angle     Circ.
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal         1     4       2953     738.2500 24.46764 204.91169 52.96716 17.837978 79.13099 0.2135263
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal         1     7       1084     154.8571 24.31038  66.67049 19.45619  6.734171 60.18813 0.4806954
+##    Solidity    Feret   FeretX   FeretY FeretAngle MinFeret
+## 1 0.5150810 83.09385 19.25000 60.25000   79.74821 31.79423
+## 2 0.7693886 27.63505 23.42857 30.42857  105.63732 10.86412</code></pre>
 <pre class="r"><code># Cluster Results:
 # Read in and assign analysis
 Cluster_analysis&lt;-readQCPA(Animal_Info_ROI, filetype = &quot;Clust&quot;)
@@ -1055,18 +1012,12 @@ Cluster_analysis&lt;-Cluster_analysis[, !colnames(Cluster_analysis) %in% c(&quot
 dim(Cluster_analysis)# 52 rows, by 21 columns</code></pre>
 <pre><code>## [1] 52 21</code></pre>
 <pre class="r"><code>Cluster_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI Pass ClusterID
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal    7         1
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal    6         1
-##      lw_mean      lw_sd    mw_mean      mw_sd    sw_mean      sw_sd   dbl_mean
-## 1 0.07855250 0.01874494 0.06783328 0.01802219 0.06569355 0.01396244 0.07415875
-## 2 0.07697873 0.01535109 0.06627374 0.01422326 0.06431390 0.01060753 0.07259081
-##       dbl_sd Area Coverage..pc.    RNL.X     RNL.Y RNL.Saturation
-## 1 0.01840701 9116           100 2.074853 -1.721327       2.695919
-## 2 0.01485467 3375           100 2.117579 -1.712775       2.723553
-##   Dmax.Chromaticity Dmax.channel
-## 1        0.08914595        lw:sw
-## 2        0.08963545        lw:sw</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI Pass ClusterID    lw_mean      lw_sd    mw_mean      mw_sd    sw_mean      sw_sd   dbl_mean
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal    7         1 0.07855250 0.01874494 0.06783328 0.01802219 0.06569355 0.01396244 0.07415875
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal    6         1 0.07697873 0.01535109 0.06627374 0.01422326 0.06431390 0.01060753 0.07259081
+##       dbl_sd Area Coverage..pc.    RNL.X     RNL.Y RNL.Saturation Dmax.Chromaticity Dmax.channel
+## 1 0.01840701 9116           100 2.074853 -1.721327       2.695919        0.08914595        lw:sw
+## 2 0.01485467 3375           100 2.117579 -1.712775       2.723553        0.08963545        lw:sw</code></pre>
 <pre class="r"><code># Individual Particle Analysis:
 # Read in and assign analysis
 IndParticle_analysis&lt;-readQCPA(Animal_Info_ROI, filetype = &quot;IndParticle&quot;)
@@ -1079,18 +1030,12 @@ IndParticle_analysis&lt;-IndParticle_analysis[,colnames(IndParticle_analysis)!=&
 dim(IndParticle_analysis)# 143 rows, by 23 columns</code></pre>
 <pre><code>## [1] 143  23</code></pre>
 <pre class="r"><code>IndParticle_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal
-##   ClusterID_Particle.         X        Y        XM       YM   Perim.    Major
-## 1                 1_1  9.001362 10.64169  9.001362 10.64169 160.6690 29.94767
-## 2                 1_2 71.712538 16.22783 71.712538 16.22783 173.4975 45.31033
-##      Minor     Angle     Circ.    Feret FeretX FeretY FeretAngle MinFeret
-## 1 15.60318  47.74661 0.1786535 60.82763      0     42   43.66778 31.08705
-## 2 18.37768 109.97441 0.2730243 71.11259     50      0  115.84439 28.42651
-##         AR     Round  Solidity Area..px.
-## 1 1.919332 0.5210147 0.3797206       367
-## 2 2.465509 0.4055958 0.6285440       654</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI ClusterID_Particle.         X        Y        XM       YM   Perim.    Major    Minor     Angle
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal                 1_1  9.001362 10.64169  9.001362 10.64169 160.6690 29.94767 15.60318  47.74661
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal                 1_2 71.712538 16.22783 71.712538 16.22783 173.4975 45.31033 18.37768 109.97441
+##       Circ.    Feret FeretX FeretY FeretAngle MinFeret       AR     Round  Solidity Area..px.
+## 1 0.1786535 60.82763      0     42   43.66778 31.08705 1.919332 0.5210147 0.3797206       367
+## 2 0.2730243 71.11259     50      0  115.84439 28.42651 2.465509 0.4055958 0.6285440       654</code></pre>
 </div>
 </div>
 <div id="get-a-.csv-list-from-leia-output" class="section level1" number="4">
@@ -1140,27 +1085,15 @@ LEIA_Res_analysis&lt;-LEIA_Res_analysis[, !colnames(LEIA_Res_analysis) %in% c(&q
 dim(LEIA_Res_analysis)# 18 rows by 37 columns</code></pre>
 <pre><code>## [1] 18 37</code></pre>
 <pre class="r"><code>LEIA_Res_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    ROI  Col.mean
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 0.1736449
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 0.1663600
-##      Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV Lum.skew
-## 1 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808 2.255974
-## 2 0.2695337 1.620183 2.286320     9.671851 0.8987935 1.380676 1.536144 2.060313
-##   Lum.kurtosis Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz
-## 1     9.558368   0.08770301  0.1856711    2.117043     3.926095
-## 2     8.282279   0.08205933  0.1756506    2.140532     3.887552
-##   Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt Col.skew.vrt
-## 1         22.61682   0.08907545  0.1942661    2.180916     3.913759
-## 2         22.67175   0.08694090  0.1873940    2.155418     3.881844
-##   Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz Lum.skew.hrz
-## 1         22.07321    0.4355562  0.8958863    2.056879     3.612730
-## 2         22.90526    0.4406635  0.8761384    1.988225     3.493638
-##   Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt
-## 1         20.01520    0.4563516  0.9904756    2.170422     3.852029
-## 2         19.45551    0.4573795  0.9806892    2.144148     3.690217
-##   Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
-## 1         22.42973      none          0          0
-## 2         20.01364      none          0          0</code></pre>
+<pre><code>##             Species                            Ind Dist    ROI  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV Lum.skew
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 0.1736449 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808 2.255974
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 0.1663600 0.2695337 1.620183 2.286320     9.671851 0.8987935 1.380676 1.536144 2.060313
+##   Lum.kurtosis Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz
+## 1     9.558368   0.08770301  0.1856711    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916     3.913759         22.07321    0.4355562
+## 2     8.282279   0.08205933  0.1756506    2.140532     3.887552         22.67175   0.08694090  0.1873940    2.155418     3.881844         22.90526    0.4406635
+##   Lum.sd.hrz Lum.CoV.hrz Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
+## 1  0.8958863    2.056879     3.612730         20.01520    0.4563516  0.9904756    2.170422     3.852029         22.42973      none          0          0
+## 2  0.8761384    1.988225     3.493638         19.45551    0.4573795  0.9806892    2.144148     3.690217         20.01364      none          0          0</code></pre>
 </div>
 <div id="get-a-.csv-list-from-gabrat-output" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Get a .csv list from
@@ -1214,27 +1147,13 @@ GabRat_Res_analysis&lt;-do.call(rbind, GabRat_Res_list)
 dim(GabRat_Res_analysis)# 72 rows by 7 columns</code></pre>
 <pre><code>## [1] 72  7</code></pre>
 <pre class="r"><code>head(GabRat_Res_analysis)# We only want every ~ fourth row for the dbl values</code></pre>
-<pre><code>##             Species                            Ind Dist X
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 1
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 2
-## 3 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 3
-## 4 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 4
-## 5 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 5
-## 6 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 6
-##                                                                                   ID
-## 1            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_lw
-## 2            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_mw
-## 3            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_sw
-## 4           3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_dbl
-## 5 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_lw
-## 6 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_mw
-##   Sigma    GabRat
-## 1     3 0.1666780
-## 2     3 0.1774265
-## 3     3 0.1902168
-## 4     3 0.1682120
-## 5     3 0.5320508
-## 6     3 0.5181680</code></pre>
+<pre><code>##             Species                            Ind Dist X                                                                                 ID Sigma    GabRat
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 1            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_lw     3 0.1666780
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 2            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_mw     3 0.1774265
+## 3 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 3            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_sw     3 0.1902168
+## 4 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 4           3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_dbl     3 0.1682120
+## 5 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 5 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_lw     3 0.5320508
+## 6 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 6 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_mw     3 0.5181680</code></pre>
 <pre class="r"><code># Set up a true/false condition on whether row has the pattern &quot;_dbl&quot;,
 # then subset data on this condition
 GabRat_Res_analysis&lt;-GabRat_Res_analysis[endsWith(GabRat_Res_analysis$ID, &quot;_dbl&quot;),]
@@ -1257,12 +1176,9 @@ GabRat_Res_analysis&lt;-GabRat_Res_analysis[, !colnames(GabRat_Res_analysis)
 dim(GabRat_Res_analysis)# 18 rows by 5 columns</code></pre>
 <pre><code>## [1] 18  5</code></pre>
 <pre class="r"><code>GabRat_Res_analysis[1:2,]# Observe the first two rows of data</code></pre>
-<pre><code>##             Species                            Ind Dist    GabRat
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.1682120
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.5332068
-##                 ROI
-## 1            animal
-## 2 animal+background</code></pre>
+<pre><code>##             Species                            Ind Dist    GabRat               ROI
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.1682120            animal
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.5332068 animal+background</code></pre>
 </div>
 <div id="combing-data-sets-and-data-preparation" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Combing data sets and
@@ -1281,24 +1197,15 @@ Cluster_Particle_analysis&lt;-merge(Cluster_analysis, Particle_analysis,
 dim(Cluster_Particle_analysis)# 52 rows and 36 columns</code></pre>
 <pre><code>## [1] 52 36</code></pre>
 <pre class="r"><code>Cluster_Particle_analysis[1:2,]# Inspect data</code></pre>
-<pre><code>##             Species                            Ind Dist               ROI
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background
-##   ClusterID Pass    lw_mean       lw_sd    mw_mean       mw_sd    sw_mean
-## 1         1    7 0.07855250 0.018744942 0.06783328 0.018022186 0.06569355
-## 2         1   20 0.03184927 0.006353116 0.02877177 0.004386119 0.03404231
-##         sw_sd   dbl_mean      dbl_sd  Area Coverage..pc.    RNL.X     RNL.Y
-## 1 0.013962437 0.07415875 0.018407013  9116     100.00000 2.074853 -1.721327
-## 2 0.006827025 0.03058787 0.005537348 32133      71.76229 1.437122  1.917127
-##   RNL.Saturation Dmax.Chromaticity Dmax.channel Count Total.Area Average.Size
-## 1       2.695919        0.08914595        lw:sw     4       2953       738.25
-## 2       2.395975        0.08390701        mw:sw     2      32133     16066.50
-##     X.Area   Perim.     Major     Minor    Angle     Circ.  Solidity     Feret
-## 1 24.46764 204.9117  52.96716  17.83798 79.13099 0.2135263 0.5150810  83.09385
-## 2 45.13759 740.6488 113.31427 101.73291 73.06783 0.4666892 0.7740756 150.38945
-##   FeretX FeretY FeretAngle  MinFeret
-## 1  19.25  60.25   79.74821  31.79423
-## 2  51.50 173.00   91.85460 119.27169</code></pre>
+<pre><code>##             Species                            Ind Dist               ROI ClusterID Pass    lw_mean       lw_sd    mw_mean       mw_sd    sw_mean       sw_sd
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal         1    7 0.07855250 0.018744942 0.06783328 0.018022186 0.06569355 0.013962437
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background         1   20 0.03184927 0.006353116 0.02877177 0.004386119 0.03404231 0.006827025
+##     dbl_mean      dbl_sd  Area Coverage..pc.    RNL.X     RNL.Y RNL.Saturation Dmax.Chromaticity Dmax.channel Count Total.Area Average.Size   X.Area   Perim.
+## 1 0.07415875 0.018407013  9116     100.00000 2.074853 -1.721327       2.695919        0.08914595        lw:sw     4       2953       738.25 24.46764 204.9117
+## 2 0.03058787 0.005537348 32133      71.76229 1.437122  1.917127       2.395975        0.08390701        mw:sw     2      32133     16066.50 45.13759 740.6488
+##       Major     Minor    Angle     Circ.  Solidity     Feret FeretX FeretY FeretAngle  MinFeret
+## 1  52.96716  17.83798 79.13099 0.2135263 0.5150810  83.09385  19.25  60.25   79.74821  31.79423
+## 2 113.31427 101.73291 73.06783 0.4666892 0.7740756 150.38945  51.50 173.00   91.85460 119.27169</code></pre>
 </div>
 <div id="vcabsacaa-data-leia-output-and-gabrat-analyses" class="section level3" number="6.1.2">
 <h3><span class="header-section-number">6.1.2</span> VCA,BSA,CAA data,
@@ -1311,87 +1218,45 @@ VCA_LEIA_GabRat_analysis&lt;-merge(VCA_analysis, LEIA_Res_analysis,
                                 by=c(&quot;Species&quot;,&quot;Ind&quot;,&quot;Dist&quot;,&quot;ROI&quot;))
 
 VCA_LEIA_GabRat_analysis[1:2,]# Inspect data</code></pre>
-<pre><code>##             Species                            Ind Dist               ROI
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background
-##     CAA.Sc    CAA.Jc   CAA.St    CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt
-## 1 1.000000 1.0000000      Inf       NaN 0.00000       NaN 0.0000000       NaN
-## 2 1.763881 0.5879602 2.098908 0.6996359 0.76058 0.6923097 0.8373184 0.7621601
-##    CAA.Scpl  CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt
-## 1       Inf       NaN 0.00000000   1.000000   1.000000  1.0000000  1.0000000
-## 2 0.6437981 0.7272349 0.01618755   1.763113   1.764646  0.5877043  0.5882152
-##   CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz
-## 1        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN
-## 2   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457
-##   CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz
-## 1        NaN  0.0000000  0.0000000        NaN        NaN          Inf
-## 2  0.6925724  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989
-##   CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt  CAA.C.Hrz  CAA.C.Vrt   CAA.PT
-## 1          Inf          NaN          NaN 0.00000000 0.00000000      Inf
-## 2    0.6472219    0.7277313    0.7239647 0.01768539 0.01469036 60.77585
-##   CAA.PT.Hrz CAA.PT.Vrt   CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax
-## 1        Inf        Inf       NaN 0.07415875       NaN       NaN 0.08914595
-## 2   55.54384   67.07187 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733
-##     VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL
-## 1         NaN        NaN  2.695919       NaN        NaN      NaN     NaN
-## 2 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111
-##    VCA.CVSL   VCA.MS   VCA.sS   VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz
-## 1       NaN      NaN      NaN       NaN 0.07415875        NaN         NaN
-## 2 0.3753171 3.334727 1.209654 0.3627445 0.04129542 0.02296875   0.5562057
-##   VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz
-## 1 0.07415875        NaN         NaN    0.08914595           NaN            NaN
-## 2 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942      0.1148605
-##   VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz
-## 1    0.08914595           NaN            NaN      2.695919           NaN
-## 2    0.08556912   0.009826575      0.1148379      2.467878     0.2756307
-##   VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz
-## 1            NaN      2.695919           NaN            NaN         NaN
-## 2      0.1116873      2.467834     0.2755308      0.1116488    16.01783
-##   VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz
-## 1         NaN          NaN         NaN         NaN          NaN        NaN
-## 2    6.010669    0.3752486    16.01434    6.011548    0.3753854    3.33508
-##   VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL
-## 1        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000
-## 2   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583
-##    BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat
-## 1       NaN 0.00000000 0.00000000         NaN 0.00000000 0.00000000         NaN
-## 2 0.3279133 0.07865894 0.08357918    1.062552 0.06068302 0.08350352    1.376061
-##   BSA.BMSL BSA.BsSL BSA.BCVSL  BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz
-## 1  0.00000 0.000000       NaN 0.000000 0.0000000      NaN   0.0000000
-## 2 11.98163 4.230545 0.3530861 2.522453 0.8547204 0.338845   0.2939087
-##   BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz
-## 1  0.00000000          NaN   0.0000000  0.00000000          NaN     0.00000000
-## 2  0.09529334    0.3242277   0.2827497  0.09347208    0.3305825     0.07536487
-##   BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt
-## 1     0.00000000             NaN     0.00000000     0.00000000             NaN
-## 2     0.08251804        1.094914     0.08262291     0.08458379        1.023733
-##   BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt
-## 1     0.00000000      0.0000000             NaN     0.00000000     0.00000000
-## 2     0.05763893      0.0828074        1.436658     0.06434617     0.08411479
-##   BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt
-## 1             NaN      0.00000      0.00000           NaN      0.00000
-## 2        1.307223     12.20617      4.27166     0.3499591     11.71142
-##   BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
-## 1     0.000000           NaN    0.000000   0.0000000          NaN    0.000000
-## 2     4.156481     0.3549083    2.567851   0.8627548    0.3359832    2.467822
-##   BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis
-## 1   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354
-## 2   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901
-##    Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz
-## 1 0.8928419 1.431054 1.602808 2.255974     9.558368   0.08770301  0.1856711
-## 2 0.7599581 1.631294 2.146557 4.713521    38.984497   0.11245671  0.2857060
-##   Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt
-## 1    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916
-## 2    2.540587     5.473994         47.54446   0.10647940  0.2643248    2.482403
-##   Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz
-## 1     3.913759         22.07321    0.4355562  0.8958863    2.056879
-## 2     5.224416         45.33121    0.3860825  1.0964629    2.839970
-##   Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt
-## 1     3.612730         20.01520    0.4563516  0.9904756    2.170422
-## 2     7.414604         84.33807    0.3751880  1.0664402    2.842415
-##   Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
-## 1     3.852029         22.42973      none          0          0
-## 2     7.844373         98.05338      none          0          0</code></pre>
+<pre><code>##             Species                            Ind Dist               ROI   CAA.Sc    CAA.Jc   CAA.St    CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt  CAA.Scpl
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal 1.000000 1.0000000      Inf       NaN 0.00000       NaN 0.0000000       NaN       Inf
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background 1.763881 0.5879602 2.098908 0.6996359 0.76058 0.6923097 0.8373184 0.7621601 0.6437981
+##    CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz CAA.Qc.Vrt
+## 1       NaN 0.00000000   1.000000   1.000000  1.0000000  1.0000000        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN        NaN
+## 2 0.7272349 0.01618755   1.763113   1.764646  0.5877043  0.5882152   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457  0.6925724
+##   CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt  CAA.C.Hrz  CAA.C.Vrt   CAA.PT CAA.PT.Hrz CAA.PT.Vrt
+## 1  0.0000000  0.0000000        NaN        NaN          Inf          Inf          NaN          NaN 0.00000000 0.00000000      Inf        Inf        Inf
+## 2  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989    0.6472219    0.7277313    0.7239647 0.01768539 0.01469036 60.77585   55.54384   67.07187
+##     CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax   VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL  VCA.CVSL   VCA.MS   VCA.sS
+## 1       NaN 0.07415875       NaN       NaN 0.08914595         NaN        NaN  2.695919       NaN        NaN      NaN     NaN       NaN      NaN      NaN
+## 2 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111 0.3753171 3.334727 1.209654
+##     VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz VCA.MDmax.Vrt VCA.sDmax.Vrt
+## 1       NaN 0.07415875        NaN         NaN 0.07415875        NaN         NaN    0.08914595           NaN            NaN    0.08914595           NaN
+## 2 0.3627445 0.04129542 0.02296875   0.5562057 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942      0.1148605    0.08556912   0.009826575
+##   VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt
+## 1            NaN      2.695919           NaN            NaN      2.695919           NaN            NaN         NaN         NaN          NaN         NaN
+## 2      0.1148379      2.467878     0.2756307      0.1116873      2.467834     0.2755308      0.1116488    16.01783    6.010669    0.3752486    16.01434
+##   VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL  BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax
+## 1         NaN          NaN        NaN        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000       NaN 0.00000000 0.00000000         NaN
+## 2    6.011548    0.3753854    3.33508   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583 0.3279133 0.07865894 0.08357918    1.062552
+##   BSA.BMSsat BSA.BsSsat BSA.BCVSsat BSA.BMSL BSA.BsSL BSA.BCVSL  BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt
+## 1 0.00000000 0.00000000         NaN  0.00000 0.000000       NaN 0.000000 0.0000000      NaN   0.0000000  0.00000000          NaN   0.0000000  0.00000000
+## 2 0.06068302 0.08350352    1.376061 11.98163 4.230545 0.3530861 2.522453 0.8547204 0.338845   0.2939087  0.09529334    0.3242277   0.2827497  0.09347208
+##   BSA.BCVL.Vrt BSA.BMDmax.Hrz BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz
+## 1          NaN     0.00000000     0.00000000             NaN     0.00000000     0.00000000             NaN     0.00000000      0.0000000             NaN
+## 2    0.3305825     0.07536487     0.08251804        1.094914     0.08262291     0.08458379        1.023733     0.05763893      0.0828074        1.436658
+##   BSA.BMSsat.Vrt BSA.BsSsat.Vrt BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz
+## 1     0.00000000     0.00000000             NaN      0.00000      0.00000           NaN      0.00000     0.000000           NaN    0.000000   0.0000000
+## 2     0.06434617     0.08411479        1.307223     12.20617      4.27166     0.3499591     11.71142     4.156481     0.3549083    2.567851   0.8627548
+##   BSA.BCVS.Hrz BSA.BMS.Vrt BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis
+## 1          NaN    0.000000   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808 2.255974     9.558368
+## 2    0.3359832    2.467822   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901 0.7599581 1.631294 2.146557 4.713521    38.984497
+##   Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz
+## 1   0.08770301  0.1856711    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916     3.913759         22.07321    0.4355562  0.8958863
+## 2   0.11245671  0.2857060    2.540587     5.473994         47.54446   0.10647940  0.2643248    2.482403     5.224416         45.33121    0.3860825  1.0964629
+##   Lum.CoV.hrz Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh
+## 1    2.056879     3.612730         20.01520    0.4563516  0.9904756    2.170422     3.852029         22.42973      none          0          0
+## 2    2.839970     7.414604         84.33807    0.3751880  1.0664402    2.842415     7.844373         98.05338      none          0          0</code></pre>
 <pre class="r"><code>dim(VCA_LEIA_GabRat_analysis)# 18 rows and 164 columns</code></pre>
 <pre><code>## [1]  18 164</code></pre>
 <pre class="r"><code># Merge the new data frame (VCA_LEIA_GabRat_analysis) with GabRat_Res_analysis
@@ -1399,87 +1264,45 @@ VCA_LEIA_GabRat_analysis&lt;-merge(VCA_LEIA_GabRat_analysis, GabRat_Res_analysis
                                 by=c(&quot;Species&quot;,&quot;Ind&quot;,&quot;Dist&quot;,&quot;ROI&quot;))
 
 VCA_LEIA_GabRat_analysis[1:2,]# Inspect data again</code></pre>
-<pre><code>##             Species                            Ind Dist               ROI
-## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal
-## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background
-##     CAA.Sc    CAA.Jc   CAA.St    CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt
-## 1 1.000000 1.0000000      Inf       NaN 0.00000       NaN 0.0000000       NaN
-## 2 1.763881 0.5879602 2.098908 0.6996359 0.76058 0.6923097 0.8373184 0.7621601
-##    CAA.Scpl  CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt
-## 1       Inf       NaN 0.00000000   1.000000   1.000000  1.0000000  1.0000000
-## 2 0.6437981 0.7272349 0.01618755   1.763113   1.764646  0.5877043  0.5882152
-##   CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz
-## 1        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN
-## 2   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457
-##   CAA.Qc.Vrt CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz
-## 1        NaN  0.0000000  0.0000000        NaN        NaN          Inf
-## 2  0.6925724  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989
-##   CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt  CAA.C.Hrz  CAA.C.Vrt   CAA.PT
-## 1          Inf          NaN          NaN 0.00000000 0.00000000      Inf
-## 2    0.6472219    0.7277313    0.7239647 0.01768539 0.01469036 60.77585
-##   CAA.PT.Hrz CAA.PT.Vrt   CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax
-## 1        Inf        Inf       NaN 0.07415875       NaN       NaN 0.08914595
-## 2   55.54384   67.07187 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733
-##     VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL
-## 1         NaN        NaN  2.695919       NaN        NaN      NaN     NaN
-## 2 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111
-##    VCA.CVSL   VCA.MS   VCA.sS   VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz
-## 1       NaN      NaN      NaN       NaN 0.07415875        NaN         NaN
-## 2 0.3753171 3.334727 1.209654 0.3627445 0.04129542 0.02296875   0.5562057
-##   VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz
-## 1 0.07415875        NaN         NaN    0.08914595           NaN            NaN
-## 2 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942      0.1148605
-##   VCA.MDmax.Vrt VCA.sDmax.Vrt VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz
-## 1    0.08914595           NaN            NaN      2.695919           NaN
-## 2    0.08556912   0.009826575      0.1148379      2.467878     0.2756307
-##   VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz
-## 1            NaN      2.695919           NaN            NaN         NaN
-## 2      0.1116873      2.467834     0.2755308      0.1116488    16.01783
-##   VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz
-## 1         NaN          NaN         NaN         NaN          NaN        NaN
-## 2    6.010669    0.3752486    16.01434    6.011548    0.3753854    3.33508
-##   VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL
-## 1        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000
-## 2   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583
-##    BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax BSA.BMSsat BSA.BsSsat BSA.BCVSsat
-## 1       NaN 0.00000000 0.00000000         NaN 0.00000000 0.00000000         NaN
-## 2 0.3279133 0.07865894 0.08357918    1.062552 0.06068302 0.08350352    1.376061
-##   BSA.BMSL BSA.BsSL BSA.BCVSL  BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz
-## 1  0.00000 0.000000       NaN 0.000000 0.0000000      NaN   0.0000000
-## 2 11.98163 4.230545 0.3530861 2.522453 0.8547204 0.338845   0.2939087
-##   BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt BSA.BCVL.Vrt BSA.BMDmax.Hrz
-## 1  0.00000000          NaN   0.0000000  0.00000000          NaN     0.00000000
-## 2  0.09529334    0.3242277   0.2827497  0.09347208    0.3305825     0.07536487
-##   BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt
-## 1     0.00000000             NaN     0.00000000     0.00000000             NaN
-## 2     0.08251804        1.094914     0.08262291     0.08458379        1.023733
-##   BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz BSA.BMSsat.Vrt BSA.BsSsat.Vrt
-## 1     0.00000000      0.0000000             NaN     0.00000000     0.00000000
-## 2     0.05763893      0.0828074        1.436658     0.06434617     0.08411479
-##   BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt
-## 1             NaN      0.00000      0.00000           NaN      0.00000
-## 2        1.307223     12.20617      4.27166     0.3499591     11.71142
-##   BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz BSA.BCVS.Hrz BSA.BMS.Vrt
-## 1     0.000000           NaN    0.000000   0.0000000          NaN    0.000000
-## 2     4.156481     0.3549083    2.567851   0.8627548    0.3359832    2.467822
-##   BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis
-## 1   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354
-## 2   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901
-##    Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis Col.mean.hrz Col.sd.hrz
-## 1 0.8928419 1.431054 1.602808 2.255974     9.558368   0.08770301  0.1856711
-## 2 0.7599581 1.631294 2.146557 4.713521    38.984497   0.11245671  0.2857060
-##   Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt
-## 1    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916
-## 2    2.540587     5.473994         47.54446   0.10647940  0.2643248    2.482403
-##   Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz Lum.CoV.hrz
-## 1     3.913759         22.07321    0.4355562  0.8958863    2.056879
-## 2     5.224416         45.33121    0.3860825  1.0964629    2.839970
-##   Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt
-## 1     3.612730         20.01520    0.4563516  0.9904756    2.170422
-## 2     7.414604         84.33807    0.3751880  1.0664402    2.842415
-##   Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh    GabRat
-## 1     3.852029         22.42973      none          0          0 0.1682120
-## 2     7.844373         98.05338      none          0          0 0.5332068</code></pre>
+<pre><code>##             Species                            Ind Dist               ROI   CAA.Sc    CAA.Jc   CAA.St    CAA.Jt  CAA.Hc    CAA.Qc    CAA.Ht    CAA.Qt  CAA.Scpl
+## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm            animal 1.000000 1.0000000      Inf       NaN 0.00000       NaN 0.0000000       NaN       Inf
+## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal+background 1.763881 0.5879602 2.098908 0.6996359 0.76058 0.6923097 0.8373184 0.7621601 0.6437981
+##    CAA.Qcpl      CAA.C CAA.Sc.Hrz CAA.Sc.Vrt CAA.Jc.Hrz CAA.Jc.Vrt CAA.St.Hrz CAA.St.Vrt CAA.Jt.Hrz CAA.Jt.Vrt CAA.Hc.Hrz CAA.Hc.Vrt CAA.Qc.Hrz CAA.Qc.Vrt
+## 1       NaN 0.00000000   1.000000   1.000000  1.0000000  1.0000000        Inf        Inf        NaN        NaN    0.00000  0.0000000        NaN        NaN
+## 2 0.7272349 0.01618755   1.763113   1.764646  0.5877043  0.5882152   2.069081   2.118686  0.6896936  0.7062285    0.76029  0.7608685  0.6920457  0.6925724
+##   CAA.Ht.Hrz CAA.Ht.Vrt CAA.Qt.Hrz CAA.Qt.Vrt CAA.Scpl.Hrz CAA.Scpl.Vrt CAA.Qcpl.Hrz CAA.Qcpl.Vrt  CAA.C.Hrz  CAA.C.Vrt   CAA.PT CAA.PT.Hrz CAA.PT.Vrt
+## 1  0.0000000  0.0000000        NaN        NaN          Inf          Inf          NaN          NaN 0.00000000 0.00000000      Inf        Inf        Inf
+## 2  0.8386991  0.8298446  0.7634168  0.7553571    0.6386989    0.6472219    0.7277313    0.7239647 0.01768539 0.01469036 60.77585   55.54384   67.07187
+##     CAA.Asp     VCA.ML    VCA.sL   VCA.CVL  VCA.MDmax   VCA.sDmax VCA.CVDmax VCA.MSsat VCA.sSsat VCA.CVSsat  VCA.MSL VCA.sSL  VCA.CVSL   VCA.MS   VCA.sS
+## 1       NaN 0.07415875       NaN       NaN 0.08914595         NaN        NaN  2.695919       NaN        NaN      NaN     NaN       NaN      NaN      NaN
+## 2 0.4529912 0.04150538 0.0231051 0.5566772 0.08559733 0.009909556  0.1157695  2.469105 0.2776953   0.112468 16.01608 6.01111 0.3753171 3.334727 1.209654
+##     VCA.CVS VCA.ML.Hrz VCA.sL.Hrz VCA.CVL.Hrz VCA.ML.Vrt VCA.sL.Vrt VCA.CVL.Vrt VCA.MDmax.Hrz VCA.sDmax.Hrz VCA.CVDmax.Hrz VCA.MDmax.Vrt VCA.sDmax.Vrt
+## 1       NaN 0.07415875        NaN         NaN 0.07415875        NaN         NaN    0.08914595           NaN            NaN    0.08914595           NaN
+## 2 0.3627445 0.04129542 0.02296875   0.5562057 0.04130759  0.0229682   0.5560287    0.08557285   0.009828942      0.1148605    0.08556912   0.009826575
+##   VCA.CVDmax.Vrt VCA.MSsat.Hrz VCA.sSsat.Hrz VCA.CVSsat.Hrz VCA.MSsat.Vrt VCA.sSsat.Vrt VCA.CVSsat.Vrt VCA.MSL.Hrz VCA.sSL.Hrz VCA.CVSL.Hrz VCA.MSL.Vrt
+## 1            NaN      2.695919           NaN            NaN      2.695919           NaN            NaN         NaN         NaN          NaN         NaN
+## 2      0.1148379      2.467878     0.2756307      0.1116873      2.467834     0.2755308      0.1116488    16.01783    6.010669    0.3752486    16.01434
+##   VCA.sSL.Vrt VCA.CVSL.Vrt VCA.MS.Hrz VCA.sS.Hrz VCA.CVS.Hrz VCA.MS.Vrt VCA.sS.Vrt VCA.CVS.Vrt   BSA.BML    BSA.BsL  BSA.BCVL BSA.BMDmax BSA.BsDmax BSA.BCVDmax
+## 1         NaN          NaN        NaN        NaN         NaN        NaN        NaN         NaN 0.0000000 0.00000000       NaN 0.00000000 0.00000000         NaN
+## 2    6.011548    0.3753854    3.33508   1.209564   0.3626792   3.334376   1.209744   0.3628096 0.2888441 0.09471583 0.3279133 0.07865894 0.08357918    1.062552
+##   BSA.BMSsat BSA.BsSsat BSA.BCVSsat BSA.BMSL BSA.BsSL BSA.BCVSL  BSA.BMS   BSA.BsS BSA.BCVS BSA.BML.Hrz BSA.BsL.Hrz BSA.BCVL.Hrz BSA.BML.Vrt BSA.BsL.Vrt
+## 1 0.00000000 0.00000000         NaN  0.00000 0.000000       NaN 0.000000 0.0000000      NaN   0.0000000  0.00000000          NaN   0.0000000  0.00000000
+## 2 0.06068302 0.08350352    1.376061 11.98163 4.230545 0.3530861 2.522453 0.8547204 0.338845   0.2939087  0.09529334    0.3242277   0.2827497  0.09347208
+##   BSA.BCVL.Vrt BSA.BMDmax.Hrz BSA.BsDmax.Hrz BSA.BCVDmax.Hrz BSA.BMDmax.Vrt BSA.BsDmax.Vrt BSA.BCVDmax.Vrt BSA.BMSsat.Hrz BSA.BsSsat.Hrz BSA.BCVSsat.Hrz
+## 1          NaN     0.00000000     0.00000000             NaN     0.00000000     0.00000000             NaN     0.00000000      0.0000000             NaN
+## 2    0.3305825     0.07536487     0.08251804        1.094914     0.08262291     0.08458379        1.023733     0.05763893      0.0828074        1.436658
+##   BSA.BMSsat.Vrt BSA.BsSsat.Vrt BSA.BCVSsat.Vrt BSA.BMSL.Hrz BSA.BsSL.Hrz BSA.BCVSL.Hrz BSA.BMSL.Vrt BSA.BsSL.Vrt BSA.BCVSL.Vrt BSA.BMS.Hrz BSA.BsS.Hrz
+## 1     0.00000000     0.00000000             NaN      0.00000      0.00000           NaN      0.00000     0.000000           NaN    0.000000   0.0000000
+## 2     0.06434617     0.08411479        1.307223     12.20617      4.27166     0.3499591     11.71142     4.156481     0.3549083    2.567851   0.8627548
+##   BSA.BCVS.Hrz BSA.BMS.Vrt BSA.BsS.Vrt BSA.BCVS.Vrt  Col.mean    Col.sd  Col.CoV Col.skew Col.kurtosis  Lum.mean   Lum.sd  Lum.CoV Lum.skew Lum.kurtosis
+## 1          NaN    0.000000   0.0000000          NaN 0.1736449 0.2851837 1.642339 2.351301     9.700354 0.8928419 1.431054 1.602808 2.255974     9.558368
+## 2    0.3359832    2.467822   0.8400862    0.3404161 0.2161124 0.4168882 1.929034 3.158602    19.114901 0.7599581 1.631294 2.146557 4.713521    38.984497
+##   Col.mean.hrz Col.sd.hrz Col.CoV.hrz Col.skew.hrz Col.kurtosis.hrz Col.mean.vrt Col.sd.vrt Col.CoV.vrt Col.skew.vrt Col.kurtosis.vrt Lum.mean.hrz Lum.sd.hrz
+## 1   0.08770301  0.1856711    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916     3.913759         22.07321    0.4355562  0.8958863
+## 2   0.11245671  0.2857060    2.540587     5.473994         47.54446   0.10647940  0.2643248    2.482403     5.224416         45.33121    0.3860825  1.0964629
+##   Lum.CoV.hrz Lum.skew.hrz Lum.kurtosis.hrz Lum.mean.vrt Lum.sd.vrt Lum.CoV.vrt Lum.skew.vrt Lum.kurtosis.vrt Transform Col.thresh Lum.thresh    GabRat
+## 1    2.056879     3.612730         20.01520    0.4563516  0.9904756    2.170422     3.852029         22.42973      none          0          0 0.1682120
+## 2    2.839970     7.414604         84.33807    0.3751880  1.0664402    2.842415     7.844373         98.05338      none          0          0 0.5332068</code></pre>
 <pre class="r"><code>dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns</code></pre>
 <pre><code>## [1]  18 165</code></pre>
 </div>
@@ -1519,29 +1342,21 @@ V.L.GbRt_subset&lt;-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis
 dim(V.L.GbRt_subset)# 18 rows by 11 columns</code></pre>
 <pre><code>## [1] 18 11</code></pre>
 <pre class="r"><code>summary(V.L.GbRt_subset) # Initial summary of the data</code></pre>
-<pre><code>##               Species                               Ind      Dist  
-##  Aphelodoris varia:12   3_AphelodorisVaria_10_NF_D_RAW:6   30cm:9  
-##  Aplysia sp       : 6   3_AphelodorisVaria_11_NF_D_RAW:6   50cm:9  
-##                         4_Aplysiasp_1_NL_N_RAW        :6           
-##                                                                    
-##                                                                    
-##                                                                    
-##                                                                    
-##                 ROI       CAA.Scpl         BSA.BML        BSA.BsL.Hrz     
-##  animal           :6   Min.   :0.3013   Min.   :0.0000   Min.   :0.00000  
-##  animal+background:6   1st Qu.:0.5280   1st Qu.:0.2007   1st Qu.:0.04736  
-##  background       :6   Median :0.6423   Median :0.2774   Median :0.07755  
-##                        Mean   :   Inf   Mean   :0.2503   Mean   :0.07439  
-##                        3rd Qu.:0.8069   3rd Qu.:0.3371   3rd Qu.:0.10934  
-##                        Max.   :   Inf   Max.   :0.4793   Max.   :0.15655  
-##                                                          NA&#39;s   :4        
-##     Col.mean         Lum.mean         Lum.CoV          GabRat      
-##  Min.   :0.1542   Min.   :0.5980   Min.   :1.483   Min.   :0.1624  
-##  1st Qu.:0.1827   1st Qu.:0.7779   1st Qu.:1.709   1st Qu.:0.2622  
-##  Median :0.1937   Median :0.8958   Median :1.864   Median :0.3781  
-##  Mean   :0.2068   Mean   :0.9352   Mean   :1.904   Mean   :0.3521  
-##  3rd Qu.:0.2291   3rd Qu.:1.0017   3rd Qu.:2.062   3rd Qu.:0.4386  
-##  Max.   :0.2857   Max.   :1.5512   Max.   :2.450   Max.   :0.5332  
+<pre><code>##               Species                               Ind      Dist                  ROI       CAA.Scpl         BSA.BML        BSA.BsL.Hrz         Col.mean     
+##  Aphelodoris varia:12   3_AphelodorisVaria_10_NF_D_RAW:6   30cm:9   animal           :6   Min.   :0.3013   Min.   :0.0000   Min.   :0.00000   Min.   :0.1542  
+##  Aplysia sp       : 6   3_AphelodorisVaria_11_NF_D_RAW:6   50cm:9   animal+background:6   1st Qu.:0.5280   1st Qu.:0.2007   1st Qu.:0.04736   1st Qu.:0.1827  
+##                         4_Aplysiasp_1_NL_N_RAW        :6            background       :6   Median :0.6423   Median :0.2774   Median :0.07755   Median :0.1937  
+##                                                                                           Mean   :   Inf   Mean   :0.2503   Mean   :0.07439   Mean   :0.2068  
+##                                                                                           3rd Qu.:0.8069   3rd Qu.:0.3371   3rd Qu.:0.10934   3rd Qu.:0.2291  
+##                                                                                           Max.   :   Inf   Max.   :0.4793   Max.   :0.15655   Max.   :0.2857  
+##                                                                                                                             NA&#39;s   :4                         
+##     Lum.mean         Lum.CoV          GabRat      
+##  Min.   :0.5980   Min.   :1.483   Min.   :0.1624  
+##  1st Qu.:0.7779   1st Qu.:1.709   1st Qu.:0.2622  
+##  Median :0.8958   Median :1.864   Median :0.3781  
+##  Mean   :0.9352   Mean   :1.904   Mean   :0.3521  
+##  3rd Qu.:1.0017   3rd Qu.:2.062   3rd Qu.:0.4386  
+##  Max.   :1.5512   Max.   :2.450   Max.   :0.5332  
 ## </code></pre>
 <pre class="r"><code># View the data frame
 View(V.L.GbRt_subset)
@@ -1559,32 +1374,23 @@ View(V.L.GbRt_subset)# Observe change the data frame
 dim(V.L.GbRt_subset)# 11 rows by 11 columns</code></pre>
 <pre><code>## [1] 11 11</code></pre>
 <pre class="r"><code>summary(V.L.GbRt_subset)</code></pre>
-<pre><code>##               Species                              Ind      Dist  
-##  Aphelodoris varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7  
-##  Aplysia sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4  
-##                        4_Aplysiasp_1_NL_N_RAW        :5           
-##                                                                   
-##                                                                   
-##                                                                   
-##                 ROI       CAA.Scpl         BSA.BML        BSA.BsL.Hrz     
-##  animal           :3   Min.   :0.3013   Min.   :0.1332   Min.   :0.04544  
-##  animal+background:5   1st Qu.:0.4786   1st Qu.:0.2402   1st Qu.:0.06180  
-##  background       :3   Median :0.5396   Median :0.2888   Median :0.09529  
-##                        Mean   :0.5261   Mean   :0.2831   Mean   :0.09468  
-##                        3rd Qu.:0.5966   3rd Qu.:0.3348   3rd Qu.:0.11521  
-##                        Max.   :0.6832   Max.   :0.3966   Max.   :0.15655  
-##     Col.mean         Lum.mean         Lum.CoV          GabRat      
-##  Min.   :0.1542   Min.   :0.5980   Min.   :1.483   Min.   :0.1906  
-##  1st Qu.:0.1881   1st Qu.:0.8488   1st Qu.:1.769   1st Qu.:0.2678  
-##  Median :0.2161   Median :0.9803   Median :2.040   Median :0.4105  
-##  Mean   :0.2179   Mean   :1.0176   Mean   :1.983   Mean   :0.3775  
-##  3rd Qu.:0.2534   3rd Qu.:1.0842   3rd Qu.:2.104   3rd Qu.:0.4647  
-##  Max.   :0.2857   Max.   :1.5512   Max.   :2.450   Max.   :0.5332</code></pre>
+<pre><code>##               Species                              Ind      Dist                  ROI       CAA.Scpl         BSA.BML        BSA.BsL.Hrz         Col.mean     
+##  Aphelodoris varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7   animal           :3   Min.   :0.3013   Min.   :0.1332   Min.   :0.04544   Min.   :0.1542  
+##  Aplysia sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4   animal+background:5   1st Qu.:0.4786   1st Qu.:0.2402   1st Qu.:0.06180   1st Qu.:0.1881  
+##                        4_Aplysiasp_1_NL_N_RAW        :5            background       :3   Median :0.5396   Median :0.2888   Median :0.09529   Median :0.2161  
+##                                                                                          Mean   :0.5261   Mean   :0.2831   Mean   :0.09468   Mean   :0.2179  
+##                                                                                          3rd Qu.:0.5966   3rd Qu.:0.3348   3rd Qu.:0.11521   3rd Qu.:0.2534  
+##                                                                                          Max.   :0.6832   Max.   :0.3966   Max.   :0.15655   Max.   :0.2857  
+##     Lum.mean         Lum.CoV          GabRat      
+##  Min.   :0.5980   Min.   :1.483   Min.   :0.1906  
+##  1st Qu.:0.8488   1st Qu.:1.769   1st Qu.:0.2678  
+##  Median :0.9803   Median :2.040   Median :0.4105  
+##  Mean   :1.0176   Mean   :1.983   Mean   :0.3775  
+##  3rd Qu.:1.0842   3rd Qu.:2.104   3rd Qu.:0.4647  
+##  Max.   :1.5512   Max.   :2.450   Max.   :0.5332</code></pre>
 <pre class="r"><code>apply(V.L.GbRt_subset[,5:11], 2, var) # Determine the colour variable variances</code></pre>
-<pre><code>##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
-## 0.012682464 0.006015432 0.001430767 0.002207957 0.087193128 0.090558647 
-##      GabRat 
-## 0.015336849</code></pre>
+<pre><code>##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV      GabRat 
+## 0.012682464 0.006015432 0.001430767 0.002207957 0.087193128 0.090558647 0.015336849</code></pre>
 <p>The p-value of the Shapiro-Wilk test for Height is less than 0.05, so
 we reject the null hypothesis and conclude that Height is not normally
 distributed. Therefore we should use Spearman’s test for this
@@ -1658,59 +1464,36 @@ lapply(V.L.GbRt_subset[,5:11], shapiro.test)</code></pre>
 ## W = 0.90139, p-value = 0.1922</code></pre>
 <pre class="r"><code># Inspect scaled values and column means
 scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)</code></pre>
-<pre><code>##      CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean    Lum.CoV
-## 2   1.0447329  0.07370189  0.01615151 -0.03748558 -0.87259277  0.5434126
-## 3  -1.1591094 -0.04606569 -1.04912193 -0.50269435 -1.42120580 -0.4793016
-## 7   1.3944807 -0.67822953 -0.68927858  1.44389073  1.80698261 -1.2187555
-## 8  -1.9965592  0.72545366  0.46902751  0.30774049 -0.03805163  1.5533929
-## 10  1.0175188 -1.19110556 -1.09924489  1.30323751  1.73650453 -1.6615115
-## 11 -0.1664538  0.60802358  1.47594374  0.21417235  0.27164927  1.3104953
-## 13  0.2343956 -1.93327402 -0.21669972  1.20297119 -0.62888125 -0.9445464
-## 14 -0.6773729 -0.42764791  0.14299748 -0.74177818 -0.39271849  0.2623784
-## 15  0.1198638  1.46361125  1.63571008 -1.30800444 -0.51469509  0.1861873
-## 17  0.2065297  0.41346282  0.61625213 -0.52704120  0.17954864  0.1893369
-## 18 -0.0180262  0.99206954 -1.30173733 -1.35500854 -0.12654002  0.2589115
-##        GabRat
-## 2   1.2575825
-## 3   0.2949464
-## 7  -1.3922980
-## 8   1.1835279
-## 10 -1.5085298
-## 11  0.2588835
-## 13  0.2669827
-## 14  0.7306342
-## 15  0.6787438
-## 17 -0.9760417
-## 18 -0.7944315
+<pre><code>##      CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean    Lum.CoV     GabRat
+## 2   1.0447329  0.07370189  0.01615151 -0.03748558 -0.87259277  0.5434126  1.2575825
+## 3  -1.1591094 -0.04606569 -1.04912193 -0.50269435 -1.42120580 -0.4793016  0.2949464
+## 7   1.3944807 -0.67822953 -0.68927858  1.44389073  1.80698261 -1.2187555 -1.3922980
+## 8  -1.9965592  0.72545366  0.46902751  0.30774049 -0.03805163  1.5533929  1.1835279
+## 10  1.0175188 -1.19110556 -1.09924489  1.30323751  1.73650453 -1.6615115 -1.5085298
+## 11 -0.1664538  0.60802358  1.47594374  0.21417235  0.27164927  1.3104953  0.2588835
+## 13  0.2343956 -1.93327402 -0.21669972  1.20297119 -0.62888125 -0.9445464  0.2669827
+## 14 -0.6773729 -0.42764791  0.14299748 -0.74177818 -0.39271849  0.2623784  0.7306342
+## 15  0.1198638  1.46361125  1.63571008 -1.30800444 -0.51469509  0.1861873  0.6787438
+## 17  0.2065297  0.41346282  0.61625213 -0.52704120  0.17954864  0.1893369 -0.9760417
+## 18 -0.0180262  0.99206954 -1.30173733 -1.35500854 -0.12654002  0.2589115 -0.7944315
 ## attr(,&quot;scaled:center&quot;)
-##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
-##   0.5261440   0.2831279   0.0946824   0.2178738   1.0176215   1.9830285 
-##      GabRat 
-##   0.3774653 
+##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV      GabRat 
+##   0.5261440   0.2831279   0.0946824   0.2178738   1.0176215   1.9830285   0.3774653 
 ## attr(,&quot;scaled:scale&quot;)
-##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
-##  0.11261644  0.07755922  0.03782548  0.04698890  0.29528483  0.30092964 
-##      GabRat 
-##  0.12384203</code></pre>
+##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV      GabRat 
+##  0.11261644  0.07755922  0.03782548  0.04698890  0.29528483  0.30092964  0.12384203</code></pre>
 <pre class="r"><code># Update the V.L.GbRt_subset data frame with the standardised values 
 V.L.GbRt_subset[,5:11]&lt;-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
 
 # Check standardisation
 summary(V.L.GbRt_subset)# Mean values are zero</code></pre>
-<pre><code>##               Species                              Ind      Dist  
-##  Aphelodoris varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7  
-##  Aplysia sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4  
-##                        4_Aplysiasp_1_NL_N_RAW        :5           
-##                                                                   
-##                                                                   
-##                                                                   
-##                 ROI       CAA.Scpl          BSA.BML         BSA.BsL.Hrz      
-##  animal           :3   Min.   :-1.9966   Min.   :-1.9333   Min.   :-1.30174  
-##  animal+background:5   1st Qu.:-0.4219   1st Qu.:-0.5529   1st Qu.:-0.86920  
-##  background       :3   Median : 0.1199   Median : 0.0737   Median : 0.01615  
-##                        Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.00000  
-##                        3rd Qu.: 0.6260   3rd Qu.: 0.6667   3rd Qu.: 0.54264  
-##                        Max.   : 1.3945   Max.   : 1.4636   Max.   : 1.63571  
+<pre><code>##               Species                              Ind      Dist                  ROI       CAA.Scpl          BSA.BML         BSA.BsL.Hrz      
+##  Aphelodoris varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7   animal           :3   Min.   :-1.9966   Min.   :-1.9333   Min.   :-1.30174  
+##  Aplysia sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4   animal+background:5   1st Qu.:-0.4219   1st Qu.:-0.5529   1st Qu.:-0.86920  
+##                        4_Aplysiasp_1_NL_N_RAW        :5            background       :3   Median : 0.1199   Median : 0.0737   Median : 0.01615  
+##                                                                                          Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.00000  
+##                                                                                          3rd Qu.: 0.6260   3rd Qu.: 0.6667   3rd Qu.: 0.54264  
+##                                                                                          Max.   : 1.3945   Max.   : 1.4636   Max.   : 1.63571  
 ##     Col.mean           Lum.mean          Lum.CoV            GabRat       
 ##  Min.   :-1.35501   Min.   :-1.4212   Min.   :-1.6615   Min.   :-1.5085  
 ##  1st Qu.:-0.63441   1st Qu.:-0.5718   1st Qu.:-0.7119   1st Qu.:-0.8852  
@@ -1719,10 +1502,8 @@ summary(V.L.GbRt_subset)# Mean values are zero</code></pre>
 ##  3rd Qu.: 0.75536   3rd Qu.: 0.2256   3rd Qu.: 0.4029   3rd Qu.: 0.7047  
 ##  Max.   : 1.44389   Max.   : 1.8070   Max.   : 1.5534   Max.   : 1.2576</code></pre>
 <pre class="r"><code>apply(V.L.GbRt_subset[,5:11], 2, var) # Confirm variances are 1</code></pre>
-<pre><code>##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV 
-##           1           1           1           1           1           1 
-##      GabRat 
-##           1</code></pre>
+<pre><code>##    CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean     Lum.CoV      GabRat 
+##           1           1           1           1           1           1           1</code></pre>
 <pre class="r"><code># # Correlation panel
 # panel.cor &lt;- function(x, y){
 #     usr &lt;- par(&quot;usr&quot;); on.exit(par(usr))
@@ -1788,10 +1569,8 @@ write.csv(GabRat_Res_analysis, row.names = FALSE, # Remove row names
 savefile_list&lt;-ls(pattern = &quot;analysis&quot;)# Save all objects with &quot;analysis&quot; in the name
 
 savefile_list# Inspect object names</code></pre>
-<pre><code>## [1] &quot;Cluster_analysis&quot;          &quot;Cluster_Particle_analysis&quot;
-## [3] &quot;GabRat_Res_analysis&quot;       &quot;IndParticle_analysis&quot;     
-## [5] &quot;LEIA_Res_analysis&quot;         &quot;Particle_analysis&quot;        
-## [7] &quot;VCA_analysis&quot;              &quot;VCA_LEIA_GabRat_analysis&quot;</code></pre>
+<pre><code>## [1] &quot;Cluster_analysis&quot;          &quot;Cluster_Particle_analysis&quot; &quot;GabRat_Res_analysis&quot;       &quot;IndParticle_analysis&quot;      &quot;LEIA_Res_analysis&quot;        
+## [6] &quot;Particle_analysis&quot;         &quot;VCA_analysis&quot;              &quot;VCA_LEIA_GabRat_analysis&quot;</code></pre>
 <pre class="r"><code># Iterate over each data frame in savefile_list
 for (i in savefile_list){
   
@@ -1807,15 +1586,9 @@ for (i in savefile_list){
 
 # Check that your files have saved
 list.files(Out_path)</code></pre>
-<pre><code>## [1] &quot;Cluster_data_03_Oct_2023.csv&quot;         
-## [2] &quot;Cluster_Particle_data_03_Oct_2023.csv&quot;
-## [3] &quot;GabRat_Res_analysis.csv&quot;              
-## [4] &quot;GabRat_Res_data_03_Oct_2023.csv&quot;      
-## [5] &quot;IndParticle_data_03_Oct_2023.csv&quot;     
-## [6] &quot;LEIA_Res_data_03_Oct_2023.csv&quot;        
-## [7] &quot;Particle_data_03_Oct_2023.csv&quot;        
-## [8] &quot;VCA_data_03_Oct_2023.csv&quot;             
-## [9] &quot;VCA_LEIA_GabRat_data_03_Oct_2023.csv&quot;</code></pre>
+<pre><code>## [1] &quot;Cluster_data_03_Oct_2023.csv&quot;          &quot;Cluster_Particle_data_03_Oct_2023.csv&quot; &quot;GabRat_Res_analysis.csv&quot;              
+## [4] &quot;GabRat_Res_data_03_Oct_2023.csv&quot;       &quot;IndParticle_data_03_Oct_2023.csv&quot;      &quot;LEIA_Res_data_03_Oct_2023.csv&quot;        
+## [7] &quot;Particle_data_03_Oct_2023.csv&quot;         &quot;VCA_data_03_Oct_2023.csv&quot;              &quot;VCA_LEIA_GabRat_data_03_Oct_2023.csv&quot;</code></pre>
 </div>
 <div id="fast-import-for-large-data-sets-using-data.table-optional---advanced" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Fast import for large
@@ -1824,6 +1597,7 @@ data sets using data.table (optional - advanced)</h1>
 <em>data.table</em> package <span class="citation">(Dowle and Srinivasan
 2023)</span>.</p>
 <pre class="r"><code>library(data.table)</code></pre>
+<pre><code>## data.table 1.14.8 using 4 threads (see ?getDTthreads).  Latest news: r-datatable.com</code></pre>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="references" class="section level1 unnumbered">
