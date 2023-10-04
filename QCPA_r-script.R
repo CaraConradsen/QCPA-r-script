@@ -399,84 +399,151 @@ ColumnNames<-c("Species","Ind","Dist","ROI","BSA.BsL.Hrz","Lum.mean",
                "CAA.Scpl","Lum.CoV","BSA.BML","Col.mean","GabRat")
 
 # Subset data by column names
-V.L.GbRt_subset<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
+V.L.GbRt_sub_analysis<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
                                           %in% ColumnNames]
 
-dim(V.L.GbRt_subset)# 18 rows by 11 columns
-summary(V.L.GbRt_subset) # Initial summary of the data
+dim(V.L.GbRt_sub_analysis)# 18 rows by 11 columns
+summary(V.L.GbRt_sub_analysis) # Initial summary of the data
 
 # View the data frame
-View(V.L.GbRt_subset)
+View(V.L.GbRt_sub_analysis)
 
 # Replace infinite values with NA using sapply
-V.L.GbRt_subset[sapply(V.L.GbRt_subset, is.infinite)] <- NA
+V.L.GbRt_sub_analysis[sapply(V.L.GbRt_sub_analysis, is.infinite)] <- NA
 
-View(V.L.GbRt_subset)# Observe change the data frame
+View(V.L.GbRt_sub_analysis)# Observe change the data frame
 
 # Remove NA/NaNs
-V.L.GbRt_subset<-na.omit(V.L.GbRt_subset)
+V.L.GbRt_sub_analysis<-na.omit(V.L.GbRt_sub_analysis)
 
-View(V.L.GbRt_subset)# Observe change the data frame
+View(V.L.GbRt_sub_analysis)# Observe change the data frame
 
-dim(V.L.GbRt_subset)# 11 rows by 11 columns
+dim(V.L.GbRt_sub_analysis)# 11 rows by 11 columns
 
-summary(V.L.GbRt_subset)
-apply(V.L.GbRt_subset[,5:11], 2, var) # Determine the colour variable variances
+summary(V.L.GbRt_sub_analysis)# Inspect column distributions
+
+# Inspect the variance for each colour variable 
+apply(V.L.GbRt_sub_analysis[,5:11], 2, var) 
 
 
-## ----Normalising and standardising data---------------------------------------
+## ----Normalising data, fig.align='center', fig.height=7, fig.width=8, fig.cap='Figure 2. Histograms of seven colour variables.'----
+# Part A: 
+# Test for normality Shapiro-Wilk test
+lapply(V.L.GbRt_sub_analysis[,5:11], shapiro.test)
+
+# Part B: 
+# Visualise distribution of the data using histograms
+Colnames_subset<-colnames(V.L.GbRt_sub_analysis[,5:11])# Select only the colour variables
+
+# Set the plot dimensions to display plots as 3 rows by 3 columns
 par(mfrow=c(3,3))
-Colnames_subset<-colnames(V.L.GbRt_subset[,5:11])
+
+# Use a for loop to iterate over the column names
 for (i in Colnames_subset) {
-  hist(V.L.GbRt_subset[,i], breaks = 10, 
+  # Plot the histogram, using 10 bins, and the colour variable as the main title
+  hist(V.L.GbRt_sub_analysis[,i], breaks = 10, 
        main=i, xlab="")
 }
 
-# Test for normality
-lapply(V.L.GbRt_subset[,5:11], shapiro.test)
+
+## ----Pairs and correlation plot, warning=FALSE, fig.align='center', fig.height=7, fig.width=9, fig.cap="Figure 3. Paired scatter plots of seven colour variables. Lower off-diagonal are the paired scatterplots where coloured points represent regions of interest (animal+background is yellow, bacground is red and animal is blue). Upper off-diagonal represents Pearson's correlation between paired colur varaibles."----
+# Correlation panel
+panel.cor <- function(x, y){
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    
+    # Calculate Pearson's correlation
+    r <- round(cor(x, y, method = "pearson"), digits=2)
+    
+    # Save as text
+    txt <- paste0("R = ", r)
+    
+    # Plot the text
+    text(0.5, 0.5, txt, cex=1)
+}
+
+my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
+
+# Scatter plot panel
+panel.scat <- function(x, y){
+  # Specify scatter plot points to colour by ROI
+  points(x,y, col=my_cols[V.L.GbRt_sub_analysis$ROI],
+         cex=1.1, pch=19)
+}
+
+pairs(V.L.GbRt_sub_analysis[,5:11],
+      # Set title
+      main="Seven colour variables for two viewing distances",
+      
+      # Parse in the new panels
+      upper.panel = panel.cor,
+      lower.panel = panel.scat,
+      
+      # Add margin space and reduce gaps between plots
+      oma=c(5,5,6,18), gap=0)
+
+# Use the data to create a figure legend
+Colour_ID<-unique(data.frame(as.character(V.L.GbRt_sub_analysis$ROI),
+                             my_cols[V.L.GbRt_sub_analysis$ROI]))
+
+# Add figure legend to plot
+legend("right", Colour_ID[,1], xpd = TRUE,
+       pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
 
 
 
+## ----Boxplots, fig.align='center', fig.height=6.5, fig.width=9, fig.cap="Figure 4. Boxplots of the seven colour variables."----
+# Part A:
+# For the boxplot function, the data has to be in long format
+# We need the reshape package for this
+library(reshape2)
+
+# Here we 'melt' the data to long format
+V.L.GbRt_sub_analysis_lng<-melt(V.L.GbRt_sub_analysis,
+                                id.vars = c("Species", "Ind", "Dist", "ROI"))
+
+# Set the plot dimensions to display a single plot, correcting outer margins
+par(mfrow=c(1,1), oma=c(0,0,0,0))
+
+# Inspect boxplots for outliers
+boxplot(value~variable, pch=16, boxwex=0.5, xlab="Colour variable",
+        data= V.L.GbRt_sub_analysis_lng)
+
+
+## ----outliers-----------------------------------------------------------------
+# Calculate z-scores and look for outliers
+apply(V.L.GbRt_sub_analysis[,5:11],2, function(x)(x-mean(x))/sd(x))
+
+
+## ----Standardising data-------------------------------------------------------
 # Inspect scaled values and column means
-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+scale(V.L.GbRt_sub_analysis[,5:11], center = TRUE, scale = TRUE)
 
-# Update the V.L.GbRt_subset data frame with the standardised values 
-V.L.GbRt_subset[,5:11]<-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
+# Update the V.L.GbRt_sub_analysis data frame with the standardised values 
+V.L.GbRt_sub_analysis[,5:11]<-scale(V.L.GbRt_sub_analysis[,5:11], 
+                                    center = TRUE, scale = TRUE)
 
 # Check standardisation
-summary(V.L.GbRt_subset)# Mean values are zero
-apply(V.L.GbRt_subset[,5:11], 2, var) # Confirm variances are 1
+summary(V.L.GbRt_sub_analysis)# Mean values are zero
+apply(V.L.GbRt_sub_analysis[,5:11], 2, var) # Confirm variances are 1
 
-# # Correlation panel
-# panel.cor <- function(x, y){
-#     usr <- par("usr"); on.exit(par(usr))
-#     par(usr = c(0, 1, 0, 1))
-#     r <- round(cor(x, y), digits=2)
-#     txt <- paste0("R = ", r)
-#     text(0.5, 0.5, txt, cex=1.5)
-# }
-# 
-# my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
-# # Scatterplot panel
-# panel.scat <- function(x, y){
-# points(x,y, col=my_cols[subset$ROI],
-#     cex=1.1, pch=19)
-# }
-# 
-# par(oma=c(0,0,0,10), xpd=TRUE)
-# pairs(subset[,5:10],
-#       main="Six colour variables for two viewing distances",
-#       upper.panel = panel.cor,
-#       lower.panel = panel.scat,  gap=0)
-# 
-# Colour_ID<-unique(data.frame(as.character(subset$ROI),my_cols[subset$ROI]))
-# legend(0.7, 0.8,Colour_ID[,1], pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
-# 
-# library(corrplot)
-# corrplot(cor(subset[,5:10]))
-# 
-# dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
-# summary(VCA_LEIA_GabRat_analysis)
+
+## ----Mahalanobis--------------------------------------------------------------
+# Using R's Mahalanobis function, add a new column to your data
+V.L.GbRt_sub_analysis$mahalnobis <-mahalanobis(V.L.GbRt_sub_analysis[,5:11],
+                                               
+                                               # Get a vector of column means
+                                               colMeans(V.L.GbRt_sub_analysis[,5:11]), 
+                                               
+                                               # Get a covaraince matrix
+                                               cov(V.L.GbRt_sub_analysis[,5:11]))
+
+# Calcualte p-values using k-1 df = 6
+V.L.GbRt_sub_analysis$pvalue <- pchisq(V.L.GbRt_sub_analysis$mahalnobis, 
+                                       df=6, lower.tail=FALSE)
+
+# Inspect Mahalnobis distances and p-values
+V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c("mahalnobis","pvalue")]
 
 
 ## ----Output files-------------------------------------------------------------
@@ -511,7 +578,30 @@ for (i in savefile_list){
 list.files(Out_path)
 
 
-## ----data.table---------------------------------------------------------------
+## ----data.table, warning=FALSE------------------------------------------------
 library(data.table)
 
+# Convert Animal_Info_ROI into data.table format
+Animal_Info_ROI_DT<-setDT(Animal_Info_ROI)
+
+# From Animal_Info_ROI we can paste the column information together
+# and then read in data row by row, specifying 'by=1:NROW(Animal_Info_ROI)'
+LEIA_analysis_DT<-Animal_Info_ROI[, fread(paste(loc,Species,Ind,Dist,"LEIA", ROI, 
+                         "_Local Edge Intensity Analysis.csv", sep="/")), 
+                 by=1:NROW(Animal_Info_ROI)]
+
+# Remove unwanted columns, and automatically assign using ':='
+LEIA_analysis_DT[, c("NROW","V1","Image", "Transform"):=NULL]
+
+# Add the Animal_Info_ROI information
+LEIA_analysis_DT<-cbind(Animal_Info_ROI,LEIA_analysis_DT)
+
+# Inspect the data.table
+head(LEIA_analysis_DT)
+
+# Create save filename
+fname=paste0(Out_path,"/", gsub("_analysis", "", "LEIA_analysis_DT"), 
+             "_data",format(Sys.time(), "_%d_%b_%Y"),".csv")
+# Save output
+fwrite(LEIA_analysis_DT, file = fname, row.names=FALSE)
 

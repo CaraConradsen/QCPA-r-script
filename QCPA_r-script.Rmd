@@ -19,7 +19,6 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 #rmarkdown::render("QCPA_r-script.Rmd", output_format = "all")
 ```
-\newpage
 
 # Setup 
 
@@ -199,9 +198,10 @@ ROI# In the QCPA batch script, we have investigated three ROIs
 ```
 
 
-
 ## Merge the list of ROIs names with the animal ID dataframe
 
+   
+   
 ```{r merge ROI}
 # Expand each unique row of the Animal_Info data frame to included a unique ROI value
 Animal_Info_ROI<-merge(Animal_Info, ROI)
@@ -518,7 +518,7 @@ dim(GabRat_Res_analysis)# 18 rows by 5 columns
 GabRat_Res_analysis[1:2,]# Observe the first two rows of data
 ```
 
-# Combing data sets and data preparation
+# Combine data sets and data preparation
 
 ## Merging data sets
 
@@ -560,11 +560,11 @@ dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
 
 ## Data cleaning
 
-In this tutorial, we are using a minimal working example, where the data used does not have proper replication (i.e., we have 3 individuals in total). For those considering using linear mixed effects models (LMMs) in downstream analyses, we recommend reading @Harrison2018. Please consider the number of data points ($n$) to parameters ($k$); where ideally $n/k > 3$ [but see discussion in @Harrison2018]. 
+In this tutorial, we are using a minimal working example, where the data used does not have proper replication (i.e., we have 3 individuals in total). For those considering using linear mixed effects models (LMMs) in R for downstream analyses, we recommend reading @Harrison2018. Please consider the number of data points ($n$) to parameters ($k$); where ideally $n/k > 3$ [but see discussion in @Harrison2018]. 
 
-### Omitting rows based on values 
+### Omit rows based on values 
 
-To demonstrate some data cleaning methods, we have created a smaller data frame *V.L.GbRt_subset*, subset from *VCA_LEIA_GabRat_analysis* by selecting the columns names. In this data set, there are both *NaN* (not a number) and *Inf* (infinite) entries. Using *summary*, by retaining *NaN* and *Infs*, functions like *mean* and *maximum* can not calculated values correctly. To remove *Inf* values, we first first convert them to *NA*s. To do so, we can use the *is.infinite* function to detect *Inf* values, however this only works on vectors (i.e., data frame columns), so we can loop over our data frame using a variant of *lapply*, the *sapply* function which returns a vector (not list). 
+To demonstrate some data cleaning methods, we have created a smaller data frame *V.L.GbRt_sub_analysis*, subset from *VCA_LEIA_GabRat_analysis* by selecting the columns names. In this data set, there are both *NaN* (not a number) and *Inf* (infinite) entries. Using *summary* we can see that by retaining *NaN* and *Infs*, functions like *mean* and *maximum* can not calculated values correctly. To remove *Inf* values, we first convert them to *NA*s. To do so, we can use the *is.infinite* function to detect *Inf* values, however this only works on vectors (i.e., data frame columns), so we can loop over our data frame using a variant of *lapply*, the *sapply* function which returns a vector (not list). 
 
 
 ```{r Removing NAs}
@@ -573,92 +573,171 @@ ColumnNames<-c("Species","Ind","Dist","ROI","BSA.BsL.Hrz","Lum.mean",
                "CAA.Scpl","Lum.CoV","BSA.BML","Col.mean","GabRat")
 
 # Subset data by column names
-V.L.GbRt_subset<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
+V.L.GbRt_sub_analysis<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
                                           %in% ColumnNames]
 
-dim(V.L.GbRt_subset)# 18 rows by 11 columns
-summary(V.L.GbRt_subset) # Initial summary of the data
+dim(V.L.GbRt_sub_analysis)# 18 rows by 11 columns
+summary(V.L.GbRt_sub_analysis) # Initial summary of the data
 
 # View the data frame
-View(V.L.GbRt_subset)
+View(V.L.GbRt_sub_analysis)
 
 # Replace infinite values with NA using sapply
-V.L.GbRt_subset[sapply(V.L.GbRt_subset, is.infinite)] <- NA
+V.L.GbRt_sub_analysis[sapply(V.L.GbRt_sub_analysis, is.infinite)] <- NA
 
-View(V.L.GbRt_subset)# Observe change the data frame
+View(V.L.GbRt_sub_analysis)# Observe change the data frame
 
 # Remove NA/NaNs
-V.L.GbRt_subset<-na.omit(V.L.GbRt_subset)
+V.L.GbRt_sub_analysis<-na.omit(V.L.GbRt_sub_analysis)
 
-View(V.L.GbRt_subset)# Observe change the data frame
+View(V.L.GbRt_sub_analysis)# Observe change the data frame
 
-dim(V.L.GbRt_subset)# 11 rows by 11 columns
+dim(V.L.GbRt_sub_analysis)# 11 rows by 11 columns
 
-summary(V.L.GbRt_subset)
-apply(V.L.GbRt_subset[,5:11], 2, var) # Determine the colour variable variances
+summary(V.L.GbRt_sub_analysis)# Inspect column distributions
+
+# Inspect the variance for each colour variable 
+apply(V.L.GbRt_sub_analysis[,5:11], 2, var) 
 ```
 
+### Testing for normality and univaraite outliers
 
-The p-value of the Shapiro-Wilk test for Height is less than 0.05, so we reject the null hypothesis and conclude that Height is not normally distributed. Therefore we should use Spearman’s test for this analysis.
+Again, with our minimal example, our estimates do not deviate from normality but here we have provided code to test this. Using a combination of the Shapiro-Wilk test for normality (Part A) and histograms (Part B) we can determine if our data is normal. For the Shapiro-Wilk test, the null hypothesis is that data is normal (i.e., p-value less than 0.05 are not normally distributed). 
 
-When implementing multivariate models, it is best to standardize data to facilitate model convergence. Here we variance standardised (mean = 0, standard
-deviation = 1) each colour pattern variable across both viewing distances and ROIs using the *scale* function. 
+```{r Normalising data, fig.align='center', fig.height=7, fig.width=8, fig.cap='Figure 2. Histograms of seven colour variables.'}
+# Part A: 
+# Test for normality Shapiro-Wilk test
+lapply(V.L.GbRt_sub_analysis[,5:11], shapiro.test)
 
-```{r Normalising and standardising data}
+# Part B: 
+# Visualise distribution of the data using histograms
+Colnames_subset<-colnames(V.L.GbRt_sub_analysis[,5:11])# Select only the colour variables
+
+# Set the plot dimensions to display plots as 3 rows by 3 columns
 par(mfrow=c(3,3))
-Colnames_subset<-colnames(V.L.GbRt_subset[,5:11])
+
+# Use a for loop to iterate over the column names
 for (i in Colnames_subset) {
-  hist(V.L.GbRt_subset[,i], breaks = 10, 
+  # Plot the histogram, using 10 bins, and the colour variable as the main title
+  hist(V.L.GbRt_sub_analysis[,i], breaks = 10, 
        main=i, xlab="")
 }
-
-# Test for normality
-lapply(V.L.GbRt_subset[,5:11], shapiro.test)
-
-
-
-# Inspect scaled values and column means
-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
-
-# Update the V.L.GbRt_subset data frame with the standardised values 
-V.L.GbRt_subset[,5:11]<-scale(V.L.GbRt_subset[,5:11], center = TRUE, scale = TRUE)
-
-# Check standardisation
-summary(V.L.GbRt_subset)# Mean values are zero
-apply(V.L.GbRt_subset[,5:11], 2, var) # Confirm variances are 1
-
-# # Correlation panel
-# panel.cor <- function(x, y){
-#     usr <- par("usr"); on.exit(par(usr))
-#     par(usr = c(0, 1, 0, 1))
-#     r <- round(cor(x, y), digits=2)
-#     txt <- paste0("R = ", r)
-#     text(0.5, 0.5, txt, cex=1.5)
-# }
-# 
-# my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
-# # Scatterplot panel
-# panel.scat <- function(x, y){
-# points(x,y, col=my_cols[subset$ROI],
-#     cex=1.1, pch=19)
-# }
-# 
-# par(oma=c(0,0,0,10), xpd=TRUE)
-# pairs(subset[,5:10],
-#       main="Six colour variables for two viewing distances",
-#       upper.panel = panel.cor,
-#       lower.panel = panel.scat,  gap=0)
-# 
-# Colour_ID<-unique(data.frame(as.character(subset$ROI),my_cols[subset$ROI]))
-# legend(0.7, 0.8,Colour_ID[,1], pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
-# 
-# library(corrplot)
-# corrplot(cor(subset[,5:10]))
-# 
-# dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
-# summary(VCA_LEIA_GabRat_analysis)
 ```
 
+To determine the degree of association between our colour variables, we can use both correlations and scatter plots. As our data is normal distributed we can use Pearson's correlation. 
+
+```{r Pairs and correlation plot, warning=FALSE, fig.align='center', fig.height=7, fig.width=9, fig.cap="Figure 3. Paired scatter plots of seven colour variables. Lower off-diagonal are the paired scatterplots where coloured points represent regions of interest (animal+background is yellow, bacground is red and animal is blue). Upper off-diagonal represents Pearson's correlation between paired colur varaibles."}
+# Correlation panel
+panel.cor <- function(x, y){
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    
+    # Calculate Pearson's correlation
+    r <- round(cor(x, y, method = "pearson"), digits=2)
+    
+    # Save as text
+    txt <- paste0("R = ", r)
+    
+    # Plot the text
+    text(0.5, 0.5, txt, cex=1)
+}
+
+my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
+
+# Scatter plot panel
+panel.scat <- function(x, y){
+  # Specify scatter plot points to colour by ROI
+  points(x,y, col=my_cols[V.L.GbRt_sub_analysis$ROI],
+         cex=1.1, pch=19)
+}
+
+pairs(V.L.GbRt_sub_analysis[,5:11],
+      # Set title
+      main="Seven colour variables for two viewing distances",
+      
+      # Parse in the new panels
+      upper.panel = panel.cor,
+      lower.panel = panel.scat,
+      
+      # Add margin space and reduce gaps between plots
+      oma=c(5,5,6,18), gap=0)
+
+# Use the data to create a figure legend
+Colour_ID<-unique(data.frame(as.character(V.L.GbRt_sub_analysis$ROI),
+                             my_cols[V.L.GbRt_sub_analysis$ROI]))
+
+# Add figure legend to plot
+legend("right", Colour_ID[,1], xpd = TRUE,
+       pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
+
+```
+
+From the scatter plots in Figure 3, there doesn't appear to be any outliers in each of the colour variables, however we can confirm this using a boxplot (Part A) and then calculate the z-scores for each estimate (Part B) and look for outliers at greater than 3 standard deviations. 
+
+```{r Boxplots, fig.align='center', fig.height=6.5, fig.width=9, fig.cap="Figure 4. Boxplots of the seven colour variables."}
+# Part A:
+# For the boxplot function, the data has to be in long format
+# We need the reshape package for this
+library(reshape2)
+
+# Here we 'melt' the data to long format
+V.L.GbRt_sub_analysis_lng<-melt(V.L.GbRt_sub_analysis,
+                                id.vars = c("Species", "Ind", "Dist", "ROI"))
+
+# Set the plot dimensions to display a single plot, correcting outer margins
+par(mfrow=c(1,1), oma=c(0,0,0,0))
+
+# Inspect boxplots for outliers
+boxplot(value~variable, pch=16, boxwex=0.5, xlab="Colour variable",
+        data= V.L.GbRt_sub_analysis_lng)
+```
+
+```{r outliers}
+# Calculate z-scores and look for outliers
+apply(V.L.GbRt_sub_analysis[,5:11],2, function(x)(x-mean(x))/sd(x))
+```
+
+Although in Figure 4, there are two points in Lum.mean that exceed 1.5 times the interquartile range (the outer whiskers of the boxplot), none of the points exceed 3 standard deviations. 
+
+
+### Standardising data
+
+When implementing multivariate models, it is best to standardize data to facilitate model convergence. Here we variance standardised (mean = 0, standard deviation = 1) each colour pattern variable across both viewing distances and ROIs using the *scale* function. 
+
+```{r Standardising data}
+# Inspect scaled values and column means
+scale(V.L.GbRt_sub_analysis[,5:11], center = TRUE, scale = TRUE)
+
+# Update the V.L.GbRt_sub_analysis data frame with the standardised values 
+V.L.GbRt_sub_analysis[,5:11]<-scale(V.L.GbRt_sub_analysis[,5:11], 
+                                    center = TRUE, scale = TRUE)
+
+# Check standardisation
+summary(V.L.GbRt_sub_analysis)# Mean values are zero
+apply(V.L.GbRt_sub_analysis[,5:11], 2, var) # Confirm variances are 1
+```
+
+### Multivaraite outliers
+
+For users who will be investigating colours multivariately, we would recommend using Mahalanobis distance to determine if there are any outliers in multivariate space. To determine p-values for Mahalanobis distance, you can use the Chi-Square statistic with k-1 degrees of freedom, where k is the number of variables (here k = 7), and p-values less than 0.05 outliers.
+
+```{r Mahalanobis}
+# Using R's Mahalanobis function, add a new column to your data
+V.L.GbRt_sub_analysis$mahalnobis <-mahalanobis(V.L.GbRt_sub_analysis[,5:11],
+                                               
+                                               # Get a vector of column means
+                                               colMeans(V.L.GbRt_sub_analysis[,5:11]), 
+                                               
+                                               # Get a covaraince matrix
+                                               cov(V.L.GbRt_sub_analysis[,5:11]))
+
+# Calcualte p-values using k-1 df = 6
+V.L.GbRt_sub_analysis$pvalue <- pchisq(V.L.GbRt_sub_analysis$mahalnobis, 
+                                       df=6, lower.tail=FALSE)
+
+# Inspect Mahalnobis distances and p-values
+V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c("mahalnobis","pvalue")]
+```
 
 
 # Export files
@@ -701,11 +780,39 @@ list.files(Out_path)
 
 # Fast import for large data sets using data.table (optional - advanced)
 
-For very large data sets we would recommend importing data using the *data.table* package [@datatable].  
+For very large data sets we would recommend importing data using the *data.table* package [@datatable]. The *data.table* format can be used in parallel and is optimised for fast .csv reading/writing. For further information and cheatsheets, visit the *data.table* GitHub page (https://github.com/Rdatatable/data.table). The *data.table* has the following structure:
 
-```{r data.table}
+    FROM[WHERE, SELECT, GROUP BY]
+    DT  [i,     j,      by]
+
+Here we will provide a quick demonstration by importing the LEIA QCPA batch script output. First, we convert our *Animal_Info_ROI* into *data.table* format using the function *setDT*. Then we will input our data using the dedicated *data.table* read function *fread*. Finally, we can output large data.tables fast using the *fwrite* function. 
+
+```{r data.table, warning=FALSE}
 library(data.table)
 
+# Convert Animal_Info_ROI into data.table format
+Animal_Info_ROI_DT<-setDT(Animal_Info_ROI)
+
+# From Animal_Info_ROI we can paste the column information together
+# and then read in data row by row, specifying 'by=1:NROW(Animal_Info_ROI)'
+LEIA_analysis_DT<-Animal_Info_ROI[, fread(paste(loc,Species,Ind,Dist,"LEIA", ROI, 
+                         "_Local Edge Intensity Analysis.csv", sep="/")), 
+                 by=1:NROW(Animal_Info_ROI)]
+
+# Remove unwanted columns, and automatically assign using ':='
+LEIA_analysis_DT[, c("NROW","V1","Image", "Transform"):=NULL]
+
+# Add the Animal_Info_ROI information
+LEIA_analysis_DT<-cbind(Animal_Info_ROI,LEIA_analysis_DT)
+
+# Inspect the data.table
+head(LEIA_analysis_DT)
+
+# Create save filename
+fname=paste0(Out_path,"/", gsub("_analysis", "", "LEIA_analysis_DT"), 
+             "_data",format(Sys.time(), "_%d_%b_%Y"),".csv")
+# Save output
+fwrite(LEIA_analysis_DT, file = fname, row.names=FALSE)
 ```
 
 
