@@ -1,6 +1,6 @@
 ---
 title: 'Quantitative Colour Pattern Analysis (QCPA)'
-subtitle: "Post-batch processing and analysis in R"
+subtitle: "Example post-batch processing and analysis in R"
 output:
   pdf_document:
     number_sections: yes
@@ -21,13 +21,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Setup 
 
-The following R script uses the trichromatic example without UV (sea slugs seen by a triggerfish, *Rhinecanthus aculeatus*), but can similarly be applied to the tetrachromatic example with UV (spiders seen by a bluetit, *Parus major*). To make the worked example readily accessible to users, we have prioritised using base R functions. As we will be working with primarily character-type data (i.e., species names, region of interest descriptors), we will introduce the user to many base functions that are for list-type data structures (e.g., `lapply()`). For clarity, we recommend that you, as the user, need to be comfortable with the different data types (e.g., numerical, character, factors) and data structures such as lists (collection of mixed data types) and data frames (special type of list). We also provide different methods to extract data, ideally introducing different coding methods and providing ways to increase the efficiency of data wrangling.  
+The following R script uses the trichromatic example without UV (sea slugs seen by a triggerfish, *Rhinecanthus aculeatus*), but can similarly be applied to the tetrachromatic example with UV (spiders seen by a bluetit, *Parus major*). To make the worked examples readily accessible to users, we have prioritised using base R functions. As we will be working with primarily character-type data (i.e., species names, region of interest descriptors), we will introduce the user to many base functions that are for list-type data structures (e.g., `lapply()`). For clarity, we recommend that you, as the user, need to be comfortable with the different data types (e.g., numerical, character, factors) and data structures such as lists (collection of mixed data types) and data frames (special type of list). We also provide different methods to extract data, ideally introducing different coding methods and providing ways to increase the efficiency of data wrangling.  
 
 For the following R script to run, please ensure that you have implemented the QPCA batch script methods. In the following folder 
 
 `example_data/eg1_trichromat_nouv/test_data`
 
-there should be two subfolders for the two species, *Aphelodoris varia* and *Aplysia sp*. Within these subdirectories, please confirm that data has been generated. As you proceed through the next few steps, we provide code that checks the data totality. If you are uncertain that you uniformly named files, we have additionally provided script to check region of interest names (see section 2.3).  
+there should be two subfolders for the two species, *Aphelodoris varia* and *Aplysia sp*. Within these subdirectories, please confirm that data has been generated. As you proceed through the next few steps, we provide code that checks the data completeness. If you are uncertain that you uniformly named files, we have additionally provided script to check region of interest names (see section 2.3).  
 
 # Create the foundational dataset identifying unique animal IDs and regions of interest for multiple viewing distances
 
@@ -45,7 +45,7 @@ Extrct_Fold <- "example_data/eg1_trichromat_nouv/test_data"
 # Paste the two locations together to specify your global data location
 loc <- paste(pth, Extrct_Fold, sep = "/")
 
-# Detect species -these could also be locations depending on your data set.
+# Detect species. These could also be locations depending on your data set
 Species <- list.files(path = loc)
 
 Species # Should contain species folders and a log file with QCPA processing details
@@ -157,6 +157,7 @@ nocite: |
 ---
 
 \newpage
+
 ```{r kable table exn out, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
 library("kableExtra")
 exns <- sort(unique(gsub("^[^_]+", "", list.files(
@@ -184,7 +185,7 @@ knitr::kable(exns,
 )
 ```
 
-We can then extract any particular image analysis .csv data files names using the `list.files()` function specifying the file name as the pattern to search for. In the following code, we have used '_*Summary Results.csv*' as our string pattern. Once we have all the file names with '_*Summary Results.csv*', we remove this phrase using `gsub()`.      
+We can then extract any particular image analysis `.csv` data files names using the `list.files()` function specifying the file name as the pattern to search for. In the following code, we have used '_Summary Results.csv' as our string pattern. Once we have all the file names with '_Summary Results.csv', we remove this phrase using `gsub()`.      
 
 ```{r ROI}
 # Here, we create a character vector determining whether animal,
@@ -360,7 +361,7 @@ We can then import our data using our function and do some data cleaning by remo
 # Read in and assign analysis
 VCA_analysis <- readQCPA(Animal_Info_ROI, filetype = "VCA")
 
-# head(VCA_analysis)# Inspect data
+# head(VCA_analysis) # Inspect data
 
 # Subset data excluding the column Image and X
 VCA_analysis <- VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
@@ -373,7 +374,7 @@ VCA_analysis[1:2, ] # Observe the first two rows of data
 # Read in and assign analysis
 Particle_analysis <- readQCPA(Animal_Info_ROI, filetype = "PartAn")
 
-# head(Particle_analysis)# Inspect data
+# head(Particle_analysis) # Inspect data
 
 dim(Particle_analysis) # 52 rows, by 20 columns
 
@@ -384,12 +385,11 @@ colnames(Particle_analysis)[5] <- "ClusterID"
 
 Particle_analysis[1:2, ] # Observe the first two rows of data
 
-
 # Cluster Results:
 # Read in and assign analysis
 Cluster_analysis <- readQCPA(Animal_Info_ROI, filetype = "Clust")
 
-# head(Cluster_Analysis)# inspect data
+# head(Cluster_Analysis) # Inspect data
 
 # Subset data excluding the column Image and X
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
@@ -402,7 +402,7 @@ Cluster_analysis[1:2, ] # Observe the first two rows of data
 # Read in and assign analysis
 IndParticle_analysis <- readQCPA(Animal_Info_ROI, filetype = "IndParticle")
 
-# head(Cluster_Analysis)# inspect data
+# head(Cluster_Analysis) # Inspect data
 
 # Subset data excluding the column X.1
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
@@ -417,46 +417,47 @@ IndParticle_analysis[1:2, ] # Observe the first two rows of data
 Here, we implement a function similar to section 3.1. However, because QCPA batch script exports LEIA analysis into a subdirectory, we have to add two additional folders to our location, `LEIA` and the ROI as a folder. For the LEIA folder, as we iterate over each row from `Animal_Info_ROI`, we convert the row into a character vector and add 'LEIA' as an element. We include a backslash to treat the ROI as a folder before specifying the image analysis file extension, `_Local Edge Intensity Analysis.csv` (Table 1).
 
 ```{r LEIA CSV Data}
+# Define a function to generate file paths, read data, and merge animal information
+read_LEIA <- function(index, animal_info, base_location) {
+  # Extract row as a character vector
+  row_values <- as.character(unlist(animal_info[index, ]))
+  
+  # Construct the file path
+  file_path <- file.path(
+    base_location, 
+    row_values[1], 
+    row_values[2], 
+    row_values[3], 
+    "LEIA", 
+    row_values[4],
+    "_Local Edge Intensity Analysis.csv"
+  )
+  
+  # Read data
+  data <- read.csv(file_path)
+  
+  # Add animal information to the data
+  data <- merge(animal_info[index, ], data)
+  
+  return(data)
+}
+
+# Read LEIA data using lapply
 LEIA_Res_list <- lapply(
-  1:nrow(Animal_Info_ROI), # For each row in Animal_Info_ROI
-  function(x) { # Start of our nested function
-
-    # Convert row into a character vector
-    tmpLoc <- as.character(unlist(Animal_Info_ROI[x, ]))
-
-    # Add and order the new sub folder LEIA before ROI
-    tmpLoc <- c(tmpLoc, "LEIA")[c(1:3, 5, 4)]
-
-    # Paste tmploc into a directory character
-    tmpLoc <- paste(tmpLoc, collapse = "/")
-
-    # Create a directory string
-    tmpLoc <- paste0(
-      paste(loc, tmpLoc, sep = "/"),
-      "/_Local Edge Intensity Analysis.csv"
-    )
-
-    # Read in the data using the newly specified location
-    data <- read.csv(tmpLoc)
-
-    # Add the specific animal information to the data
-    data <- merge(Animal_Info_ROI[x, ], data)
-
-    data # returns data
-  }
+  seq_len(nrow(Animal_Info_ROI)),
+  function(x) read_LEIA(x, Animal_Info_ROI, loc)
 )
 
-# We then collapse the LEIA_Res_list list into a data frame by
-# calling rbind in the function do.call
+# Combine list into a data frame
 LEIA_Res_analysis <- do.call(rbind, LEIA_Res_list)
 
-# Subset data excluding the column Image and X
-LEIA_Res_analysis <- LEIA_Res_analysis[, !colnames(LEIA_Res_analysis) %in% c("X", "Image")]
+# Subset data to exclude specific columns
+LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) %in% c("X", "Image"))]
 
-# Check the imported data
-dim(LEIA_Res_analysis) # 18 rows by 37 columns
+# Check the resulting data
+dim(LEIA_Res_analysis) # Print dimensions of the data
+head(LEIA_Res_analysis, 2) # Print the first two rows of data
 
-LEIA_Res_analysis[1:2, ] # Observe the first two rows of data
 ```
 
 # Get a .csv list from GabRat output
@@ -546,7 +547,6 @@ dim(Cluster_Particle_analysis) # 52 rows and 36 columns
 
 Cluster_Particle_analysis[1:2, ] # Inspect data
 ```
-
 
 ### VCA,BSA,CAA data, LEIA output and GabRat analyses 
 
@@ -769,10 +769,9 @@ V.L.GbRt_sub_analysis$pvalue <- pchisq(V.L.GbRt_sub_analysis$mahalnobis,
 V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c("mahalnobis", "pvalue")]
 ```
 
-
 # Export files
 
-Depending on what image analysis sets you are using, we have provided multiple ways to save the image analysis data files as csvs in the folder 'Output'. First, we use `dir.create()` to create the folder 'Output' in the Test Data folder, and save this new folder location as `Out_path`. To save a single file, you can use `write.csv()`, where we have used the argument `row.names = FALSE` to make sure that the row numbers in the dataframe aren't included in the csv file. 
+Depending on what image analysis sets you are using, we have provided multiple ways to save the image analysis data files as csvs in the folder 'Output'. First, we use `dir.create()` to create the folder 'Output' in the `test_data` folder, and save this new folder location as `Out_path`. To save a single file, you can use `write.csv()`, where we have used the argument `row.names = FALSE` to make sure that the row numbers in the dataframe aren't included in the csv file. 
 
 To save mutliple files, we utilise the fact that our naming convention in this R tutorial specifies image analysis data files with `_analysis`. Using the `ls()` function with the pattern argument set to `_analysis`, we can create a list of all our image analysis dataframes. Then, using a for loop, we iterate over each dataframe, rename it using the current date, and then output the csv file. Finally, we use `list.files()` to check that the files have been created. 
 

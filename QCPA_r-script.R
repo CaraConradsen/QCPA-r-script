@@ -8,7 +8,7 @@ Extrct_Fold <- "example_data/eg1_trichromat_nouv/test_data"
 # Paste the two locations together to specify your global data location
 loc <- paste(pth, Extrct_Fold, sep = "/")
 
-# Detect species -these could also be locations depending on your data set.
+# Detect species. These could also be locations depending on your data set
 Species <- list.files(path = loc)
 
 Species # Should contain species folders and a log file with QCPA processing details
@@ -221,7 +221,7 @@ readQCPA(Animal_Info_ROI) # We include only the animal id data set
 # Read in and assign analysis
 VCA_analysis <- readQCPA(Animal_Info_ROI, filetype = "VCA")
 
-# head(VCA_analysis)# Inspect data
+# head(VCA_analysis) # Inspect data
 
 # Subset data excluding the column Image and X
 VCA_analysis <- VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
@@ -234,7 +234,7 @@ VCA_analysis[1:2, ] # Observe the first two rows of data
 # Read in and assign analysis
 Particle_analysis <- readQCPA(Animal_Info_ROI, filetype = "PartAn")
 
-# head(Particle_analysis)# Inspect data
+# head(Particle_analysis) # Inspect data
 
 dim(Particle_analysis) # 52 rows, by 20 columns
 
@@ -245,12 +245,11 @@ colnames(Particle_analysis)[5] <- "ClusterID"
 
 Particle_analysis[1:2, ] # Observe the first two rows of data
 
-
 # Cluster Results:
 # Read in and assign analysis
 Cluster_analysis <- readQCPA(Animal_Info_ROI, filetype = "Clust")
 
-# head(Cluster_Analysis)# inspect data
+# head(Cluster_Analysis) # Inspect data
 
 # Subset data excluding the column Image and X
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
@@ -263,7 +262,7 @@ Cluster_analysis[1:2, ] # Observe the first two rows of data
 # Read in and assign analysis
 IndParticle_analysis <- readQCPA(Animal_Info_ROI, filetype = "IndParticle")
 
-# head(Cluster_Analysis)# inspect data
+# head(Cluster_Analysis) # Inspect data
 
 # Subset data excluding the column X.1
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
@@ -274,46 +273,47 @@ IndParticle_analysis[1:2, ] # Observe the first two rows of data
 
 
 ## ----LEIA CSV Data------------------------------------------------------------
+# Define a function to generate file paths, read data, and merge animal information
+read_LEIA <- function(index, animal_info, base_location) {
+  # Extract row as a character vector
+  row_values <- as.character(unlist(animal_info[index, ]))
+  
+  # Construct the file path
+  file_path <- file.path(
+    base_location, 
+    row_values[1], 
+    row_values[2], 
+    row_values[3], 
+    "LEIA", 
+    row_values[4],
+    "_Local Edge Intensity Analysis.csv"
+  )
+  
+  # Read data
+  data <- read.csv(file_path)
+  
+  # Add animal information to the data
+  data <- merge(animal_info[index, ], data)
+  
+  return(data)
+}
+
+# Read LEIA data using lapply
 LEIA_Res_list <- lapply(
-  1:nrow(Animal_Info_ROI), # For each row in Animal_Info_ROI
-  function(x) { # Start of our nested function
-
-    # Convert row into a character vector
-    tmpLoc <- as.character(unlist(Animal_Info_ROI[x, ]))
-
-    # Add and order the new sub folder LEIA before ROI
-    tmpLoc <- c(tmpLoc, "LEIA")[c(1:3, 5, 4)]
-
-    # Paste tmploc into a directory character
-    tmpLoc <- paste(tmpLoc, collapse = "/")
-
-    # Create a directory string
-    tmpLoc <- paste0(
-      paste(loc, tmpLoc, sep = "/"),
-      "/_Local Edge Intensity Analysis.csv"
-    )
-
-    # Read in the data using the newly specified location
-    data <- read.csv(tmpLoc)
-
-    # Add the specific animal information to the data
-    data <- merge(Animal_Info_ROI[x, ], data)
-
-    data # returns data
-  }
+  seq_len(nrow(Animal_Info_ROI)),
+  function(x) read_LEIA(x, Animal_Info_ROI, loc)
 )
 
-# We then collapse the LEIA_Res_list list into a data frame by
-# calling rbind in the function do.call
+# Combine list into a data frame
 LEIA_Res_analysis <- do.call(rbind, LEIA_Res_list)
 
-# Subset data excluding the column Image and X
-LEIA_Res_analysis <- LEIA_Res_analysis[, !colnames(LEIA_Res_analysis) %in% c("X", "Image")]
+# Subset data to exclude specific columns
+LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) %in% c("X", "Image"))]
 
-# Check the imported data
-dim(LEIA_Res_analysis) # 18 rows by 37 columns
+# Check the resulting data
+dim(LEIA_Res_analysis) # Print dimensions of the data
+head(LEIA_Res_analysis, 2) # Print the first two rows of data
 
-LEIA_Res_analysis[1:2, ] # Observe the first two rows of data
 
 
 ## ----GabRat CSV Data----------------------------------------------------------
