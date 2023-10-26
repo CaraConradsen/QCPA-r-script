@@ -1,16 +1,15 @@
 ---
-title: "Quantitative Colour Pattern Analysis (QCPA): R script for post batch processing"
+title: 'Quantitative Colour Pattern Analysis (QCPA)'
+subtitle: "Post-batch processing and analysis in R"
 output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
   html_document:
     css: styles.css
     number_sections: yes
-    toc: true
-  word_document:
-    reference_docx: QCPA_r-script-doc-styles.docx
-    number_sections: no
-    toc: true
-    highlight: "tango"
-toc-title: "Contents"
+    toc: yes
+toc-title: Contents
 bibliography: QCPA_r_bib.bib
 editor_options:
   chunk_output_type: console
@@ -298,8 +297,6 @@ knitr::kable(ftyp,
 )
 ```
 
-\newline
-&nbsp;
 
 ```{r readQCPA function}
 readQCPA <- function(Ani_ID_dat, filetype = "NA", path = loc) {
