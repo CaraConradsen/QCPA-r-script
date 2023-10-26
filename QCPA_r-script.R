@@ -1,9 +1,9 @@
 ## ----Animal IDs---------------------------------------------------------------
-# Get directory; assumes the R script is in the parent folder of Worked example data
+# Get directory; assumes the R script is in the parent folder of example_data
 pth <- getwd()
 
 # Set sub folder name containing your data
-Extrct_Fold <- "Worked example data/Example1_tri-chromat_no_UV/Test Data"
+Extrct_Fold <- "example_data/eg1_trichromat_nouv/test_data"
 
 # Paste the two locations together to specify your global data location
 loc <- paste(pth, Extrct_Fold, sep = "/")
@@ -14,7 +14,7 @@ Species <- list.files(path = loc)
 Species # Should contain species folders and a log file with QCPA processing details
 
 # Here, we use the "Ap" pattern in both species names to subset the Species list
-Species <- Species[grepl("Ap", Species)] # Removes the log file from vector
+Species <- Species[grepl("ap", Species)] # Removes the log file from vector
 
 # Note: For multiple different species patterns, can search using the or condition '|'
 # e.g., Species<-Species[grepl("A|B", Species)], returns species with pattern 'A' or 'B'
@@ -592,7 +592,7 @@ write.csv(GabRat_Res_analysis,
   file = paste(c(Out_path, "GabRat_Res_analysis.csv"),
     collapse = "/"
   )
-) # Save to the folder Output in Test Data
+) # Save to the folder Output in test_data
 
 # For multiple files:
 savefile_list <- ls(pattern = "analysis") # Save all objects with "analysis" in the name
@@ -606,7 +606,7 @@ for (i in savefile_list) {
   # Remove "_analysis" using gsub and add "_data" and date created
   fname <- paste0(gsub("_analysis", "", i), "_data", format(Sys.time(), "_%d_%b_%Y"), ".csv")
 
-  # Save to the folder Output in Test Data
+  # Save to the folder Output in test_data
   write.csv(GabRat_Res_analysis,
     row.names = FALSE, # Remove row names
     file = paste(c(Out_path, fname), collapse = "/")
