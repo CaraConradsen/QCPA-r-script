@@ -103,13 +103,13 @@ ROI # In the QCPA batch script, we have investigated three ROIs
 # Expand each unique row of the Animal_Info data frame to included a unique ROI value
 Animal_Info_ROI <- merge(Animal_Info, ROI)
 
-colnames(Animal_Info_ROI)[4] <- "ROI" # Name column 4 to ROI
+colnames(Animal_Info_ROI)[4] <- "ROI"  # Name column 4 to ROI
 
-Animal_Info_ROI$ROI <- factor(Animal_Info_ROI$ROI) # Convert to factor
+Animal_Info_ROI$ROI <- factor(Animal_Info_ROI$ROI)  # Convert to factor
 
-head(Animal_Info_ROI) # Check data
+head(Animal_Info_ROI)  # Check data
 
-str(Animal_Info_ROI) # Check that ROI is a factor
+str(Animal_Info_ROI)  # Check that ROI is a factor
 
 
 ## ----reduced function---------------------------------------------------------
@@ -153,7 +153,6 @@ Sum_Res_df <- do.call(rbind, Sum_Res_list)
 dim(Sum_Res_df) # 18 rows by 133 columns
 
 head(Sum_Res_df)[, 1:12] # check the first six rows and first twelve columns
-
 
 # Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path
 # from the global environment because we'll be recycling them in the second function
@@ -616,6 +615,11 @@ for (i in savefile_list) {
 
 # Check that your files have saved
 list.files(Out_path)
+
+
+## ----eval=FALSE---------------------------------------------------------------
+## FROM[WHERE, SELECT, GROUP BY]
+## DT  [i,     j,      by]
 
 
 ## ----data.table, warning=FALSE------------------------------------------------

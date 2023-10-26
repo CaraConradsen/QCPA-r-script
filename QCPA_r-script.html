@@ -620,7 +620,7 @@ code to work, regions of interest must be uniformly named and
 capitalised for all individuals analysed. Below is a method to ensure
 that these regions of interest (ROIs) have been correctly named by
 reporting all unique names across your data by examining all unique
-<em>.tif</em> file names. If you are confident that the naming was
+<code>.tif</code> file names. If you are confident that the naming was
 consistent, you may skip this step.</p>
 <pre class="r"><code># Create vector containing all the individual animal sub directories 
 tmpAnidir &lt;- apply(Animal_Info, 1, function(x) paste(unlist(x), collapse = &quot;/&quot;))
@@ -721,11 +721,11 @@ properties</td>
 </tbody>
 </table>
 <p>We can then extract any particular image analysis .csv data files
-names using the <em>list.files</em> function specifying the file name as
-the pattern to search for. In the following code, we have used
+names using the <code>list.files()</code> function specifying the file
+name as the pattern to search for. In the following code, we have used
 ‘<em><em>Summary Results.csv</em>’ as our string pattern. Once we have
 all the file names with ’Summary Results.csv</em>’, we remove this
-phrase using <em>gsub</em>.</p>
+phrase using <code>gsub()</code>.</p>
 <pre class="r"><code># Here, we create a character vector determining whether animal,
 # background and/or animal+background options were used
 # Using the first row of Animal_Info to specify the location to examine
@@ -748,11 +748,11 @@ ROIs names with the animal ID dataframe</h2>
 <pre class="r"><code># Expand each unique row of the Animal_Info data frame to included a unique ROI value
 Animal_Info_ROI &lt;- merge(Animal_Info, ROI)
 
-colnames(Animal_Info_ROI)[4] &lt;- &quot;ROI&quot; # Name column 4 to ROI
+colnames(Animal_Info_ROI)[4] &lt;- &quot;ROI&quot;  # Name column 4 to ROI
 
-Animal_Info_ROI$ROI &lt;- factor(Animal_Info_ROI$ROI) # Convert to factor
+Animal_Info_ROI$ROI &lt;- factor(Animal_Info_ROI$ROI)  # Convert to factor
 
-head(Animal_Info_ROI) # Check data</code></pre>
+head(Animal_Info_ROI)  # Check data</code></pre>
 <pre><code>##             Species                            Ind Dist    ROI
 ## 1 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal
 ## 2 Aphelodoris varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal
@@ -760,7 +760,7 @@ head(Animal_Info_ROI) # Check data</code></pre>
 ## 4 Aphelodoris varia 3_AphelodorisVaria_11_NF_D_RAW 50cm animal
 ## 5        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 30cm animal
 ## 6        Aplysia sp         4_Aplysiasp_1_NL_N_RAW 50cm animal</code></pre>
-<pre class="r"><code>str(Animal_Info_ROI) # Check that ROI is a factor</code></pre>
+<pre class="r"><code>str(Animal_Info_ROI)  # Check that ROI is a factor</code></pre>
 <pre><code>## &#39;data.frame&#39;:    18 obs. of  4 variables:
 ##  $ Species: Factor w/ 2 levels &quot;Aphelodoris varia&quot;,..: 1 1 1 1 2 2 1 1 1 1 ...
 ##  $ Ind    : Factor w/ 3 levels &quot;3_AphelodorisVaria_10_NF_D_RAW&quot;,..: 1 1 2 2 3 3 1 1 2 2 ...
@@ -788,20 +788,20 @@ to define and import multiple types of image analysis data files.</p>
 <h2><span class="header-section-number">3.1</span> Simplified function
 example to read in image analysis files</h2>
 <p>In the following function, we walk through the steps for a function
-that only imports VCA,BSA,CAA image analysis data but will lay the
+that only imports VCA, BSA, CAA image analysis data but will lay the
 foundations for when we create the function that can input any of the
 image analyses.</p>
 <p>There are three parts:</p>
-<ol style="list-style-type: upper-alpha">
-<li><p>the first section will specify what type of image analysis we are
-interested in;</p></li>
-<li><p>the second section extracts the data using
-<em>Animal_Info_ROI</em> data frame and stores the data as a list in the
-object <em>Sum_Res_list</em>; and,</p></li>
-<li><p>in the third section, we use the <em>do.call</em> function to
-extract all the list elements in <em>Sum_Res_list</em> and combine them
-into a data frame using <em>rbind</em>. From Table 1, the file suffix
-for this analysis is ’_<em>Summary Results.csv</em>’.</p></li>
+<ol style="list-style-type: decimal">
+<li>The first section will specify what type of image analysis we are
+interested in</li>
+<li>The second section extracts the data using
+<code>Animal_Info_ROI</code> data frame and stores the data as a list in
+the object <code>Sum_Res_list</code></li>
+<li>In the third section, we use the <code>do.call()</code> function to
+extract all the list elements in <code>Sum_Res_list</code> and combine
+them into a data frame using <code>rbind()</code>. From Table 1, the
+file suffix for this analysis is ’_<em>Summary Results.csv</em>’.</li>
 </ol>
 <pre class="r"><code># Part A:
 # Here, we specify what image analysis so that we can use the correct file extension
@@ -874,21 +874,22 @@ rm(path)</code></pre>
 <h2><span class="header-section-number">3.2</span> Dynamic function to
 read in various image analysis files</h2>
 <p>To dynamically import data, we are going to create the function
-<em>readQCPA</em>, which will take an animal ID data frame
-(<em>Ani_ID_dat</em>), the specific image analysis that we are
-interested in (<em>filetype</em>), and a folder directory (where we set
-the default <em>path</em> to the <em>loc</em> defined in section 1.2).
-For Part A of the function, we can conditionally set what image analysis
-we are interested in and set the <em>exnfile</em> object to the correct
-file extension. We have listed each image analysis and the argument name
-to be specified as the filetype in Table 2. As the last conditional (at
-the <em>else</em> level), we have used the <em>stop</em> function which
-will occur if <em>filetype</em> has not been specified, and will report
-an error. Part B is the same as in section 3.1 above however it is worth
-noting that we used <em>merge</em> here instead of <em>rbind</em>
-(section 2.1) because this allows our function to handle data in both
-long and wide format. Then, in Part C, we use the <em>return</em>
-function to output our newly imported data.</p>
+<code>readQCPA()</code>, which will take an animal ID data frame
+(<code>Ani_ID_dat</code>), the specific image analysis that we are
+interested in (<code>filetype</code>), and a folder directory (where we
+set the default <code>path</code> to the <code>loc</code> defined in
+section 1.2). For Part A of the function, we can conditionally set what
+image analysis we are interested in and set the <code>exnfile</code>
+object to the correct file extension. We have listed each image analysis
+and the argument name to be specified as the filetype in Table 2. As the
+last conditional (at the <code>else</code> level), we have used the
+<code>stop</code> function which will occur if <code>filetype</code> has
+not been specified, and will report an error. Part B is the same as in
+section 3.1 above however it is worth noting that we used
+<code>merge</code> here instead of <code>rbind()</code> (section 2.1)
+because this allows our function to handle data in both long and wide
+format. Then, in Part C, we use the <code>return</code> function to
+output our newly imported data.</p>
 <table>
 <caption>Table 2. QCPA image analysis and the different filetype
 arguments</caption>
@@ -965,8 +966,8 @@ arguments</caption>
   return(data_df) # outputs the data frame
 }</code></pre>
 <p>To demonstrate how the stop warning works, we have implemented the
-<em>readQCPA</em> function here without specifying the image analysis
-file type.</p>
+<code>readQCPA()</code> function here without specifying the image
+analysis file type.</p>
 <pre class="r"><code>readQCPA(Animal_Info_ROI) # We include only the animal id data set</code></pre>
 <pre><code>## Error in readQCPA(Animal_Info_ROI): Specify analysis output type: e.g., 
 ##          filetype =
@@ -1129,12 +1130,13 @@ dim(IndParticle_analysis) # 143 rows, by 23 columns</code></pre>
 LEIA output</h1>
 <p>Here, we implement a function similar to section 3.1. However,
 because QCPA batch script exports LEIA analysis into a subdirectory, we
-have to add two additional folders to our location, <em>LEIA</em> and
-the ROI as a folder. For the LEIA folder, as we iterate over each row
-from <em>Animal_Info_ROI</em>, we convert the row into a character
-vector and add ‘LEIA’ as an element. We include a backslash to treat the
-ROI as a folder before specifying the image analysis file extension,
-“_<em>Local Edge Intensity Analysis.csv</em>” (Table 1).</p>
+have to add two additional folders to our location, <code>LEIA</code>
+and the ROI as a folder. For the LEIA folder, as we iterate over each
+row from <code>Animal_Info_ROI</code>, we convert the row into a
+character vector and add ‘LEIA’ as an element. We include a backslash to
+treat the ROI as a folder before specifying the image analysis file
+extension, <code>_Local Edge Intensity Analysis.csv</code> (Table
+1).</p>
 <pre class="r"><code>LEIA_Res_list &lt;- lapply(
   1:nrow(Animal_Info_ROI), # For each row in Animal_Info_ROI
   function(x) { # Start of our nested function
@@ -1201,19 +1203,19 @@ dim(LEIA_Res_analysis) # 18 rows by 37 columns</code></pre>
 <h1><span class="header-section-number">5</span> Get a .csv list from
 GabRat output</h1>
 <p>For GabRat analyses, there are no specific ROIs, so we only need the
-first three columns from <em>Animal_Info_ROI</em>. Similar to LEIA
+first three columns from <code>Animal_Info_ROI</code>. Similar to LEIA
 (section 4, above), QCPA batch script also exports GabRat analysis into
 a subdirectory. We will again iterate over each row of
-<em>Animal_Info_ROI</em> and convert the row into a character vector,
-adding ‘GabRat’ as an element. From Table 1, the GabRat file extension
-is: ’_<em>GabRat_Results.csv</em>’, where we place a backslash before
-the file name to specify that it is located within the GabRat
-folder.</p>
+<code>Animal_Info_ROI</code> and convert the row into a character
+vector, adding ‘GabRat’ as an element. From Table 1, the GabRat file
+extension is: <code>_GabRat_Results.csv</code>, where we place a
+backslash before the file name to specify that it is located within the
+GabRat folder.</p>
 <p>For this work example, we are only interested in the GabRat values
-‘<em>dbl</em>’ (the luminance channel of the visual system considered in
-the analysis), so we will then extract the rows with only these values.
-We then extract the ROI information in a method similar to section
-2.3.</p>
+<code>dbl</code> (the luminance channel of the visual system considered
+in the analysis), so we will then extract the rows with only these
+values. We then extract the ROI information in a method similar to
+section 2.3.</p>
 <pre class="r"><code># Because we are not using ROI which adds three levels (rows),
 # we trim data frame using unique()
 # For each the 6 rows in Animal_Info_ROI
@@ -1308,7 +1310,8 @@ data preparation</h1>
 <div id="merging-data-sets" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Merging data
 sets</h2>
-<p>To merge files, we will again use the <em>merge</em> function.</p>
+<p>To merge files, we will again use the <code>merge()</code>
+function.</p>
 <div id="particle-analyses" class="section level3" number="6.1.1">
 <h3><span class="header-section-number">6.1.1</span> Particle
 analyses</h3>
@@ -1342,9 +1345,9 @@ dim(Cluster_Particle_analysis) # 52 rows and 36 columns</code></pre>
 <div id="vcabsacaa-data-leia-output-and-gabrat-analyses" class="section level3" number="6.1.2">
 <h3><span class="header-section-number">6.1.2</span> VCA,BSA,CAA data,
 LEIA output and GabRat analyses</h3>
-<p>Here, we demonstrate how to collate data across the VCA,BSA,CAA data,
-LEIA output and GabRat output. We have excluded the particle analysis
-outcome from this step.</p>
+<p>Here, we demonstrate how to collate data across the VCA, BSA, CAA
+data, LEIA output, and GabRat output. We have excluded the particle
+analysis outcome from this step.</p>
 <pre class="r"><code># Merge the first two data frames (VCA_analysis and LEIA_Res_analysis) together
 VCA_LEIA_GabRat_analysis &lt;- merge(VCA_analysis, LEIA_Res_analysis,
   by = c(&quot;Species&quot;, &quot;Ind&quot;, &quot;Dist&quot;, &quot;ROI&quot;)
@@ -1538,18 +1541,18 @@ see discussion in Harrison et al. 2018)</span>.</p>
 <h3><span class="header-section-number">6.2.1</span> Omit rows based on
 values</h3>
 <p>To demonstrate some data cleaning methods, we have created a smaller
-data frame <em>V.L.GbRt_sub_analysis</em>, subset from
-<em>VCA_LEIA_GabRat_analysis</em> by selecting the columns names. In
-this data set, there are both <em>NaN</em> (not a number) and
-<em>Inf</em> (infinite) entries. Using <em>summary</em> we can see that
-by retaining <em>NaN</em> and <em>Infs</em>, functions like
-<em>mean</em> and <em>maximum</em> can not calculated values correctly.
-To remove <em>Inf</em> values, we first convert them to <em>NA</em>s. To
-do so, we can use the <em>is.infinite</em> function to detect
-<em>Inf</em> values, however this only works on vectors (i.e., data
-frame columns), so we can loop over our data frame using a variant of
-<em>lapply</em>, the <em>sapply</em> function which returns a vector
-(not list).</p>
+data frame <code>V.L.GbRt_sub_analysis</code>, subset from
+<code>VCA_LEIA_GabRat_analysis</code> by selecting the columns names. In
+this data set, there are both <code>NaN</code> (not a number) and
+<code>Inf</code> (infinite) entries. Using <code>summary()</code> we can
+see that by retaining <code>NaN</code> and <code>Infs</code>, functions
+like <code>mean()</code> and <code>max()</code> can not calculated
+values correctly. To remove <code>Inf</code> values, we first convert
+them to <code>NA</code>. To do so, we can use the
+<code>is.infinite()</code> function to detect <code>Inf</code> values,
+however this only works on vectors (i.e., data frame columns), so we can
+loop over our data frame using a variant of <code>lapply()</code>, the
+<code>sapply()</code> function which returns a vector (not list).</p>
 <pre class="r"><code># Specify column names
 ColumnNames &lt;- c(
   &quot;Species&quot;, &quot;Ind&quot;, &quot;Dist&quot;, &quot;ROI&quot;, &quot;BSA.BsL.Hrz&quot;, &quot;Lum.mean&quot;,
@@ -1638,8 +1641,8 @@ normality and univaraite outliers</h3>
 normality but here we have provided code to test this. Using a
 combination of the Shapiro-Wilk test for normality (Part A) and
 histograms (Part B) we can determine if our data is normal. For the
-Shapiro-Wilk test, the null hypothesis is that data is normal (i.e.,
-p-value less than 0.05 are not normally distributed).</p>
+Shapiro-Wilk test, the null hypothesis is that data is normal
+(i.e. p-value less than 0.05 are not normally distributed).</p>
 <pre class="r"><code># Part A:
 # Test for normality Shapiro-Wilk test
 lapply(V.L.GbRt_sub_analysis[, 5:11], shapiro.test)</code></pre>
@@ -1719,7 +1722,7 @@ Figure 2. Histograms of seven colour variables.
 </p>
 </div>
 <p>To determine the degree of association between our colour variables,
-we can use both correlations and scatter plots. As our data is normal
+we can use both correlations and scatter plots. As our data is normally
 distributed we can use Pearson’s correlation.</p>
 <pre class="r"><code># Correlation panel
 panel.cor &lt;- function(x, y) {
@@ -1846,7 +1849,7 @@ data</h3>
 <p>When implementing multivariate models, it is best to standardize data
 to facilitate model convergence. Here we variance standardised (mean =
 0, standard deviation = 1) each colour pattern variable across both
-viewing distances and ROIs using the <em>scale</em> function.</p>
+viewing distances and ROIs using the <code>scale()</code> function.</p>
 <pre class="r"><code># Inspect scaled values and column means
 scale(V.L.GbRt_sub_analysis[, 5:11], center = TRUE, scale = TRUE)</code></pre>
 <pre><code>##      CAA.Scpl     BSA.BML BSA.BsL.Hrz    Col.mean    Lum.mean    Lum.CoV
@@ -1963,20 +1966,20 @@ V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c(&quot;mahalnobis&
 <h1><span class="header-section-number">7</span> Export files</h1>
 <p>Depending on what image analysis sets you are using, we have provided
 multiple ways to save the image analysis data files as csvs in the
-folder ‘Output’. First, we use <em>dir.create</em> to create the folder
-‘Output’ in the Test Data folder, and save this new folder location as
-<em>Out_path</em>. To save a single file, you can use
-<em>write.csv</em>, where we have used the argument <em>row.names =
-FALSE</em> to make sure that the row numbers in the dataframe aren’t
-included in the csv file.</p>
+folder ‘Output’. First, we use <code>dir.create()</code> to create the
+folder ‘Output’ in the Test Data folder, and save this new folder
+location as <code>Out_path</code>. To save a single file, you can use
+<code>write.csv()</code>, where we have used the argument
+<code>row.names = FALSE</code> to make sure that the row numbers in the
+dataframe aren’t included in the csv file.</p>
 <p>To save mutliple files, we utilise the fact that our naming
 convention in this R tutorial specifies image analysis data files with
-<em><em>analysis</em>. Using the <em>ls</em> function with the pattern
-argument set to “analysis</em>”, we can create a list of all our image
-analysis dataframes. Then, using a for loop, we iterate over each
-dataframe, rename it using the current date, and then output the csv
-file. Finally, we use <em>list.files</em> to check that the files have
-been created.</p>
+<code>_analysis</code>. Using the <code>ls()</code> function with the
+pattern argument set to <code>_analysis</code>, we can create a list of
+all our image analysis dataframes. Then, using a for loop, we iterate
+over each dataframe, rename it using the current date, and then output
+the csv file. Finally, we use <code>list.files()</code> to check that
+the files have been created.</p>
 <pre class="r"><code>dir.create(paste(c(loc, &quot;Output&quot;), collapse = &quot;/&quot;)) # Create the Output directory
 
 Out_path &lt;- paste(c(loc, &quot;Output&quot;), collapse = &quot;/&quot;) # Save Output directory path
@@ -2030,19 +2033,21 @@ list.files(Out_path)</code></pre>
 <h1><span class="header-section-number">8</span> Fast import for large
 data sets using data.table (optional - advanced)</h1>
 <p>For very large data sets we would recommend importing data using the
-<em>data.table</em> package <span class="citation">(Dowle and Srinivasan
-2023)</span>. The <em>data.table</em> format can be used in parallel and
-is optimised for fast .csv reading/writing. For further information and
-cheatsheets, visit the <em>data.table</em> GitHub page (<a href="https://github.com/Rdatatable/data.table" class="uri">https://github.com/Rdatatable/data.table</a>). The
+<code>data.table</code> package <span class="citation">(Dowle and
+Srinivasan 2023)</span>. The <code>data.table</code> format can be used
+in parallel and is optimised for fast <code>.csv</code> reading/writing.
+For further information and cheatsheets, visit the
+<code>data.table</code> GitHub page (<a href="https://github.com/Rdatatable/data.table" class="uri">https://github.com/Rdatatable/data.table</a>). The
 <em>data.table</em> has the following structure:</p>
-<pre><code>FROM[WHERE, SELECT, GROUP BY]
+<pre class="r"><code>FROM[WHERE, SELECT, GROUP BY]
 DT  [i,     j,      by]</code></pre>
 <p>Here we will provide a quick demonstration by importing the LEIA QCPA
-batch script output. First, we convert our <em>Animal_Info_ROI</em> into
-<em>data.table</em> format using the function <em>setDT</em>. Then we
-will input our data using the dedicated <em>data.table</em> read
-function <em>fread</em>. Finally, we can output large data.tables fast
-using the <em>fwrite</em> function.</p>
+batch script output. First, we convert our <code>Animal_Info_ROI</code>
+into <code>data.table</code> format using the function
+<code>setDT</code>. Then we will input our data using the dedicated
+<code>data.table</code> read function <code>fread</code>. Finally, we
+can output large data.tables fast using the <code>fwrite</code>
+function.</p>
 <pre class="r"><code>library(data.table)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;data.table&#39;</code></pre>
