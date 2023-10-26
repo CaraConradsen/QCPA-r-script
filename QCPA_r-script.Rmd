@@ -22,11 +22,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Setup 
 
-The following R script uses the trichromatic example without UV (sea slugs seen by a triggerfish, *Rhinecanthus aculeatus*), but can similarly be applied to the tetrachromatic example with UV (spiders seen by a bluetit, *Parus major*). To make the worked example readily accessible to users, we have prioritised using base R functions. As we will be working with primarily character-type data (i.e., species names, region of interest descriptors), we will introduce the user to many base functions that are for list-type data structures (e.g., *lapply()*). For clarity, we recommend that you, as the user, need to be comfortable with the different data types (e.g., numerical, character, factors) and data structures such as lists (collection of mixed data types) and data frames (special type of list). We also provide different methods to extract data, ideally introducing different coding methods and providing ways to increase the efficiency of data wrangling.  
+The following R script uses the trichromatic example without UV (sea slugs seen by a triggerfish, *Rhinecanthus aculeatus*), but can similarly be applied to the tetrachromatic example with UV (spiders seen by a bluetit, *Parus major*). To make the worked example readily accessible to users, we have prioritised using base R functions. As we will be working with primarily character-type data (i.e., species names, region of interest descriptors), we will introduce the user to many base functions that are for list-type data structures (e.g., `lapply()`). For clarity, we recommend that you, as the user, need to be comfortable with the different data types (e.g., numerical, character, factors) and data structures such as lists (collection of mixed data types) and data frames (special type of list). We also provide different methods to extract data, ideally introducing different coding methods and providing ways to increase the efficiency of data wrangling.  
 
-For the following R script to run, please ensure that you have implemented the QPCA batch script methods. In the following folder:
+For the following R script to run, please ensure that you have implemented the QPCA batch script methods. In the following folder 
 
-    Worked example data/Example1_tri-chromat_no_UV/Test Data
+`Worked example data/Example1_tri-chromat_no_UV/Test Data`
 
 there should be two subfolders for the two species, *Aphelodoris varia* and *Aplysia sp*. Within these subdirectories, please confirm that data has been generated. As you proceed through the next few steps, we provide code that checks the data totality. If you are uncertain that you uniformly named files, we have additionally provided script to check region of interest names (see section 2.3).  
 
@@ -34,26 +34,25 @@ there should be two subfolders for the two species, *Aphelodoris varia* and *Apl
 
 ## Iterate over folders to extract species, animals and viewing distances
 
-First, we will specify the location of the data files with respect to where your working directory has been saved. Here, we have assumed that the R script was saved in the parent folder of Worked example data. The next step will be to extract the names of the two focal species using the folder names within the *Test Data* folder. 
-
+First, we will specify the location of the data files with respect to where your working directory has been saved. Here, we have assumed that the R script was saved in the parent folder of Worked example data. The next step will be to extract the names of the two focal species using the folder names within the `Test Data` folder. 
 
 ```{r Animal IDs}
 # Get directory; assumes the R script is in the parent folder of Worked example data
-pth<-getwd()  
+pth <- getwd()
 
 # Set sub folder name containing your data
-Extrct_Fold="Worked example data/Example1_tri-chromat_no_UV/Test Data"
+Extrct_Fold <- "Worked example data/Example1_tri-chromat_no_UV/Test Data"
 
 # Paste the two locations together to specify your global data location
-loc<-paste(pth,Extrct_Fold, sep="/")
+loc <- paste(pth, Extrct_Fold, sep = "/")
 
 # Detect species -these could also be locations depending on your data set.
-Species=list.files(path=loc) 
+Species <- list.files(path = loc)
 
-Species# Should contain species folders and a log file with QCPA processing details
+Species # Should contain species folders and a log file with QCPA processing details
 
 # Here, we use the "Ap" pattern in both species names to subset the Species list
-Species<-Species[grepl("Ap", Species)]# Removes the log file from vector
+Species <- Species[grepl("Ap", Species)] # Removes the log file from vector
 
 # Note: For multiple different species patterns, can search using the or condition '|'
 # e.g., Species<-Species[grepl("A|B", Species)], returns species with pattern 'A' or 'B'
@@ -61,51 +60,53 @@ Species<-Species[grepl("Ap", Species)]# Removes the log file from vector
 Species
 ```
 
-Here, we will demonstrate extracting folder information names using a for loop. We first create an empty data frame called *Animal_Info*. Then, for each *i*$^{th}$ species (here *i* = 1 or 2), we create a path into the species folder and record in the object *Indviduals_list* all the unique individual animal folder names using the *list.files* function. We then establish a second, nested loop, which will then iterate over each individual (*ind*) in *Indviduals_list* to extract all unique viewing distance folder names using *list.files*. To distinguish the viewing distance folders from other files saved within the directory, use the argument *pattern = "cm"* in *list.files*. Finally, we combine the unique species name, individual name and viewing distances into unique columns and add as a new row in *Animal_Info*.
+Here, we will demonstrate extracting folder information names using a for loop. We first create an empty data frame called `Animal_Info`. Then, for each *i*$^{th}$ species (here *i* = 1 or 2), we create a path into the species folder and record in the object `Indviduals_list` all the unique individual animal folder names using the `list.files` function. We then establish a second, nested loop, which will then iterate over each individual (`ind`) in `Indviduals_list` to extract all unique viewing distance folder names using `list.files`. To distinguish the viewing distance folders from other files saved within the directory, use the argument `pattern = "cm"` in `list.files`. Finally, we combine the unique species name, individual name and viewing distances into unique columns and add as a new row in `Animal_Info`.
 
 ```{r Animal Loop}
-Animal_Info<-data.frame(NULL)# First create an empty data frame
+Animal_Info <- data.frame(NULL)  # First create an empty data frame
 
 # Then create a loop to iterate over the species folders,
-# extracting viewing distances and individual animal IDs 
-for (i in 1:length(Species)) {# Here i will be either 1 or 2
-    Ind_pth<-paste0(loc, "/",Species[i])# Pastes the ith species from the Species object
-    Indviduals_list<-list.files(path=Ind_pth)# Extracts all individual folder names
-    
-    # Iterate over the number of individuals in each species folder
-    for (ind in 1:length(Indviduals_list)){
-      # The variable dist lists all the unique viewing distance folder names 
-      # identified by "cm"
-      Dists<-list.files(paste0(Ind_pth,"/", Indviduals_list[ind]), pattern = "cm")
-      
-      # Add to Animal_Info a new row with species name, individual and viewing distance 
-      rbind(Animal_Info, cbind(Species[i], Indviduals_list[ind], c(Dists)))-> Animal_Info
-    }
+# extracting viewing distances and individual animal IDs
+for (i in 1:length(Species)) { # Here i will be either 1 or 2
+  Ind_pth <- paste0(loc, "/", Species[i]) # Pastes the ith species from the Species object
+  Indviduals_list <- list.files(path = Ind_pth) # Extracts all individual folder names
+
+  # Iterate over the number of individuals in each species folder
+  for (ind in 1:length(Indviduals_list)) {
+    # The variable dist lists all the unique viewing distance folder names
+    # identified by "cm"
+    Dists <- list.files(paste0(Ind_pth, "/", Indviduals_list[ind]), pattern = "cm")
+
+    # Add to Animal_Info a new row with species name, individual and viewing distance
+    rbind(Animal_Info, cbind(Species[i], Indviduals_list[ind], c(Dists))) -> Animal_Info
+  }
 }
-colnames(Animal_Info)<-c("Species", "Ind", "Dist")# Rename the column names in Animal_Info 
+colnames(Animal_Info) <- c("Species", "Ind", "Dist") # Rename the column names in Animal_Info
 ```
 
 ## Inspect data
 
-Check that the data has correctly been imported and reflects your experimental records. We converted the character data into factors, which is the appropriate format for running statistical tests in downstream analyses. We use the *lapply* function to apply the function *factor* to each column in our data frame. We can again use the *lapply* function to apply the function *nlevels* to our newly converted data frame, which will report the number of unique elements within each column of the data frame *Animal_Info*.
+Check that the data has correctly been imported and reflects your experimental records. We converted the character data into factors, which is the appropriate format for running statistical tests in downstream analyses. We use the `lapply()` function to apply the function `factor()` to each column in our data frame. We can again use the `lapply()` function to apply the function `nlevels()` to our newly converted data frame, which will report the number of unique elements within each column of the data frame `Animal_Info`.
 
 ```{r Check data, fig.align='center', fig.cap='Figure 1. Counts of individuals within species for each viewing distance.'}
 # Check data
 Animal_Info
 
 # Convert character data into factors
-Animal_Info[,colnames(Animal_Info)] <-lapply(Animal_Info[,colnames(Animal_Info)],factor)
+Animal_Info[, colnames(Animal_Info)] <- lapply(Animal_Info[, colnames(Animal_Info)], factor)
 
-str(Animal_Info)# Observe structure of the data
+str(Animal_Info) # Observe structure of the data
 
 # Check the number of unique species, individuals and viewing distances
 lapply(Animal_Info, nlevels)
 
-# To visualise the experimental design, we first aggregate the data to determine the 
+# To visualise the experimental design, we first aggregate the data to determine the
 # number (length) of each individual by species and distance
-Ani_info_tab<-aggregate(Ind~Species+Dist, data=Animal_Info, length)
-barplot(Ind~Dist+Species, beside=TRUE, ylab = "Count",
-        legend.text=TRUE, data=Ani_info_tab)
+Ani_info_tab <- aggregate(Ind ~ Species + Dist, data = Animal_Info, length)
+barplot(Ind ~ Dist + Species,
+  beside = TRUE, ylab = "Count",
+  legend.text = TRUE, data = Ani_info_tab
+)
 ```
   
 In this example, there are only three individuals. However, with a larger data set with missing data, this becomes an important step to determine a balanced experimental design. 
@@ -117,25 +118,24 @@ The number of data files will depend on whether animal, background and/or animal
 
 ```{r Check ROIs}
 # Create vector containing all the individual animal sub directories 
-tmpAnidir<-apply(Animal_Info,1, function (x) paste(unlist(x), collapse = "/"))
+tmpAnidir <- apply(Animal_Info, 1, function(x) paste(unlist(x), collapse = "/"))
 
 # Paste the global file directories to the front of the sub directory paths
-tmpAnidir <- paste(loc, tmpAnidir, sep="/") 
+tmpAnidir <- paste(loc, tmpAnidir, sep = "/")
 
 # This should highlight the unique regions of interest, if there are
 # more than expected - look for naming inconsistencies
-unique(unlist(strsplit(list.files(tmpAnidir, pattern=".tif"), "_"))[ c(TRUE,FALSE)])
+unique(unlist(strsplit(list.files(tmpAnidir, pattern = ".tif"), "_"))[c(TRUE, FALSE)])
 ```
   
- **How the nested line works.** *The above line can be broken down into four steps:*\newline
-  
-1. *list.files() searches all the locations specified in the tmpAnidir vector for files with the ".tif" extension and puts these file names into a new character vector.* \newline
-  
-2. *Knowing that file names are composed of two bits of information separated by an underscore, strsplit() cuts the filenames into two elements at the underscore and outputs a list containing these two new elements for each unique file.*\newline
-  
-3. *unlist() puts all elements into a vector. As the region of interest are the prefix, it will be first element in the pair, which we can subset using: [ c(TRUE,FALSE)].*\newline
-  
-4. *Finally, the unique() function looks across all names used for each individual and retains only unique names, omitting duplicates.*
+**How the nested line works** 
+
+The above line can be broken down into four steps:
+
+1. `list.files()` searches all the locations specified in the tmpAnidir vector for files with the `.tif` extension and puts these file names into a new character vector.
+2. Knowing that file names are composed of two bits of information separated by an underscore, `strsplit()` cuts the filenames into two elements at the underscore and outputs a list containing these two new elements for each unique file.
+3. `unlist()` puts all elements into a vector. As the region of interest are the prefix, it will be first element in the pair, which we can subset using: `[ c(TRUE,FALSE)]`.
+4. Finally, the `unique()` function looks across all names used for each individual and retains only unique names, omitting duplicates.
 
 ## Add regions of interest to Animal information dataset
 
@@ -146,7 +146,7 @@ However, we provide a second method that extracts your data's ROIs.
 ### Simplified method to list ROIs
 
 ```{r simple ROIs}
-ROI<-c("animal","animal+background","background")# Add the names of ROIs
+ROI <- c("animal", "animal+background", "background") # Add the names of ROIs
 ```
 
 ### Extract ROIs from the data
@@ -161,40 +161,47 @@ nocite: |
 \newpage
 ```{r kable table exn out, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
 library("kableExtra")
-exns<- sort(unique(gsub("^[^_]+", "", list.files(
-  paste0(loc,"/Aphelodoris varia/3_AphelodorisVaria_10_NF_D_RAW"),
-  pattern=".csv", recursive = TRUE))))
+exns <- sort(unique(gsub("^[^_]+", "", list.files(
+  paste0(loc, "/Aphelodoris varia/3_AphelodorisVaria_10_NF_D_RAW"),
+  pattern = ".csv", recursive = TRUE
+))))
 
-exns<-as.data.frame(cbind(
-  c("Particle analysis",
-    "Particle analysis + cluster properties", 
+exns <- as.data.frame(cbind(
+  c(
+    "Particle analysis",
+    "Particle analysis + cluster properties",
     "GabRat",
     "Particle analysis + sub-cluster properties",
-    "LEIA","Particle analysis + transition matrix + cluster properties",
-    "CAA, VCA, BSA"), exns))
-colnames(exns)<-c("Image analysis", "File name")
-exns <- exns[order(exns$"Image analysis",exns$"File name"),]
-rownames(exns)<-NULL
-knitr::kable(exns, align="l",
-             caption = "Table 1. QCPA image analysis and associated output files. See van den Berg & Troscianko  et al. (2020) for a detailed description.",
-             format = "pipe", padding = 2)
+    "LEIA", "Particle analysis + transition matrix + cluster properties",
+    "CAA, VCA, BSA"
+  ), exns
+))
+colnames(exns) <- c("Image analysis", "File name")
+exns <- exns[order(exns$"Image analysis", exns$"File name"), ]
+rownames(exns) <- NULL
+knitr::kable(exns,
+  align = "l",
+  caption = "Table 1. QCPA image analysis and associated output files. See van den Berg & Troscianko  et al. (2020) for a detailed description.",
+  format = "pipe", padding = 2
+)
 ```
 
 We can then extract any particular image analysis .csv data files names using the *list.files* function specifying the file name as the pattern to search for. In the following code, we have used '_*Summary Results.csv*' as our string pattern. Once we have all the file names with '_*Summary Results.csv*', we remove this phrase using *gsub*.      
 
 ```{r ROI}
-# Here, we create a character vector determining whether animal, 
+# Here, we create a character vector determining whether animal,
 # background and/or animal+background options were used
-# Using the first row of Animal_Info to specify the location to examine 
-# the number and types of _Summary Results.csv files 
+# Using the first row of Animal_Info to specify the location to examine
+# the number and types of _Summary Results.csv files
 
 # Find all the ROI output files for '_Summary Results.csv'
-ROI<- list.files(paste(loc,paste(unlist(Animal_Info[1,]), collapse = "/"),
-                            sep="/"), pattern = "_Summary Results.csv")
+ROI <- list.files(paste(loc, paste(unlist(Animal_Info[1, ]), collapse = "/"),
+  sep = "/"
+), pattern = "_Summary Results.csv")
 
 # Here we remove the "_Summary Results.csv" information
-ROI<- gsub("_Summary Results.csv", "", ROI)
-ROI# In the QCPA batch script, we have investigated three ROIs
+ROI <- gsub("_Summary Results.csv", "", ROI)
+ROI # In the QCPA batch script, we have investigated three ROIs
 ```
 
 
@@ -204,15 +211,15 @@ ROI# In the QCPA batch script, we have investigated three ROIs
    
 ```{r merge ROI}
 # Expand each unique row of the Animal_Info data frame to included a unique ROI value
-Animal_Info_ROI<-merge(Animal_Info, ROI)
+Animal_Info_ROI <- merge(Animal_Info, ROI)
 
-colnames(Animal_Info_ROI)[4]<-"ROI" # Name column 4 to ROI
+colnames(Animal_Info_ROI)[4] <- "ROI" # Name column 4 to ROI
 
-Animal_Info_ROI$ROI<-factor(Animal_Info_ROI$ROI)# Convert to factor
+Animal_Info_ROI$ROI <- factor(Animal_Info_ROI$ROI) # Convert to factor
 
-head(Animal_Info_ROI)# Check data
+head(Animal_Info_ROI) # Check data
 
-str(Animal_Info_ROI)# Check that ROI is a factor
+str(Animal_Info_ROI) # Check that ROI is a factor
 ```
 
 # Create a function to import a .csv list from VCA,BSA,CAA data, with options for particle analysis
@@ -235,47 +242,51 @@ There are three parts:
 ```{r reduced function}
 # Part A:
 # Here, we specify what image analysis so that we can use the correct file extension
-exnfile="_Summary Results.csv"
+exnfile <- "_Summary Results.csv"
 
-Ani_ID_dat=Animal_Info_ROI # Assign our animal ID data frame
+Ani_ID_dat <- Animal_Info_ROI # Assign our animal ID data frame
 
-path=loc # This is the global location set in section 2.1
+path <- loc # This is the global location set in section 2.1
 
 # Part B:
 # Once the file extension condition is met, we use lapply to extract the data,
 # using a nested function within lapply
-Sum_Res_list<-lapply(1:nrow(Ani_ID_dat), # for each row in Ani_ID_dat...
-                  function (x){ # start of our nested function
-                    
-                    # Extract the individual row information
-                    tmpLoc<- paste(unlist(Ani_ID_dat[x,]), collapse = "/")
-                    
-                    # Create a directory string
-                    tmpLoc<-paste0(paste(path,tmpLoc, sep="/"), exnfile)
-                    
-                    # Read in the data using the newly specified location
-                    data <- read.csv(tmpLoc)
-                    
-                    # Add the specific animal information to the data
-                    data <- merge(Ani_ID_dat[x,], data)
-                    
-                    data # Returns data
-                  })
+Sum_Res_list <- lapply(
+  1:nrow(Ani_ID_dat), # for each row in Ani_ID_dat...
+  function(x) { # start of our nested function
+
+    # Extract the individual row information
+    tmpLoc <- paste(unlist(Ani_ID_dat[x, ]), collapse = "/")
+
+    # Create a directory string
+    tmpLoc <- paste0(paste(path, tmpLoc, sep = "/"), exnfile)
+
+    # Read in the data using the newly specified location
+    data <- read.csv(tmpLoc)
+
+    # Add the specific animal information to the data
+    data <- merge(Ani_ID_dat[x, ], data)
+
+    data # Returns data
+  }
+)
 
 # Part C:
-# We then collapse the Sum_Res_list list into a data frame by 
+# We then collapse the Sum_Res_list list into a data frame by
 # calling rbind in the function do.call
-Sum_Res_df<-do.call(rbind, Sum_Res_list)
+Sum_Res_df <- do.call(rbind, Sum_Res_list)
 
 # Check the imported data
-dim(Sum_Res_df)# 18 rows by 133 columns
+dim(Sum_Res_df) # 18 rows by 133 columns
 
-head(Sum_Res_df)[,1:12]# check the first six rows and first twelve columns
+head(Sum_Res_df)[, 1:12] # check the first six rows and first twelve columns
 
 
-# Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path 
+# Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path
 # from the global environment because we'll be recycling them in the second function
-rm(exnfile); rm(Ani_ID_dat); rm(path)
+rm(exnfile)
+rm(Ani_ID_dat)
+rm(path)
 ```
 
 ## Dynamic function to read in various image analysis files
@@ -283,70 +294,74 @@ rm(exnfile); rm(Ani_ID_dat); rm(path)
 To dynamically import data, we are going to create the function *readQCPA*, which will take an animal ID data frame (*Ani_ID_dat*), the specific image analysis that we are interested in (*filetype*), and a folder directory (where we set the default *path* to the *loc* defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the *exnfile* object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the *else* level), we have used the *stop* function which will occur if *filetype* has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used *merge* here instead of *rbind* (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the *return* function to output our newly imported data. 
 
 ```{r kable table ftyp, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
-ftyp<-data.frame(Img_type=c("VCA,BSA,CAA", "Cluster Particle Analysis", "Cluster Results","Individual Particle"),
-           ftyp=c('"VCA"','"PartAn"','"Clust"', '"IndParticle"') )
-colnames(ftyp)<-c("Image analysis", "Filetype argument")
-knitr::kable(ftyp, align="l",
-             caption = "Table 2. QCPA image analysis and the different filetype arguments",
-             format = "pipe", padding = 3)
+ftyp <- data.frame(
+  Img_type = c("VCA,BSA,CAA", "Cluster Particle Analysis", "Cluster Results", "Individual Particle"),
+  ftyp = c('"VCA"', '"PartAn"', '"Clust"', '"IndParticle"')
+)
+colnames(ftyp) <- c("Image analysis", "Filetype argument")
+knitr::kable(ftyp,
+  align = "l",
+  caption = "Table 2. QCPA image analysis and the different filetype arguments",
+  format = "pipe", padding = 3
+)
 ```
 
 \newline
 &nbsp;
 
 ```{r readQCPA function}
-readQCPA<- function(Ani_ID_dat,filetype="NA",path=loc){
+readQCPA <- function(Ani_ID_dat, filetype = "NA", path = loc) {
   # loc is assigned by default, but can be changed
-  
-  # Part A: 
-  # Here, we specify arguments for different image analyses so that we can 
+
+  # Part A:
+  # Here, we specify arguments for different image analyses so that we can
   # extract the correct file extension
-  if(filetype=="VCA"){
-    exnfile="_Summary Results.csv"
-  } else if (filetype=="PartAn"){
-    exnfile="_Cluster Particle Analysis Summary Results.csv"
-  } else if (filetype=="Clust"){
-    exnfile="_Cluster Results.csv"
-  } else if (filetype=="IndParticle"){
-    exnfile="_Individual Particle Results.csv"
+  if (filetype == "VCA") {
+    exnfile <- "_Summary Results.csv"
+  } else if (filetype == "PartAn") {
+    exnfile <- "_Cluster Particle Analysis Summary Results.csv"
+  } else if (filetype == "Clust") {
+    exnfile <- "_Cluster Results.csv"
+  } else if (filetype == "IndParticle") {
+    exnfile <- "_Individual Particle Results.csv"
   } else {
     stop('Specify analysis output type: e.g., 
          filetype =\n"VCA"\n"PartAn"\n"Clust"\n"IndParticle"')
-  }# stop command halts the function and specifies how the user went wrong
-  
-  # Part B: 
+  } # stop command halts the function and specifies how the user went wrong
+
+  # Part B:
   # Once the file extension condition is met, we use lapply to extract the data,
   # using a nested function within lapply
-  data_list<-lapply(1:nrow(Ani_ID_dat), function (x){# for each row in Ani_ID_dat...
-    
-    #extract the individual row information
-    tmpLoc<- paste(unlist(Ani_ID_dat[x,]), collapse = "/")
-    
+  data_list <- lapply(1:nrow(Ani_ID_dat), function(x) { # for each row in Ani_ID_dat...
+
+    # extract the individual row information
+    tmpLoc <- paste(unlist(Ani_ID_dat[x, ]), collapse = "/")
+
     # create a directory string
-    tmpLoc<-paste0(paste(path,tmpLoc, sep="/"), exnfile)
-    
+    tmpLoc <- paste0(paste(path, tmpLoc, sep = "/"), exnfile)
+
     # read in the data using the newly specified location
     data <- read.csv(tmpLoc)
-    
+
     # add the specific animal information to the data
-    data <- merge(Ani_ID_dat[x,], data)
-    
-    data #returns data
+    data <- merge(Ani_ID_dat[x, ], data)
+
+    data # returns data
   })
-  
-  # Part C: 
-  # We then collapse the data_list list into a data frame by calling rbind 
+
+  # Part C:
+  # We then collapse the data_list list into a data frame by calling rbind
   # in the function do.call
-  data_df<-do.call(rbind, data_list)
-  
-  return(data_df)# outputs the data frame
+  data_df <- do.call(rbind, data_list)
+
+  return(data_df) # outputs the data frame
 }
 ```
 
 To demonstrate how the stop warning works, we have implemented the *readQCPA* function here without specifying the image analysis file type. 
 
 ```{r empty readQCPA, error=TRUE}
-readQCPA(Animal_Info_ROI)# We include only the animal id data set
+readQCPA(Animal_Info_ROI) # We include only the animal id data set
 ```
 
 We can then import our data using our function and do some data cleaning by removing unnecessary columns.  
@@ -354,58 +369,58 @@ We can then import our data using our function and do some data cleaning by remo
 ```{r implementing readQCPA}
 # VCA,BSA,CAA analysis:
 # Read in and assign analysis
-VCA_analysis<-readQCPA(Animal_Info_ROI, filetype = "VCA") 
+VCA_analysis <- readQCPA(Animal_Info_ROI, filetype = "VCA")
 
-#head(VCA_analysis)# Inspect data
+# head(VCA_analysis)# Inspect data
 
 # Subset data excluding the column Image and X
-VCA_analysis<-VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
+VCA_analysis <- VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
 
-dim(VCA_analysis)# 18 rows, by 131 columns
+dim(VCA_analysis) # 18 rows, by 131 columns
 
-VCA_analysis[1:2,]# Observe the first two rows of data
+VCA_analysis[1:2, ] # Observe the first two rows of data
 
 # Cluster Particle Analysis:
 # Read in and assign analysis
-Particle_analysis<-readQCPA(Animal_Info_ROI, filetype = "PartAn") 
+Particle_analysis <- readQCPA(Animal_Info_ROI, filetype = "PartAn")
 
-#head(Particle_analysis)# Inspect data
+# head(Particle_analysis)# Inspect data
 
-dim(Particle_analysis)# 52 rows, by 20 columns
+dim(Particle_analysis) # 52 rows, by 20 columns
 
 colnames(Particle_analysis)[5]
 
 # Change column name to be consistent with Cluster analysis
-colnames(Particle_analysis)[5]<-"ClusterID" 
+colnames(Particle_analysis)[5] <- "ClusterID"
 
-Particle_analysis[1:2,]# Observe the first two rows of data
+Particle_analysis[1:2, ] # Observe the first two rows of data
 
 
 # Cluster Results:
 # Read in and assign analysis
-Cluster_analysis<-readQCPA(Animal_Info_ROI, filetype = "Clust")
+Cluster_analysis <- readQCPA(Animal_Info_ROI, filetype = "Clust")
 
-#head(Cluster_Analysis)# inspect data
+# head(Cluster_Analysis)# inspect data
 
 # Subset data excluding the column Image and X
-Cluster_analysis<-Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
+Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
 
-dim(Cluster_analysis)# 52 rows, by 21 columns
+dim(Cluster_analysis) # 52 rows, by 21 columns
 
-Cluster_analysis[1:2,]# Observe the first two rows of data
+Cluster_analysis[1:2, ] # Observe the first two rows of data
 
 # Individual Particle Analysis:
 # Read in and assign analysis
-IndParticle_analysis<-readQCPA(Animal_Info_ROI, filetype = "IndParticle")
+IndParticle_analysis <- readQCPA(Animal_Info_ROI, filetype = "IndParticle")
 
-#head(Cluster_Analysis)# inspect data
+# head(Cluster_Analysis)# inspect data
 
 # Subset data excluding the column X.1
-IndParticle_analysis<-IndParticle_analysis[,colnames(IndParticle_analysis)!="X.1"]
+IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
 
-dim(IndParticle_analysis)# 143 rows, by 23 columns
+dim(IndParticle_analysis) # 143 rows, by 23 columns
 
-IndParticle_analysis[1:2,]# Observe the first two rows of data
+IndParticle_analysis[1:2, ] # Observe the first two rows of data
 ```
 
 # Get a .csv list from LEIA output
@@ -414,42 +429,46 @@ Here, we implement a function similar to section 3.1. However, because QCPA batc
 
 
 ```{r LEIA CSV Data}
-LEIA_Res_list<-lapply(1:nrow(Animal_Info_ROI), # For each row in Animal_Info_ROI
-                  function (x){ # Start of our nested function
-                    
-                    # Convert row into a character vector
-                    tmpLoc <- as.character(unlist(Animal_Info_ROI[x,]))
-                    
-                    # Add and order the new sub folder LEIA before ROI
-                    tmpLoc <- c(tmpLoc, "LEIA")[c(1:3,5,4)]
-                    
-                    # Paste tmploc into a directory character
-                    tmpLoc <- paste(tmpLoc, collapse = "/")
-                    
-                    # Create a directory string
-                    tmpLoc <-paste0(paste(loc,tmpLoc, sep="/"), 
-                                    "/_Local Edge Intensity Analysis.csv")
-                    
-                    # Read in the data using the newly specified location
-                    data <- read.csv(tmpLoc)
-                    
-                    # Add the specific animal information to the data
-                    data <- merge(Animal_Info_ROI[x,], data)
-                    
-                    data #returns data
-                  })
+LEIA_Res_list <- lapply(
+  1:nrow(Animal_Info_ROI), # For each row in Animal_Info_ROI
+  function(x) { # Start of our nested function
 
-# We then collapse the LEIA_Res_list list into a data frame by 
+    # Convert row into a character vector
+    tmpLoc <- as.character(unlist(Animal_Info_ROI[x, ]))
+
+    # Add and order the new sub folder LEIA before ROI
+    tmpLoc <- c(tmpLoc, "LEIA")[c(1:3, 5, 4)]
+
+    # Paste tmploc into a directory character
+    tmpLoc <- paste(tmpLoc, collapse = "/")
+
+    # Create a directory string
+    tmpLoc <- paste0(
+      paste(loc, tmpLoc, sep = "/"),
+      "/_Local Edge Intensity Analysis.csv"
+    )
+
+    # Read in the data using the newly specified location
+    data <- read.csv(tmpLoc)
+
+    # Add the specific animal information to the data
+    data <- merge(Animal_Info_ROI[x, ], data)
+
+    data # returns data
+  }
+)
+
+# We then collapse the LEIA_Res_list list into a data frame by
 # calling rbind in the function do.call
-LEIA_Res_analysis<-do.call(rbind, LEIA_Res_list)
+LEIA_Res_analysis <- do.call(rbind, LEIA_Res_list)
 
 # Subset data excluding the column Image and X
-LEIA_Res_analysis<-LEIA_Res_analysis[, !colnames(LEIA_Res_analysis) %in% c("X", "Image")]
+LEIA_Res_analysis <- LEIA_Res_analysis[, !colnames(LEIA_Res_analysis) %in% c("X", "Image")]
 
 # Check the imported data
-dim(LEIA_Res_analysis)# 18 rows by 37 columns
+dim(LEIA_Res_analysis) # 18 rows by 37 columns
 
-LEIA_Res_analysis[1:2,]# Observe the first two rows of data
+LEIA_Res_analysis[1:2, ] # Observe the first two rows of data
 ```
 
 # Get a .csv list from GabRat output
@@ -459,63 +478,66 @@ For GabRat analyses, there are no specific ROIs, so we only need the first three
 For this work example, we are only interested in the GabRat values '*dbl*' (the luminance channel of the visual system considered in the analysis), so we will then extract the rows with only these values. We then extract the ROI information in a method similar to section 2.3.
 
 ```{r GabRat CSV Data}
-# Because we are not using ROI which adds three levels (rows), 
+# Because we are not using ROI which adds three levels (rows),
 # we trim data frame using unique()
 # For each the 6 rows in Animal_Info_ROI
-GabRat_Res_list<-lapply(1:nrow(unique(Animal_Info_ROI[,1:3])), 
-                  function (x){ # Start of our nested function
-                    
-                    # Using the first three columns, convert row into a character vector
-                    tmpLoc <- as.character(unlist(Animal_Info_ROI[x,1:3]))
-                    
-                    tmpLoc <- c(tmpLoc, "GabRat")# Add the new sub folder GabRat
-                    
-                    # Paste tmploc into a directory character
-                    tmpLoc <- paste(tmpLoc, collapse = "/")
-                    
-                    # Create a directory string
-                    tmpLoc <-paste0(paste(loc,tmpLoc, sep="/"), "/_GabRat_Results.csv")
-                    
-                    # Read in the data using the newly specified location
-                    data <- read.csv(tmpLoc)
-                    
-                    # Add the specific animal information to the data,
-                    # using only the first three columns
-                    data <- merge(Animal_Info_ROI[x,1:3], data)
-                    
-                    data # Returns data
-                  })
+GabRat_Res_list <- lapply(
+  1:nrow(unique(Animal_Info_ROI[, 1:3])),
+  function(x) { # Start of our nested function
 
-# We then collapse the LEIA_Res_list list into a data frame by calling 
+    # Using the first three columns, convert row into a character vector
+    tmpLoc <- as.character(unlist(Animal_Info_ROI[x, 1:3]))
+
+    tmpLoc <- c(tmpLoc, "GabRat") # Add the new sub folder GabRat
+
+    # Paste tmploc into a directory character
+    tmpLoc <- paste(tmpLoc, collapse = "/")
+
+    # Create a directory string
+    tmpLoc <- paste0(paste(loc, tmpLoc, sep = "/"), "/_GabRat_Results.csv")
+
+    # Read in the data using the newly specified location
+    data <- read.csv(tmpLoc)
+
+    # Add the specific animal information to the data,
+    # using only the first three columns
+    data <- merge(Animal_Info_ROI[x, 1:3], data)
+
+    data # Returns data
+  }
+)
+
+# We then collapse the LEIA_Res_list list into a data frame by calling
 # rbind in the function do.call
-GabRat_Res_analysis<-do.call(rbind, GabRat_Res_list)
+GabRat_Res_analysis <- do.call(rbind, GabRat_Res_list)
 
 # Check the imported data
-dim(GabRat_Res_analysis)# 72 rows by 7 columns
-head(GabRat_Res_analysis)# We only want every ~ fourth row for the dbl values
+dim(GabRat_Res_analysis) # 72 rows by 7 columns
+head(GabRat_Res_analysis) # We only want every ~ fourth row for the dbl values
 
 # Set up a true/false condition on whether row has the pattern "_dbl",
 # then subset data on this condition
-GabRat_Res_analysis<-GabRat_Res_analysis[endsWith(GabRat_Res_analysis$ID, "_dbl"),]
-rownames(GabRat_Res_analysis)<-NULL # Reset row numbers
+GabRat_Res_analysis <- GabRat_Res_analysis[endsWith(GabRat_Res_analysis$ID, "_dbl"), ]
+rownames(GabRat_Res_analysis) <- NULL # Reset row numbers
 
-# Then we want to determine ROI where we split the ID column 
+# Then we want to determine ROI where we split the ID column
 # data on the shared pattern "WholeImage_"
-# We then only take the second elemnt, using a FALSE,TRUE index 
-GabRat_Res_analysis$ROI<-unlist(
-  strsplit(GabRat_Res_analysis$ID, "WholeImage_"))[c(FALSE,TRUE)]
+# We then only take the second elemnt, using a FALSE,TRUE index
+GabRat_Res_analysis$ROI <- unlist(
+  strsplit(GabRat_Res_analysis$ID, "WholeImage_")
+)[c(FALSE, TRUE)]
 
 # Then remove the '_dbl'
-GabRat_Res_analysis$ROI<-gsub("_dbl","", GabRat_Res_analysis$ROI)
+GabRat_Res_analysis$ROI <- gsub("_dbl", "", GabRat_Res_analysis$ROI)
 
 # Remove unnecessary columns, subset data excluding the column X
-GabRat_Res_analysis<-GabRat_Res_analysis[, !colnames(GabRat_Res_analysis) 
-                                         %in% c("X","ID", "Sigma")]
+GabRat_Res_analysis <- GabRat_Res_analysis[, !colnames(GabRat_Res_analysis)
+%in% c("X", "ID", "Sigma")]
 
 # Check the imported data
-dim(GabRat_Res_analysis)# 18 rows by 5 columns
+dim(GabRat_Res_analysis) # 18 rows by 5 columns
 
-GabRat_Res_analysis[1:2,]# Observe the first two rows of data
+GabRat_Res_analysis[1:2, ] # Observe the first two rows of data
 ```
 
 # Combine data sets and data preparation
@@ -528,12 +550,13 @@ To merge files, we will again use the *merge* function.
 
 ```{r merge two particle analyses files}
 # Merging two files together
-Cluster_Particle_analysis<-merge(Cluster_analysis, Particle_analysis, 
-                                 by=c("Species","Ind","Dist","ROI", "ClusterID"))
+Cluster_Particle_analysis <- merge(Cluster_analysis, Particle_analysis,
+  by = c("Species", "Ind", "Dist", "ROI", "ClusterID")
+)
 
-dim(Cluster_Particle_analysis)# 52 rows and 36 columns
+dim(Cluster_Particle_analysis) # 52 rows and 36 columns
 
-Cluster_Particle_analysis[1:2,]# Inspect data
+Cluster_Particle_analysis[1:2, ] # Inspect data
 ```
 
 
@@ -543,19 +566,21 @@ Here, we demonstrate how to collate data across the VCA,BSA,CAA data, LEIA outpu
 
 ```{r combine VCA LEIA and GabRat}
 # Merge the first two data frames (VCA_analysis and LEIA_Res_analysis) together
-VCA_LEIA_GabRat_analysis<-merge(VCA_analysis, LEIA_Res_analysis, 
-                                by=c("Species","Ind","Dist","ROI"))
+VCA_LEIA_GabRat_analysis <- merge(VCA_analysis, LEIA_Res_analysis,
+  by = c("Species", "Ind", "Dist", "ROI")
+)
 
-VCA_LEIA_GabRat_analysis[1:2,]# Inspect data
-dim(VCA_LEIA_GabRat_analysis)# 18 rows and 164 columns
+VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data
+dim(VCA_LEIA_GabRat_analysis) # 18 rows and 164 columns
 
 # Merge the new data frame (VCA_LEIA_GabRat_analysis) with GabRat_Res_analysis
-VCA_LEIA_GabRat_analysis<-merge(VCA_LEIA_GabRat_analysis, GabRat_Res_analysis,
-                                by=c("Species","Ind","Dist","ROI"))
+VCA_LEIA_GabRat_analysis <- merge(VCA_LEIA_GabRat_analysis, GabRat_Res_analysis,
+  by = c("Species", "Ind", "Dist", "ROI")
+)
 
-VCA_LEIA_GabRat_analysis[1:2,]# Inspect data again
+VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data again
 
-dim(VCA_LEIA_GabRat_analysis)# 18 rows and 165 columns
+dim(VCA_LEIA_GabRat_analysis) # 18 rows and 165 columns
 ```
 
 ## Data cleaning
@@ -569,14 +594,16 @@ To demonstrate some data cleaning methods, we have created a smaller data frame 
 
 ```{r Removing NAs}
 # Specify column names
-ColumnNames<-c("Species","Ind","Dist","ROI","BSA.BsL.Hrz","Lum.mean",
-               "CAA.Scpl","Lum.CoV","BSA.BML","Col.mean","GabRat")
+ColumnNames <- c(
+  "Species", "Ind", "Dist", "ROI", "BSA.BsL.Hrz", "Lum.mean",
+  "CAA.Scpl", "Lum.CoV", "BSA.BML", "Col.mean", "GabRat"
+)
 
 # Subset data by column names
-V.L.GbRt_sub_analysis<-VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis) 
-                                          %in% ColumnNames]
+V.L.GbRt_sub_analysis <- VCA_LEIA_GabRat_analysis[, colnames(VCA_LEIA_GabRat_analysis)
+%in% ColumnNames]
 
-dim(V.L.GbRt_sub_analysis)# 18 rows by 11 columns
+dim(V.L.GbRt_sub_analysis) # 18 rows by 11 columns
 summary(V.L.GbRt_sub_analysis) # Initial summary of the data
 
 # View the data frame
@@ -585,19 +612,19 @@ View(V.L.GbRt_sub_analysis)
 # Replace infinite values with NA using sapply
 V.L.GbRt_sub_analysis[sapply(V.L.GbRt_sub_analysis, is.infinite)] <- NA
 
-View(V.L.GbRt_sub_analysis)# Observe change the data frame
+View(V.L.GbRt_sub_analysis) # Observe change the data frame
 
 # Remove NA/NaNs
-V.L.GbRt_sub_analysis<-na.omit(V.L.GbRt_sub_analysis)
+V.L.GbRt_sub_analysis <- na.omit(V.L.GbRt_sub_analysis)
 
-View(V.L.GbRt_sub_analysis)# Observe change the data frame
+View(V.L.GbRt_sub_analysis) # Observe change the data frame
 
-dim(V.L.GbRt_sub_analysis)# 11 rows by 11 columns
+dim(V.L.GbRt_sub_analysis) # 11 rows by 11 columns
 
-summary(V.L.GbRt_sub_analysis)# Inspect column distributions
+summary(V.L.GbRt_sub_analysis) # Inspect column distributions
 
-# Inspect the variance for each colour variable 
-apply(V.L.GbRt_sub_analysis[,5:11], 2, var) 
+# Inspect the variance for each colour variable
+apply(V.L.GbRt_sub_analysis[, 5:11], 2, var)
 ```
 
 ### Testing for normality and univaraite outliers
@@ -605,22 +632,24 @@ apply(V.L.GbRt_sub_analysis[,5:11], 2, var)
 Again, with our minimal example, our estimates do not deviate from normality but here we have provided code to test this. Using a combination of the Shapiro-Wilk test for normality (Part A) and histograms (Part B) we can determine if our data is normal. For the Shapiro-Wilk test, the null hypothesis is that data is normal (i.e., p-value less than 0.05 are not normally distributed). 
 
 ```{r Normalising data, fig.align='center', fig.height=7, fig.width=8, fig.cap='Figure 2. Histograms of seven colour variables.'}
-# Part A: 
+# Part A:
 # Test for normality Shapiro-Wilk test
-lapply(V.L.GbRt_sub_analysis[,5:11], shapiro.test)
+lapply(V.L.GbRt_sub_analysis[, 5:11], shapiro.test)
 
-# Part B: 
+# Part B:
 # Visualise distribution of the data using histograms
-Colnames_subset<-colnames(V.L.GbRt_sub_analysis[,5:11])# Select only the colour variables
+Colnames_subset <- colnames(V.L.GbRt_sub_analysis[, 5:11]) # Select only the colour variables
 
 # Set the plot dimensions to display plots as 3 rows by 3 columns
-par(mfrow=c(3,3))
+par(mfrow = c(3, 3))
 
 # Use a for loop to iterate over the column names
 for (i in Colnames_subset) {
   # Plot the histogram, using 10 bins, and the colour variable as the main title
-  hist(V.L.GbRt_sub_analysis[,i], breaks = 10, 
-       main=i, xlab="")
+  hist(V.L.GbRt_sub_analysis[, i],
+    breaks = 10,
+    main = i, xlab = ""
+  )
 }
 ```
 
@@ -628,47 +657,55 @@ To determine the degree of association between our colour variables, we can use 
 
 ```{r Pairs and correlation plot, warning=FALSE, fig.align='center', fig.height=7, fig.width=9, fig.cap="Figure 3. Paired scatter plots of seven colour variables. Lower off-diagonal are the paired scatterplots where coloured points represent regions of interest (animal+background is yellow, bacground is red and animal is blue). Upper off-diagonal represents Pearson's correlation between paired colur varaibles."}
 # Correlation panel
-panel.cor <- function(x, y){
-    usr <- par("usr"); on.exit(par(usr))
-    par(usr = c(0, 1, 0, 1))
-    
-    # Calculate Pearson's correlation
-    r <- round(cor(x, y, method = "pearson"), digits=2)
-    
-    # Save as text
-    txt <- paste0("R = ", r)
-    
-    # Plot the text
-    text(0.5, 0.5, txt, cex=1)
+panel.cor <- function(x, y) {
+  usr <- par("usr")
+  on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+
+  # Calculate Pearson's correlation
+  r <- round(cor(x, y, method = "pearson"), digits = 2)
+
+  # Save as text
+  txt <- paste0("R = ", r)
+
+  # Plot the text
+  text(0.5, 0.5, txt, cex = 1)
 }
 
 my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
 
 # Scatter plot panel
-panel.scat <- function(x, y){
+panel.scat <- function(x, y) {
   # Specify scatter plot points to colour by ROI
-  points(x,y, col=my_cols[V.L.GbRt_sub_analysis$ROI],
-         cex=1.1, pch=19)
+  points(x, y,
+    col = my_cols[V.L.GbRt_sub_analysis$ROI],
+    cex = 1.1, pch = 19
+  )
 }
 
-pairs(V.L.GbRt_sub_analysis[,5:11],
-      # Set title
-      main="Seven colour variables for two viewing distances",
-      
-      # Parse in the new panels
-      upper.panel = panel.cor,
-      lower.panel = panel.scat,
-      
-      # Add margin space and reduce gaps between plots
-      oma=c(5,5,6,18), gap=0)
+pairs(V.L.GbRt_sub_analysis[, 5:11],
+  # Set title
+  main = "Seven colour variables for two viewing distances",
+
+  # Parse in the new panels
+  upper.panel = panel.cor,
+  lower.panel = panel.scat,
+
+  # Add margin space and reduce gaps between plots
+  oma = c(5, 5, 6, 18), gap = 0
+)
 
 # Use the data to create a figure legend
-Colour_ID<-unique(data.frame(as.character(V.L.GbRt_sub_analysis$ROI),
-                             my_cols[V.L.GbRt_sub_analysis$ROI]))
+Colour_ID <- unique(data.frame(
+  as.character(V.L.GbRt_sub_analysis$ROI),
+  my_cols[V.L.GbRt_sub_analysis$ROI]
+))
 
 # Add figure legend to plot
-legend("right", Colour_ID[,1], xpd = TRUE,
-       pch =19,cex=1.1,bty="n", col=Colour_ID[,2])
+legend("right", Colour_ID[, 1],
+  xpd = TRUE,
+  pch = 19, cex = 1.1, bty = "n", col = Colour_ID[, 2]
+)
 
 ```
 
@@ -681,20 +718,23 @@ From the scatter plots in Figure 3, there doesn't appear to be any outliers in e
 library(reshape2)
 
 # Here we 'melt' the data to long format
-V.L.GbRt_sub_analysis_lng<-melt(V.L.GbRt_sub_analysis,
-                                id.vars = c("Species", "Ind", "Dist", "ROI"))
+V.L.GbRt_sub_analysis_lng <- melt(V.L.GbRt_sub_analysis,
+  id.vars = c("Species", "Ind", "Dist", "ROI")
+)
 
 # Set the plot dimensions to display a single plot, correcting outer margins
-par(mfrow=c(1,1), oma=c(0,0,0,0))
+par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
 # Inspect boxplots for outliers
-boxplot(value~variable, pch=16, boxwex=0.5, xlab="Colour variable",
-        data= V.L.GbRt_sub_analysis_lng)
+boxplot(value ~ variable,
+  pch = 16, boxwex = 0.5, xlab = "Colour variable",
+  data = V.L.GbRt_sub_analysis_lng
+)
 ```
 
 ```{r outliers}
 # Calculate z-scores and look for outliers
-apply(V.L.GbRt_sub_analysis[,5:11],2, function(x)(x-mean(x))/sd(x))
+apply(V.L.GbRt_sub_analysis[, 5:11], 2, function(x) (x - mean(x)) / sd(x))
 ```
 
 Although in Figure 4, there are two points in Lum.mean that exceed 1.5 times the interquartile range (the outer whiskers of the boxplot), none of the points exceed 3 standard deviations. 
@@ -706,15 +746,16 @@ When implementing multivariate models, it is best to standardize data to facilit
 
 ```{r Standardising data}
 # Inspect scaled values and column means
-scale(V.L.GbRt_sub_analysis[,5:11], center = TRUE, scale = TRUE)
+scale(V.L.GbRt_sub_analysis[, 5:11], center = TRUE, scale = TRUE)
 
-# Update the V.L.GbRt_sub_analysis data frame with the standardised values 
-V.L.GbRt_sub_analysis[,5:11]<-scale(V.L.GbRt_sub_analysis[,5:11], 
-                                    center = TRUE, scale = TRUE)
+# Update the V.L.GbRt_sub_analysis data frame with the standardised values
+V.L.GbRt_sub_analysis[, 5:11] <- scale(V.L.GbRt_sub_analysis[, 5:11],
+  center = TRUE, scale = TRUE
+)
 
 # Check standardisation
-summary(V.L.GbRt_sub_analysis)# Mean values are zero
-apply(V.L.GbRt_sub_analysis[,5:11], 2, var) # Confirm variances are 1
+summary(V.L.GbRt_sub_analysis) # Mean values are zero
+apply(V.L.GbRt_sub_analysis[, 5:11], 2, var) # Confirm variances are 1
 ```
 
 ### Multivaraite outliers
@@ -723,20 +764,23 @@ For users who will be investigating colours multivariately, we would recommend u
 
 ```{r Mahalanobis}
 # Using R's Mahalanobis function, add a new column to your data
-V.L.GbRt_sub_analysis$mahalnobis <-mahalanobis(V.L.GbRt_sub_analysis[,5:11],
-                                               
-                                               # Get a vector of column means
-                                               colMeans(V.L.GbRt_sub_analysis[,5:11]), 
-                                               
-                                               # Get a covaraince matrix
-                                               cov(V.L.GbRt_sub_analysis[,5:11]))
+V.L.GbRt_sub_analysis$mahalnobis <- mahalanobis(
+  V.L.GbRt_sub_analysis[, 5:11],
+
+  # Get a vector of column means
+  colMeans(V.L.GbRt_sub_analysis[, 5:11]),
+
+  # Get a covaraince matrix
+  cov(V.L.GbRt_sub_analysis[, 5:11])
+)
 
 # Calcualte p-values using k-1 df = 6
-V.L.GbRt_sub_analysis$pvalue <- pchisq(V.L.GbRt_sub_analysis$mahalnobis, 
-                                       df=6, lower.tail=FALSE)
+V.L.GbRt_sub_analysis$pvalue <- pchisq(V.L.GbRt_sub_analysis$mahalnobis,
+  df = 6, lower.tail = FALSE
+)
 
 # Inspect Mahalnobis distances and p-values
-V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c("mahalnobis","pvalue")]
+V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c("mahalnobis", "pvalue")]
 ```
 
 
@@ -747,31 +791,35 @@ Depending on what image analysis sets you are using, we have provided multiple w
 To save mutliple files, we utilise the fact that our naming convention in this R tutorial specifies image analysis data files with _*analysis*. Using the *ls* function with the pattern argument set to "_*analysis*", we can create a list of all our image analysis dataframes. Then, using a for loop, we iterate over each dataframe, rename it using the current date, and then output the csv file. Finally, we use *list.files* to check that the files have been created. 
 
 ```{r Output files}
-dir.create(paste(c(loc, "Output"), collapse = "/"))# Create the Output directory
+dir.create(paste(c(loc, "Output"), collapse = "/")) # Create the Output directory
 
-Out_path = paste(c(loc, "Output"), collapse = "/")# Save Output directory path
+Out_path <- paste(c(loc, "Output"), collapse = "/") # Save Output directory path
 
 # For a single file:
-write.csv(GabRat_Res_analysis, row.names = FALSE, # Remove row names
-          file=paste(c(Out_path, "GabRat_Res_analysis.csv"), 
-                     collapse = "/"))# Save to the folder Output in Test Data
+write.csv(GabRat_Res_analysis,
+  row.names = FALSE, # Remove row names
+  file = paste(c(Out_path, "GabRat_Res_analysis.csv"),
+    collapse = "/"
+  )
+) # Save to the folder Output in Test Data
 
 # For multiple files:
-savefile_list<-ls(pattern = "analysis")# Save all objects with "analysis" in the name
+savefile_list <- ls(pattern = "analysis") # Save all objects with "analysis" in the name
 
-savefile_list# Inspect object names
+savefile_list # Inspect object names
 
 # Iterate over each data frame in savefile_list
-for (i in savefile_list){
-  
+for (i in savefile_list) {
   # Create file name and add the .csv extension
   # Add date of creation using format(Sys.time(), "_%d_%b_%Y")
   # Remove "_analysis" using gsub and add "_data" and date created
-  fname=paste0(gsub("_analysis", "", i), "_data",format(Sys.time(), "_%d_%b_%Y"),".csv")
-  
+  fname <- paste0(gsub("_analysis", "", i), "_data", format(Sys.time(), "_%d_%b_%Y"), ".csv")
+
   # Save to the folder Output in Test Data
-  write.csv(GabRat_Res_analysis, row.names = FALSE, # Remove row names
-          file=paste(c(Out_path, fname), collapse = "/"))
+  write.csv(GabRat_Res_analysis,
+    row.names = FALSE, # Remove row names
+    file = paste(c(Out_path, fname), collapse = "/")
+  )
 }
 
 # Check that your files have saved
@@ -791,28 +839,33 @@ Here we will provide a quick demonstration by importing the LEIA QCPA batch scri
 library(data.table)
 
 # Convert Animal_Info_ROI into data.table format
-Animal_Info_ROI_DT<-setDT(Animal_Info_ROI)
+Animal_Info_ROI_DT <- setDT(Animal_Info_ROI)
 
 # From Animal_Info_ROI we can paste the column information together
 # and then read in data row by row, specifying 'by=1:NROW(Animal_Info_ROI)'
-LEIA_analysis_DT<-Animal_Info_ROI[, fread(paste(loc,Species,Ind,Dist,"LEIA", ROI, 
-                         "_Local Edge Intensity Analysis.csv", sep="/")), 
-                 by=1:NROW(Animal_Info_ROI)]
+LEIA_analysis_DT <- Animal_Info_ROI[, fread(paste(loc, Species, Ind, Dist, "LEIA", ROI,
+  "_Local Edge Intensity Analysis.csv",
+  sep = "/"
+)),
+by = 1:NROW(Animal_Info_ROI)
+]
 
 # Remove unwanted columns, and automatically assign using ':='
-LEIA_analysis_DT[, c("NROW","V1","Image", "Transform"):=NULL]
+LEIA_analysis_DT[, c("NROW", "V1", "Image", "Transform") := NULL]
 
 # Add the Animal_Info_ROI information
-LEIA_analysis_DT<-cbind(Animal_Info_ROI,LEIA_analysis_DT)
+LEIA_analysis_DT <- cbind(Animal_Info_ROI, LEIA_analysis_DT)
 
 # Inspect the data.table
 head(LEIA_analysis_DT)
 
 # Create save filename
-fname=paste0(Out_path,"/", gsub("_analysis", "", "LEIA_analysis_DT"), 
-             "_data",format(Sys.time(), "_%d_%b_%Y"),".csv")
+fname <- paste0(
+  Out_path, "/", gsub("_analysis", "", "LEIA_analysis_DT"),
+  "_data", format(Sys.time(), "_%d_%b_%Y"), ".csv"
+)
 # Save output
-fwrite(LEIA_analysis_DT, file = fname, row.names=FALSE)
+fwrite(LEIA_analysis_DT, file = fname, row.names = FALSE)
 ```
 
 
@@ -821,10 +874,10 @@ fwrite(LEIA_analysis_DT, file = fname, row.names=FALSE)
 # References
 
 ```{r hidden, include=FALSE, purl=FALSE}
-unlink(list.dirs()[endsWith(list.dirs(), "Output")], recursive=TRUE)
+unlink(list.dirs()[endsWith(list.dirs(), "Output")], recursive = TRUE)
 # Run this at the end to create a R file
 options(knitr.duplicate.label = "allow")
-knitr::purl('QCPA_r-script.Rmd')
+knitr::purl("QCPA_r-script.Rmd")
 ```
 
 
