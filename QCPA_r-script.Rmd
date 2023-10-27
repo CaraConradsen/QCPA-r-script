@@ -151,7 +151,7 @@ The final lines achieve four things:
 3. `unlist()` puts all elements into a vector. As the region of interest are the prefix, it will be first element in the pair, which we can subset using: `[ c(TRUE,FALSE)]`.
 4. Finally, the `unique()` function looks across all names used for each individual and retains only unique names, omitting duplicates.
 
-## Add regions of interest to Animal information dataset
+## Add regions of interest to animal information dataset
 
 To proceed with the next step, the regions of interest (ROIs) must be uniformly named across all individual specimens (see above if uncertain). Here, we introduce two methods to add ROIs. The first method is the quickest, and works if you are confident in your naming conventions. 
 
@@ -237,7 +237,7 @@ head(Animal_Info_ROI)  # Check data
 str(Animal_Info_ROI)  # Check that ROI is a factor
 ```
 
-# Create a function to import a .csv list from VCA,BSA,CAA data, with options for particle analysis
+# Create a function to import a .csv list from VCA, BSA, and CAA data, with options for particle analysis
 
 As before, you could use a series of nested loops to extract the data in the csv files (e.g., section 2.1). However, here we introduce how to define a function to determine the data location using the data listed in the *Animal_Info_ROI* data frame and import the .csv file. By creating a function, we can then make our file importing dynamic, providing options to import different image analysis files. And, by using information called directly from the *Animal_Info_ROI* data frame, we ensure the data extracted is correct and reduces errors that would have potentially occurred if we did a broad import. First, we present a simple example of a function to import the VCA,BSA,CAA data files, and then, secondly, we expand on our function to demonstrate how to define and import multiple types of image analysis data files. 
 

@@ -411,7 +411,7 @@ species, animals and viewing distances</a></li>
 <li><a href="#inspect-data" id="toc-inspect-data"><span class="toc-section-number">2.2</span> Inspect data</a></li>
 <li><a href="#inspect-regions-of-interest-for-inconsistent-labelling-additional-step" id="toc-inspect-regions-of-interest-for-inconsistent-labelling-additional-step"><span class="toc-section-number">2.3</span> Inspect regions of interest for
 inconsistent labelling (additional step)</a></li>
-<li><a href="#add-regions-of-interest-to-animal-information-dataset" id="toc-add-regions-of-interest-to-animal-information-dataset"><span class="toc-section-number">2.4</span> Add regions of interest to Animal
+<li><a href="#add-regions-of-interest-to-animal-information-dataset" id="toc-add-regions-of-interest-to-animal-information-dataset"><span class="toc-section-number">2.4</span> Add regions of interest to animal
 information dataset</a>
 <ul>
 <li><a href="#simplified-method-to-list-rois" id="toc-simplified-method-to-list-rois"><span class="toc-section-number">2.4.1</span> Simplified method to list
@@ -422,8 +422,8 @@ data</a></li>
 <li><a href="#merge-the-list-of-rois-names-with-the-animal-id-dataframe" id="toc-merge-the-list-of-rois-names-with-the-animal-id-dataframe"><span class="toc-section-number">2.5</span> Merge the list of ROIs names with
 the animal ID dataframe</a></li>
 </ul></li>
-<li><a href="#create-a-function-to-import-a-.csv-list-from-vcabsacaa-data-with-options-for-particle-analysis" id="toc-create-a-function-to-import-a-.csv-list-from-vcabsacaa-data-with-options-for-particle-analysis"><span class="toc-section-number">3</span> Create a function to import a .csv
-list from VCA,BSA,CAA data, with options for particle analysis</a>
+<li><a href="#create-a-function-to-import-a-.csv-list-from-vca-bsa-and-caa-data-with-options-for-particle-analysis" id="toc-create-a-function-to-import-a-.csv-list-from-vca-bsa-and-caa-data-with-options-for-particle-analysis"><span class="toc-section-number">3</span> Create a function to import a .csv
+list from VCA, BSA, and CAA data, with options for particle analysis</a>
 <ul>
 <li><a href="#simplified-function-example-to-read-in-image-analysis-files" id="toc-simplified-function-example-to-read-in-image-analysis-files"><span class="toc-section-number">3.1</span> Simplified function example to
 read in image analysis files</a></li>
@@ -672,7 +672,7 @@ duplicates.</li>
 </div>
 <div id="add-regions-of-interest-to-animal-information-dataset" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Add regions of
-interest to Animal information dataset</h2>
+interest to animal information dataset</h2>
 <p>To proceed with the next step, the regions of interest (ROIs) must be
 uniformly named across all individual specimens (see above if
 uncertain). Here, we introduce two methods to add ROIs. The first method
@@ -790,10 +790,10 @@ head(Animal_Info_ROI)  # Check data</code></pre>
 ##  $ ROI    : Factor w/ 3 levels &quot;animal&quot;,&quot;animal+background&quot;,..: 1 1 1 1 1 1 2 2 2 2 ...</code></pre>
 </div>
 </div>
-<div id="create-a-function-to-import-a-.csv-list-from-vcabsacaa-data-with-options-for-particle-analysis" class="section level1" number="3">
+<div id="create-a-function-to-import-a-.csv-list-from-vca-bsa-and-caa-data-with-options-for-particle-analysis" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Create a function to
-import a .csv list from VCA,BSA,CAA data, with options for particle
-analysis</h1>
+import a .csv list from VCA, BSA, and CAA data, with options for
+particle analysis</h1>
 <p>As before, you could use a series of nested loops to extract the data
 in the csv files (e.g., section 2.1). However, here we introduce how to
 define a function to determine the data location using the data listed
