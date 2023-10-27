@@ -129,22 +129,24 @@ In this example, there are only three individuals. However, with a larger data s
 The number of data files will depend on whether animal, background and/or animal+background options were selected; this will make up the prefix of the file name followed by an underscore and image analysis file type (e.g., '_*Summary Results.csv*'). For the following R code to work, regions of interest must be uniformly named and capitalised for all individuals analysed. Below is a method to ensure that these regions of interest (ROIs) have been correctly named by reporting all unique names across your data by examining all unique `.tif` file names. If you are confident that the naming was consistent, you may skip this step. 
 
 ```{r Check ROIs}
-# Create vector containing all the individual animal sub directories 
-tmpAnidir <- apply(animal_info, 1, function(x) paste(unlist(x), collapse = "/"))
+# Generate individual animal sub-directories paths
+animal_sub_dirs <- apply(animal_info, 1, function(x) paste(x, collapse = "/"))
 
-# Paste the global file directories to the front of the sub directory paths
-tmpAnidir <- paste(data_location, tmpAnidir, sep = "/")
+# Prepend the global file directories to the sub-directory paths
+full_animal_dirs <- file.path(data_location, animal_sub_dirs)
 
-# This should highlight the unique regions of interest, if there are
-# more than expected - look for naming inconsistencies
-unique(unlist(strsplit(list.files(tmpAnidir, pattern = ".tif"), "_"))[c(TRUE, FALSE)])
+# Identify the unique regions of interest. If there are
+# more than expected - look for naming inconsistencies.
+tif_files <- list.files(full_animal_dirs, pattern = ".tif")
+roi_names <- unique(unlist(strsplit(tif_files, "_"))[c(TRUE, FALSE)])
+roi_names
 ```
   
-**How the nested line works** 
+**How the final lines works** 
 
-The above line can be broken down into four steps:
+The final lines achieve four things:
 
-1. `list.files()` searches all the locations specified in the tmpAnidir vector for files with the `.tif` extension and puts these file names into a new character vector.
+1. `list.files()` searches all the locations specified in the `full_animal_dirs` vector for files with the `.tif` extension and puts these file names into a new character vector.
 2. Knowing that file names are composed of two bits of information separated by an underscore, `strsplit()` cuts the filenames into two elements at the underscore and outputs a list containing these two new elements for each unique file.
 3. `unlist()` puts all elements into a vector. As the region of interest are the prefix, it will be first element in the pair, which we can subset using: `[ c(TRUE,FALSE)]`.
 4. Finally, the `unique()` function looks across all names used for each individual and retains only unique names, omitting duplicates.

@@ -639,22 +639,25 @@ that these regions of interest (ROIs) have been correctly named by
 reporting all unique names across your data by examining all unique
 <code>.tif</code> file names. If you are confident that the naming was
 consistent, you may skip this step.</p>
-<pre class="r"><code># Create vector containing all the individual animal sub directories 
-tmpAnidir &lt;- apply(animal_info, 1, function(x) paste(unlist(x), collapse = &quot;/&quot;))
+<pre class="r"><code># Generate individual animal sub-directories paths
+animal_sub_dirs &lt;- apply(animal_info, 1, function(x) paste(x, collapse = &quot;/&quot;))
 
-# Paste the global file directories to the front of the sub directory paths
-tmpAnidir &lt;- paste(data_location, tmpAnidir, sep = &quot;/&quot;)
+# Prepend the global file directories to the sub-directory paths
+full_animal_dirs &lt;- file.path(data_location, animal_sub_dirs)
 
-# This should highlight the unique regions of interest, if there are
-# more than expected - look for naming inconsistencies
-unique(unlist(strsplit(list.files(tmpAnidir, pattern = &quot;.tif&quot;), &quot;_&quot;))[c(TRUE, FALSE)])</code></pre>
+# Identify the unique regions of interest. If there are
+# more than expected - look for naming inconsistencies.
+tif_files &lt;- list.files(full_animal_dirs, pattern = &quot;.tif&quot;)
+roi_names &lt;- unique(unlist(strsplit(tif_files, &quot;_&quot;))[c(TRUE, FALSE)])
+roi_names</code></pre>
 <pre><code>## [1] &quot;animal&quot;            &quot;animal+background&quot; &quot;background&quot;</code></pre>
-<p><strong>How the nested line works</strong></p>
-<p>The above line can be broken down into four steps:</p>
+<p><strong>How the final lines works</strong></p>
+<p>The final lines achieve four things:</p>
 <ol style="list-style-type: decimal">
 <li><code>list.files()</code> searches all the locations specified in
-the tmpAnidir vector for files with the <code>.tif</code> extension and
-puts these file names into a new character vector.</li>
+the <code>full_animal_dirs</code> vector for files with the
+<code>.tif</code> extension and puts these file names into a new
+character vector.</li>
 <li>Knowing that file names are composed of two bits of information
 separated by an underscore, <code>strsplit()</code> cuts the filenames
 into two elements at the underscore and outputs a list containing these
