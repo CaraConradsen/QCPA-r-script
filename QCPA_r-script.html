@@ -751,22 +751,24 @@ the file names with ’_Summary Results.csv’, we remove this phrase using
 # Using the first row of animal_info to specify the location to examine
 # the number and types of _Summary Results.csv files
 
-# Find all the ROI output files for &#39;_Summary Results.csv&#39;
-ROI &lt;- list.files(paste(data_location, paste(unlist(animal_info[1, ]), collapse = &quot;/&quot;),
-  sep = &quot;/&quot;
-), pattern = &quot;_Summary Results.csv&quot;)
+# Use the first row of animal_info to specify the location to examine
+first_animal_path &lt;- file.path(data_location, paste(unlist(animal_info[1, ]), collapse = &quot;/&quot;))
 
-# Here we remove the &quot;_Summary Results.csv&quot; information
-ROI &lt;- gsub(&quot;_Summary Results.csv&quot;, &quot;&quot;, ROI)
-ROI # In the QCPA batch script, we have investigated three ROIs</code></pre>
+# Find all the ROI output files for &#39;_Summary Results.csv&#39;
+roi_files &lt;- list.files(first_animal_path, pattern = &quot;_Summary Results.csv&quot;)
+
+# Extract ROI names by removing the &quot;_Summary Results.csv&quot; suffix
+rois &lt;- gsub(&quot;_Summary Results.csv&quot;, &quot;&quot;, roi_files)
+rois</code></pre>
 <pre><code>## [1] &quot;animal&quot;            &quot;animal+background&quot; &quot;background&quot;</code></pre>
+<pre class="r"><code># Note: In the QCPA batch script, three ROIs were investigated.</code></pre>
 </div>
 </div>
 <div id="merge-the-list-of-rois-names-with-the-animal-id-dataframe" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span> Merge the list of
 ROIs names with the animal ID dataframe</h2>
 <pre class="r"><code># Expand each unique row of the animal_info data frame to included a unique ROI value
-Animal_Info_ROI &lt;- merge(animal_info, ROI)
+Animal_Info_ROI &lt;- merge(animal_info, rois)
 
 colnames(Animal_Info_ROI)[4] &lt;- &quot;ROI&quot;  # Name column 4 to ROI
 
@@ -1179,80 +1181,63 @@ section 2.3.</p>
 <pre class="r"><code># Because we are not using ROI which adds three levels (rows),
 # we trim data frame using unique()
 # For each the 6 rows in Animal_Info_ROI
-GabRat_Res_list &lt;- lapply(
-  1:nrow(unique(Animal_Info_ROI[, 1:3])),
-  function(x) { # Start of our nested function
 
-    # Using the first three columns, convert row into a character vector
-    tmpLoc &lt;- as.character(unlist(Animal_Info_ROI[x, 1:3]))
+# Import GabRat results and process data
 
-    tmpLoc &lt;- c(tmpLoc, &quot;GabRat&quot;) # Add the new sub folder GabRat
+# Function to read and process GabRat results
+read_gabrat &lt;- function(data_location, animal_info) {
+  gabrat_res_list &lt;- lapply(
+    1:nrow(unique(animal_info[, 1:3])),
+    function(row_index) {
+      # Convert row into a character vector
+      tmp_loc &lt;- as.character(unlist(animal_info[row_index, 1:3]))
+      tmp_loc &lt;- c(tmp_loc, &quot;GabRat&quot;) # Add the new sub folder GabRat
+      dir_path &lt;- file.path(data_location, paste(tmp_loc, collapse = &quot;/&quot;), &quot;_GabRat_Results.csv&quot;)
+      
+      # Read in the data using the newly specified location
+      data &lt;- read.csv(dir_path)
+      
+      # Add the specific animal information to the data
+      data &lt;- merge(animal_info[row_index, 1:3], data)
+      data
+    }
+  )
+  
+  # Collapse the gabrat_res_list list into a data frame
+  gabrat_res_analysis &lt;- do.call(rbind, gabrat_res_list)
+  
+  # Filter data for rows containing &quot;_dbl&quot; in ID
+  gabrat_res_analysis &lt;- gabrat_res_analysis[endsWith(gabrat_res_analysis$ID, &quot;_dbl&quot;), ]
+  rownames(gabrat_res_analysis) &lt;- NULL
+  
+  # Add ROI column by extracting substring after &quot;WholeImage_&quot;
+  gabrat_res_analysis$ROI &lt;- sapply(
+    strsplit(gabrat_res_analysis$ID, &quot;WholeImage_&quot;), `[`, 2
+  )
+  
+  # Remove &#39;_dbl&#39; suffix from ROI column
+  gabrat_res_analysis$ROI &lt;- gsub(&quot;_dbl&quot;, &quot;&quot;, gabrat_res_analysis$ROI)
+  
+  # Remove unnecessary columns
+  gabrat_res_analysis &lt;- gabrat_res_analysis[, !colnames(gabrat_res_analysis) %in% c(&quot;X&quot;, &quot;ID&quot;, &quot;Sigma&quot;)]
+  
+  gabrat_res_analysis
+}
 
-    # Paste tmploc into a directory character
-    tmpLoc &lt;- paste(tmpLoc, collapse = &quot;/&quot;)
+# Call the function to read and process GabRat results
+gabrat_res_analysis &lt;- read_gabrat(data_location, Animal_Info_ROI)
 
-    # Create a directory string
-    tmpLoc &lt;- paste0(paste(data_location, tmpLoc, sep = &quot;/&quot;), &quot;/_GabRat_Results.csv&quot;)
-
-    # Read in the data using the newly specified location
-    data &lt;- read.csv(tmpLoc)
-
-    # Add the specific animal information to the data,
-    # using only the first three columns
-    data &lt;- merge(Animal_Info_ROI[x, 1:3], data)
-
-    data # Returns data
-  }
-)
-
-# We then collapse the LEIA_Res_list list into a data frame by calling
-# rbind in the function do.call
-GabRat_Res_analysis &lt;- do.call(rbind, GabRat_Res_list)
-
-# Check the imported data
-dim(GabRat_Res_analysis) # 72 rows by 7 columns</code></pre>
-<pre><code>## [1] 72  7</code></pre>
-<pre class="r"><code>head(GabRat_Res_analysis) # We only want every ~ fourth row for the dbl values</code></pre>
-<pre><code>##             Species                            Ind Dist X
-## 1 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 1
-## 2 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 2
-## 3 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 3
-## 4 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 4
-## 5 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 5
-## 6 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 6
-##                                                                                   ID Sigma    GabRat
-## 1            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_lw     3 0.1666780
-## 2            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_mw     3 0.1774265
-## 3            3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_sw     3 0.1902168
-## 4           3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal_dbl     3 0.1682120
-## 5 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_lw     3 0.5320508
-## 6 3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity1_Dist300_WholeImage_animal+background_mw     3 0.5181680</code></pre>
-<pre class="r"><code># Set up a true/false condition on whether row has the pattern &quot;_dbl&quot;,
-# then subset data on this condition
-GabRat_Res_analysis &lt;- GabRat_Res_analysis[endsWith(GabRat_Res_analysis$ID, &quot;_dbl&quot;), ]
-rownames(GabRat_Res_analysis) &lt;- NULL # Reset row numbers
-
-# Then we want to determine ROI where we split the ID column
-# data on the shared pattern &quot;WholeImage_&quot;
-# We then only take the second elemnt, using a FALSE,TRUE index
-GabRat_Res_analysis$ROI &lt;- unlist(
-  strsplit(GabRat_Res_analysis$ID, &quot;WholeImage_&quot;)
-)[c(FALSE, TRUE)]
-
-# Then remove the &#39;_dbl&#39;
-GabRat_Res_analysis$ROI &lt;- gsub(&quot;_dbl&quot;, &quot;&quot;, GabRat_Res_analysis$ROI)
-
-# Remove unnecessary columns, subset data excluding the column X
-GabRat_Res_analysis &lt;- GabRat_Res_analysis[, !colnames(GabRat_Res_analysis)
-%in% c(&quot;X&quot;, &quot;ID&quot;, &quot;Sigma&quot;)]
-
-# Check the imported data
-dim(GabRat_Res_analysis) # 18 rows by 5 columns</code></pre>
+# Check the processed data
+print(dim(gabrat_res_analysis)) # Should show 18 rows and 5 columns</code></pre>
 <pre><code>## [1] 18  5</code></pre>
-<pre class="r"><code>GabRat_Res_analysis[1:2, ] # Observe the first two rows of data</code></pre>
+<pre class="r"><code>print(head(gabrat_res_analysis)) # Displays first two rows of data</code></pre>
 <pre><code>##             Species                            Ind Dist    GabRat               ROI
 ## 1 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.1682120            animal
-## 2 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.5332068 animal+background</code></pre>
+## 2 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.5332068 animal+background
+## 3 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm 0.4139920        background
+## 4 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 50cm 0.1624157            animal
+## 5 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 50cm 0.4468272 animal+background
+## 6 aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 50cm 0.3590715        background</code></pre>
 </div>
 <div id="combine-data-sets-and-data-preparation" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Combine data sets and
@@ -1348,8 +1333,8 @@ VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data</code></pre>
 ## 2      none          0          0</code></pre>
 <pre class="r"><code>dim(VCA_LEIA_GabRat_analysis) # 18 rows and 164 columns</code></pre>
 <pre><code>## [1]  18 164</code></pre>
-<pre class="r"><code># Merge the new data frame (VCA_LEIA_GabRat_analysis) with GabRat_Res_analysis
-VCA_LEIA_GabRat_analysis &lt;- merge(VCA_LEIA_GabRat_analysis, GabRat_Res_analysis,
+<pre class="r"><code># Merge the new data frame (VCA_LEIA_GabRat_analysis) with gabrat_res_analysis
+VCA_LEIA_GabRat_analysis &lt;- merge(VCA_LEIA_GabRat_analysis, gabrat_res_analysis,
   by = c(&quot;Species&quot;, &quot;Ind&quot;, &quot;Dist&quot;, &quot;ROI&quot;)
 )
 
@@ -1812,9 +1797,9 @@ the files have been created.</p>
 Out_path &lt;- paste(c(data_location, &quot;Output&quot;), collapse = &quot;/&quot;) # Save Output directory path
 
 # For a single file:
-write.csv(GabRat_Res_analysis,
+write.csv(gabrat_res_analysis,
   row.names = FALSE, # Remove row names
-  file = paste(c(Out_path, &quot;GabRat_Res_analysis.csv&quot;),
+  file = paste(c(Out_path, &quot;gabrat_res_analysis.csv&quot;),
     collapse = &quot;/&quot;
   )
 ) # Save to the folder Output in test_data
@@ -1823,7 +1808,7 @@ write.csv(GabRat_Res_analysis,
 savefile_list &lt;- ls(pattern = &quot;analysis&quot;) # Save all objects with &quot;analysis&quot; in the name
 
 savefile_list # Inspect object names</code></pre>
-<pre><code>##  [1] &quot;Cluster_analysis&quot;          &quot;Cluster_Particle_analysis&quot; &quot;GabRat_Res_analysis&quot;       &quot;IndParticle_analysis&quot;     
+<pre><code>##  [1] &quot;Cluster_analysis&quot;          &quot;Cluster_Particle_analysis&quot; &quot;gabrat_res_analysis&quot;       &quot;IndParticle_analysis&quot;     
 ##  [5] &quot;LEIA_analysis_DT&quot;          &quot;LEIA_Res_analysis&quot;         &quot;Particle_analysis&quot;         &quot;V.L.GbRt_sub_analysis&quot;    
 ##  [9] &quot;V.L.GbRt_sub_analysis_lng&quot; &quot;VCA_analysis&quot;              &quot;VCA_LEIA_GabRat_analysis&quot;</code></pre>
 <pre class="r"><code># Iterate over each data frame in savefile_list
@@ -1834,7 +1819,7 @@ for (i in savefile_list) {
   fname &lt;- paste0(gsub(&quot;_analysis&quot;, &quot;&quot;, i), &quot;_data&quot;, format(Sys.time(), &quot;_%d_%b_%Y&quot;), &quot;.csv&quot;)
 
   # Save to the folder Output in test_data
-  write.csv(GabRat_Res_analysis,
+  write.csv(gabrat_res_analysis,
     row.names = FALSE, # Remove row names
     file = paste(c(Out_path, fname), collapse = &quot;/&quot;)
   )
@@ -1842,8 +1827,8 @@ for (i in savefile_list) {
 
 # Check that your files have saved
 list.files(Out_path)</code></pre>
-<pre><code>##  [1] &quot;Cluster_data_27_Oct_2023.csv&quot;          &quot;Cluster_Particle_data_27_Oct_2023.csv&quot; &quot;GabRat_Res_analysis.csv&quot;              
-##  [4] &quot;GabRat_Res_data_27_Oct_2023.csv&quot;       &quot;IndParticle_data_27_Oct_2023.csv&quot;      &quot;LEIA_DT_data_27_Oct_2023.csv&quot;         
+<pre><code>##  [1] &quot;Cluster_data_27_Oct_2023.csv&quot;          &quot;Cluster_Particle_data_27_Oct_2023.csv&quot; &quot;gabrat_res_analysis.csv&quot;              
+##  [4] &quot;gabrat_res_data_27_Oct_2023.csv&quot;       &quot;IndParticle_data_27_Oct_2023.csv&quot;      &quot;LEIA_DT_data_27_Oct_2023.csv&quot;         
 ##  [7] &quot;LEIA_Res_data_27_Oct_2023.csv&quot;         &quot;Particle_data_27_Oct_2023.csv&quot;         &quot;V.L.GbRt_sub_data_27_Oct_2023.csv&quot;    
 ## [10] &quot;V.L.GbRt_sub_lng_data_27_Oct_2023.csv&quot; &quot;VCA_data_27_Oct_2023.csv&quot;              &quot;VCA_LEIA_GabRat_data_27_Oct_2023.csv&quot;</code></pre>
 </div>
