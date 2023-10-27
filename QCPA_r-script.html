@@ -500,27 +500,27 @@ the R script was saved in the parent folder of
 <code>example_data</code>. The next step will be to extract the names of
 the two focal species using the folder names within the
 <code>test_data</code> folder.</p>
-<pre class="r"><code># Get directory; assumes the R script is in the parent folder of example_data
-pth &lt;- getwd()
+<pre class="r"><code># Construct the global data location path. This assumes the R script is in the
+# project root
+data_location &lt;- file.path(getwd(), &quot;example_data/eg1_trichromat_nouv/test_data&quot;)
 
-# Set sub folder name containing your data
-Extrct_Fold &lt;- &quot;example_data/eg1_trichromat_nouv/test_data&quot;
+# List the species folders in the data location
+# These could also be locations depending on your data set
+species_folders &lt;- list.files(path = data_location)
 
-# Paste the two locations together to specify your global data location
-loc &lt;- paste(pth, Extrct_Fold, sep = &quot;/&quot;)
-
-# Detect species. These could also be locations depending on your data set
-Species &lt;- list.files(path = loc)
-
-Species # Should contain species folders and a log file with QCPA processing details</code></pre>
+# Print the list of species folders and log file with QCPA processing details
+print(species_folders)</code></pre>
 <pre><code>## [1] &quot;aphelodoris_varia&quot;  &quot;aplysia_sp&quot;         &quot;Batch_QCPA_Log.txt&quot;</code></pre>
-<pre class="r"><code># Here, we use the &quot;Ap&quot; pattern in both species names to subset the Species list
-Species &lt;- Species[grepl(&quot;ap&quot;, Species)] # Removes the log file from vector
+<pre class="r"><code># Filter species folders based on the &quot;Ap&quot; pattern in their names
+# This removes the log file from the vector
+species &lt;- grep(&quot;ap&quot;, species_folders, value = TRUE)
 
-# Note: For multiple different species patterns, can search using the or condition &#39;|&#39;
-# e.g., Species&lt;-Species[grepl(&quot;A|B&quot;, Species)], returns species with pattern &#39;A&#39; or &#39;B&#39;
+# Note: For multiple different species patterns, can search using the or 
+# condition &#39;|&#39;. e.g., species &lt;- species[grepl(&quot;A|B&quot;, species)], 
+# returns species with pattern &#39;A&#39; or &#39;B&#39;
 
-Species</code></pre>
+# Print the filtered list of species folders
+print(species)</code></pre>
 <pre><code>## [1] &quot;aphelodoris_varia&quot; &quot;aplysia_sp&quot;</code></pre>
 <p>Here, we will demonstrate extracting folder information names using a
 for loop. We first create an empty data frame called
@@ -540,8 +540,8 @@ new row in <code>Animal_Info</code>.</p>
 
 # Then create a loop to iterate over the species folders,
 # extracting viewing distances and individual animal IDs
-for (i in 1:length(Species)) { # Here i will be either 1 or 2
-  Ind_pth &lt;- paste0(loc, &quot;/&quot;, Species[i]) # Pastes the ith species from the Species object
+for (i in 1:length(species)) { # Here i will be either 1 or 2
+  Ind_pth &lt;- paste0(data_location, &quot;/&quot;, species[i]) # Pastes the ith species from the species object
   Indviduals_list &lt;- list.files(path = Ind_pth) # Extracts all individual folder names
 
   # Iterate over the number of individuals in each species folder
@@ -551,7 +551,7 @@ for (i in 1:length(Species)) { # Here i will be either 1 or 2
     Dists &lt;- list.files(paste0(Ind_pth, &quot;/&quot;, Indviduals_list[ind]), pattern = &quot;cm&quot;)
 
     # Add to Animal_Info a new row with species name, individual and viewing distance
-    rbind(Animal_Info, cbind(Species[i], Indviduals_list[ind], c(Dists))) -&gt; Animal_Info
+    rbind(Animal_Info, cbind(species[i], Indviduals_list[ind], c(Dists))) -&gt; Animal_Info
   }
 }
 colnames(Animal_Info) &lt;- c(&quot;Species&quot;, &quot;Ind&quot;, &quot;Dist&quot;) # Rename the column names in Animal_Info</code></pre>
@@ -629,7 +629,7 @@ consistent, you may skip this step.</p>
 tmpAnidir &lt;- apply(Animal_Info, 1, function(x) paste(unlist(x), collapse = &quot;/&quot;))
 
 # Paste the global file directories to the front of the sub directory paths
-tmpAnidir &lt;- paste(loc, tmpAnidir, sep = &quot;/&quot;)
+tmpAnidir &lt;- paste(data_location, tmpAnidir, sep = &quot;/&quot;)
 
 # This should highlight the unique regions of interest, if there are
 # more than expected - look for naming inconsistencies
@@ -735,7 +735,7 @@ the file names with ’_Summary Results.csv’, we remove this phrase using
 # the number and types of _Summary Results.csv files
 
 # Find all the ROI output files for &#39;_Summary Results.csv&#39;
-ROI &lt;- list.files(paste(loc, paste(unlist(Animal_Info[1, ]), collapse = &quot;/&quot;),
+ROI &lt;- list.files(paste(data_location, paste(unlist(Animal_Info[1, ]), collapse = &quot;/&quot;),
   sep = &quot;/&quot;
 ), pattern = &quot;_Summary Results.csv&quot;)
 
@@ -812,7 +812,7 @@ exnfile &lt;- &quot;_Summary Results.csv&quot;
 
 Ani_ID_dat &lt;- Animal_Info_ROI # Assign our animal ID data frame
 
-path &lt;- loc # This is the global location set in section 2.1
+path &lt;- data_location # This is the global location set in section 2.1
 
 # Part B:
 # Once the file extension condition is met, we use lapply to extract the data,
@@ -880,19 +880,19 @@ read in various image analysis files</h2>
 <code>read_qcpa()</code>, which will take an animal ID data frame
 (<code>Ani_ID_dat</code>), the specific image analysis that we are
 interested in (<code>filetype</code>), and a folder directory (where we
-set the default <code>path</code> to the <code>loc</code> defined in
-section 1.2). For Part A of the function, we can conditionally set what
-image analysis we are interested in and set the <code>exnfile</code>
-object to the correct file extension. We have listed each image analysis
-and the argument name to be specified as the filetype in Table 2. As the
-last conditional (at the <code>else</code> level), we have used the
-<code>stop</code> function which will occur if <code>filetype</code> has
-not been specified, and will report an error. Part B is the same as in
-section 3.1 above however it is worth noting that we used
-<code>merge</code> here instead of <code>rbind()</code> (section 2.1)
-because this allows our function to handle data in both long and wide
-format. Then, in Part C, we use the <code>return</code> function to
-output our newly imported data.</p>
+set the default <code>path</code> to the <code>data_location</code>
+defined in section 1.2). For Part A of the function, we can
+conditionally set what image analysis we are interested in and set the
+<code>exnfile</code> object to the correct file extension. We have
+listed each image analysis and the argument name to be specified as the
+filetype in Table 2. As the last conditional (at the <code>else</code>
+level), we have used the <code>stop</code> function which will occur if
+<code>filetype</code> has not been specified, and will report an error.
+Part B is the same as in section 3.1 above however it is worth noting
+that we used <code>merge</code> here instead of <code>rbind()</code>
+(section 2.1) because this allows our function to handle data in both
+long and wide format. Then, in Part C, we use the <code>return</code>
+function to output our newly imported data.</p>
 <table>
 <caption>Table 2. QCPA image analysis and the different filetype
 arguments</caption>
@@ -921,7 +921,7 @@ arguments</caption>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>read_qcpa &lt;- function(Ani_ID_dat, filetype = &quot;NA&quot;, path = loc) {
+<pre class="r"><code>read_qcpa &lt;- function(Ani_ID_dat, filetype = &quot;NA&quot;, path = data_location) {
   # Default location is assigned, but can be changed
 
   # Part A: Specify arguments for different image analyses
@@ -1115,7 +1115,7 @@ read_leia &lt;- function(index, animal_info, base_location) {
 # Read LEIA data using lapply
 LEIA_Res_list &lt;- lapply(
   seq_len(nrow(Animal_Info_ROI)),
-  function(x) read_leia(x, Animal_Info_ROI, loc)
+  function(x) read_leia(x, Animal_Info_ROI, data_location)
 )
 
 # Combine list into a data frame
@@ -1175,7 +1175,7 @@ GabRat_Res_list &lt;- lapply(
     tmpLoc &lt;- paste(tmpLoc, collapse = &quot;/&quot;)
 
     # Create a directory string
-    tmpLoc &lt;- paste0(paste(loc, tmpLoc, sep = &quot;/&quot;), &quot;/_GabRat_Results.csv&quot;)
+    tmpLoc &lt;- paste0(paste(data_location, tmpLoc, sep = &quot;/&quot;), &quot;/_GabRat_Results.csv&quot;)
 
     # Read in the data using the newly specified location
     data &lt;- read.csv(tmpLoc)
@@ -1790,9 +1790,9 @@ all our image analysis dataframes. Then, using a for loop, we iterate
 over each dataframe, rename it using the current date, and then output
 the csv file. Finally, we use <code>list.files()</code> to check that
 the files have been created.</p>
-<pre class="r"><code>dir.create(paste(c(loc, &quot;Output&quot;), collapse = &quot;/&quot;)) # Create the Output directory
+<pre class="r"><code>dir.create(paste(c(data_location, &quot;Output&quot;), collapse = &quot;/&quot;)) # Create the Output directory
 
-Out_path &lt;- paste(c(loc, &quot;Output&quot;), collapse = &quot;/&quot;) # Save Output directory path
+Out_path &lt;- paste(c(data_location, &quot;Output&quot;), collapse = &quot;/&quot;) # Save Output directory path
 
 # For a single file:
 write.csv(GabRat_Res_analysis,
@@ -1856,7 +1856,7 @@ Animal_Info_ROI_DT &lt;- setDT(Animal_Info_ROI)
 
 # From Animal_Info_ROI we can paste the column information together
 # and then read in data row by row, specifying &#39;by=1:NROW(Animal_Info_ROI)&#39;
-LEIA_analysis_DT &lt;- Animal_Info_ROI[, fread(paste(loc, Species, Ind, Dist, &quot;LEIA&quot;, ROI,
+LEIA_analysis_DT &lt;- Animal_Info_ROI[, fread(paste(data_location, Species, Ind, Dist, &quot;LEIA&quot;, ROI,
   &quot;_Local Edge Intensity Analysis.csv&quot;,
   sep = &quot;/&quot;
 )),

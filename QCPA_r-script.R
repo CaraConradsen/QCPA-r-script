@@ -1,25 +1,25 @@
-## ----Animal IDs------------------------------------------------------------------------------------------------------------------------
-# Get directory; assumes the R script is in the parent folder of example_data
-pth <- getwd()
+## ----animal_ids------------------------------------------------------------------------------------------------------------------------
+# Construct the global data location path. This assumes the R script is in the
+# project root
+data_location <- file.path(getwd(), "example_data/eg1_trichromat_nouv/test_data")
 
-# Set sub folder name containing your data
-Extrct_Fold <- "example_data/eg1_trichromat_nouv/test_data"
+# List the species folders in the data location
+# These could also be locations depending on your data set
+species_folders <- list.files(path = data_location)
 
-# Paste the two locations together to specify your global data location
-loc <- paste(pth, Extrct_Fold, sep = "/")
+# Print the list of species folders and log file with QCPA processing details
+print(species_folders)
 
-# Detect species. These could also be locations depending on your data set
-Species <- list.files(path = loc)
+# Filter species folders based on the "Ap" pattern in their names
+# This removes the log file from the vector
+species <- grep("ap", species_folders, value = TRUE)
 
-Species # Should contain species folders and a log file with QCPA processing details
+# Note: For multiple different species patterns, can search using the or 
+# condition '|'. e.g., species <- species[grepl("A|B", species)], 
+# returns species with pattern 'A' or 'B'
 
-# Here, we use the "Ap" pattern in both species names to subset the Species list
-Species <- Species[grepl("ap", Species)] # Removes the log file from vector
-
-# Note: For multiple different species patterns, can search using the or condition '|'
-# e.g., Species<-Species[grepl("A|B", Species)], returns species with pattern 'A' or 'B'
-
-Species
+# Print the filtered list of species folders
+print(species)
 
 
 ## ----Animal Loop-----------------------------------------------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ Animal_Info <- data.frame(NULL)  # First create an empty data frame
 
 # Then create a loop to iterate over the species folders,
 # extracting viewing distances and individual animal IDs
-for (i in 1:length(Species)) { # Here i will be either 1 or 2
-  Ind_pth <- paste0(loc, "/", Species[i]) # Pastes the ith species from the Species object
+for (i in 1:length(species)) { # Here i will be either 1 or 2
+  Ind_pth <- paste0(data_location, "/", species[i]) # Pastes the ith species from the species object
   Indviduals_list <- list.files(path = Ind_pth) # Extracts all individual folder names
 
   # Iterate over the number of individuals in each species folder
@@ -38,7 +38,7 @@ for (i in 1:length(Species)) { # Here i will be either 1 or 2
     Dists <- list.files(paste0(Ind_pth, "/", Indviduals_list[ind]), pattern = "cm")
 
     # Add to Animal_Info a new row with species name, individual and viewing distance
-    rbind(Animal_Info, cbind(Species[i], Indviduals_list[ind], c(Dists))) -> Animal_Info
+    rbind(Animal_Info, cbind(species[i], Indviduals_list[ind], c(Dists))) -> Animal_Info
   }
 }
 colnames(Animal_Info) <- c("Species", "Ind", "Dist") # Rename the column names in Animal_Info
@@ -70,7 +70,7 @@ barplot(Ind ~ Dist + Species,
 tmpAnidir <- apply(Animal_Info, 1, function(x) paste(unlist(x), collapse = "/"))
 
 # Paste the global file directories to the front of the sub directory paths
-tmpAnidir <- paste(loc, tmpAnidir, sep = "/")
+tmpAnidir <- paste(data_location, tmpAnidir, sep = "/")
 
 # This should highlight the unique regions of interest, if there are
 # more than expected - look for naming inconsistencies
@@ -90,7 +90,7 @@ ROI <- c("animal", "animal+background", "background") # Add the names of ROIs
 # the number and types of _Summary Results.csv files
 
 # Find all the ROI output files for '_Summary Results.csv'
-ROI <- list.files(paste(loc, paste(unlist(Animal_Info[1, ]), collapse = "/"),
+ROI <- list.files(paste(data_location, paste(unlist(Animal_Info[1, ]), collapse = "/"),
   sep = "/"
 ), pattern = "_Summary Results.csv")
 
@@ -119,7 +119,7 @@ exnfile <- "_Summary Results.csv"
 
 Ani_ID_dat <- Animal_Info_ROI # Assign our animal ID data frame
 
-path <- loc # This is the global location set in section 2.1
+path <- data_location # This is the global location set in section 2.1
 
 # Part B:
 # Once the file extension condition is met, we use lapply to extract the data,
@@ -164,7 +164,7 @@ rm(path)
 
 
 ## ----read_qcpa function----------------------------------------------------------------------------------------------------------------
-read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = loc) {
+read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
   # Default location is assigned, but can be changed
 
   # Part A: Specify arguments for different image analyses
@@ -297,7 +297,7 @@ read_leia <- function(index, animal_info, base_location) {
 # Read LEIA data using lapply
 LEIA_Res_list <- lapply(
   seq_len(nrow(Animal_Info_ROI)),
-  function(x) read_leia(x, Animal_Info_ROI, loc)
+  function(x) read_leia(x, Animal_Info_ROI, data_location)
 )
 
 # Combine list into a data frame
@@ -330,7 +330,7 @@ GabRat_Res_list <- lapply(
     tmpLoc <- paste(tmpLoc, collapse = "/")
 
     # Create a directory string
-    tmpLoc <- paste0(paste(loc, tmpLoc, sep = "/"), "/_GabRat_Results.csv")
+    tmpLoc <- paste0(paste(data_location, tmpLoc, sep = "/"), "/_GabRat_Results.csv")
 
     # Read in the data using the newly specified location
     data <- read.csv(tmpLoc)
@@ -579,9 +579,9 @@ V.L.GbRt_sub_analysis[, colnames(V.L.GbRt_sub_analysis) %in% c("mahalnobis", "pv
 
 
 ## ----Output files----------------------------------------------------------------------------------------------------------------------
-dir.create(paste(c(loc, "Output"), collapse = "/")) # Create the Output directory
+dir.create(paste(c(data_location, "Output"), collapse = "/")) # Create the Output directory
 
-Out_path <- paste(c(loc, "Output"), collapse = "/") # Save Output directory path
+Out_path <- paste(c(data_location, "Output"), collapse = "/") # Save Output directory path
 
 # For a single file:
 write.csv(GabRat_Res_analysis,
@@ -627,7 +627,7 @@ Animal_Info_ROI_DT <- setDT(Animal_Info_ROI)
 
 # From Animal_Info_ROI we can paste the column information together
 # and then read in data row by row, specifying 'by=1:NROW(Animal_Info_ROI)'
-LEIA_analysis_DT <- Animal_Info_ROI[, fread(paste(loc, Species, Ind, Dist, "LEIA", ROI,
+LEIA_analysis_DT <- Animal_Info_ROI[, fread(paste(data_location, Species, Ind, Dist, "LEIA", ROI,
   "_Local Edge Intensity Analysis.csv",
   sep = "/"
 )),
