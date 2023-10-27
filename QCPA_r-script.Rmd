@@ -283,7 +283,7 @@ rm(path)
 
 ## Dynamic function to read in various image analysis files
 
-To dynamically import data, we are going to create the function `readQCPA()`, which will take an animal ID data frame (`Ani_ID_dat`), the specific image analysis that we are interested in (`filetype`), and a folder directory (where we set the default `path` to the `loc` defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the `exnfile` object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the `else` level), we have used the `stop` function which will occur if `filetype` has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used `merge` here instead of `rbind()` (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the `return` function to output our newly imported data. 
+To dynamically import data, we are going to create the function `read_qcpa()`, which will take an animal ID data frame (`Ani_ID_dat`), the specific image analysis that we are interested in (`filetype`), and a folder directory (where we set the default `path` to the `loc` defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the `exnfile` object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the `else` level), we have used the `stop` function which will occur if `filetype` has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used `merge` here instead of `rbind()` (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the `return` function to output our newly imported data. 
 
 ```{r kable table ftyp, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
 ftyp <- data.frame(
@@ -299,67 +299,63 @@ knitr::kable(ftyp,
 ```
 
 
-```{r readQCPA function}
-readQCPA <- function(Ani_ID_dat, filetype = "NA", path = loc) {
-  # loc is assigned by default, but can be changed
+```{r read_qcpa function}
+read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = loc) {
+  # Default location is assigned, but can be changed
 
-  # Part A:
-  # Here, we specify arguments for different image analyses so that we can
-  # extract the correct file extension
-  if (filetype == "VCA") {
-    exnfile <- "_Summary Results.csv"
-  } else if (filetype == "PartAn") {
-    exnfile <- "_Cluster Particle Analysis Summary Results.csv"
-  } else if (filetype == "Clust") {
-    exnfile <- "_Cluster Results.csv"
-  } else if (filetype == "IndParticle") {
-    exnfile <- "_Individual Particle Results.csv"
-  } else {
-    stop('Specify analysis output type: e.g., 
-         filetype =\n"VCA"\n"PartAn"\n"Clust"\n"IndParticle"')
-  } # stop command halts the function and specifies how the user went wrong
+  # Part A: Specify arguments for different image analyses
+  file_extensions <- list(
+    VCA = "_Summary Results.csv",
+    PartAn = "_Cluster Particle Analysis Summary Results.csv",
+    Clust = "_Cluster Results.csv",
+    IndParticle = "_Individual Particle Results.csv"
+  )
 
-  # Part B:
-  # Once the file extension condition is met, we use lapply to extract the data,
-  # using a nested function within lapply
-  data_list <- lapply(1:nrow(Ani_ID_dat), function(x) { # for each row in Ani_ID_dat...
+  if (!filetype %in% names(file_extensions)) {
+    stop('Specify analysis output type: filetype = "VCA", "PartAn", "Clust", or "IndParticle"')
+  }
 
-    # extract the individual row information
-    tmpLoc <- paste(unlist(Ani_ID_dat[x, ]), collapse = "/")
+  exnfile <- file_extensions[[filetype]]
 
-    # create a directory string
-    tmpLoc <- paste0(paste(path, tmpLoc, sep = "/"), exnfile)
+  # Part B: Extract data using lapply
+  data_list <- lapply(seq_len(nrow(Ani_ID_dat)), function(x) {
+    # Extract row information and create directory string
+    dir_components <- unlist(Ani_ID_dat[x, ])
+    tmpLoc <- file.path(path, paste(dir_components[1:3], collapse = "/"), 
+                        paste(dir_components[4], exnfile, sep = ""))
 
-    # read in the data using the newly specified location
+    # Check if file exists before trying to read it
+    if (!file.exists(tmpLoc)) {
+      stop("File does not exist: ", tmpLoc)
+    }
+
+    # Read data and add animal information
     data <- read.csv(tmpLoc)
-
-    # add the specific animal information to the data
     data <- merge(Ani_ID_dat[x, ], data)
 
-    data # returns data
+    return(data)
   })
 
-  # Part C:
-  # We then collapse the data_list list into a data frame by calling rbind
-  # in the function do.call
+  # Part C: Combine list into a data frame
   data_df <- do.call(rbind, data_list)
 
-  return(data_df) # outputs the data frame
+  return(data_df)
 }
+
 ```
 
-To demonstrate how the stop warning works, we have implemented the `readQCPA()` function here without specifying the image analysis file type. 
+To demonstrate how the stop warning works, we have implemented the `read_qcpa()` function here without specifying the image analysis file type. 
 
-```{r empty readQCPA, error=TRUE}
-readQCPA(Animal_Info_ROI) # We include only the animal id data set
+```{r empty read_qcpa, error=TRUE}
+read_qcpa(Animal_Info_ROI) # We include only the animal id data set
 ```
 
 We can then import our data using our function and do some data cleaning by removing unnecessary columns.  
 
-```{r implementing readQCPA}
+```{r implementing read_qcpa}
 # VCA,BSA,CAA analysis:
 # Read in and assign analysis
-VCA_analysis <- readQCPA(Animal_Info_ROI, filetype = "VCA")
+VCA_analysis <- read_qcpa(Animal_Info_ROI, filetype = "VCA")
 
 # head(VCA_analysis) # Inspect data
 
@@ -372,7 +368,7 @@ VCA_analysis[1:2, ] # Observe the first two rows of data
 
 # Cluster Particle Analysis:
 # Read in and assign analysis
-Particle_analysis <- readQCPA(Animal_Info_ROI, filetype = "PartAn")
+Particle_analysis <- read_qcpa(Animal_Info_ROI, filetype = "PartAn")
 
 # head(Particle_analysis) # Inspect data
 
@@ -387,7 +383,7 @@ Particle_analysis[1:2, ] # Observe the first two rows of data
 
 # Cluster Results:
 # Read in and assign analysis
-Cluster_analysis <- readQCPA(Animal_Info_ROI, filetype = "Clust")
+Cluster_analysis <- read_qcpa(Animal_Info_ROI, filetype = "Clust")
 
 # head(Cluster_Analysis) # Inspect data
 
@@ -400,7 +396,7 @@ Cluster_analysis[1:2, ] # Observe the first two rows of data
 
 # Individual Particle Analysis:
 # Read in and assign analysis
-IndParticle_analysis <- readQCPA(Animal_Info_ROI, filetype = "IndParticle")
+IndParticle_analysis <- read_qcpa(Animal_Info_ROI, filetype = "IndParticle")
 
 # head(Cluster_Analysis) # Inspect data
 
@@ -418,7 +414,7 @@ Here, we implement a function similar to section 3.1. However, because QCPA batc
 
 ```{r LEIA CSV Data}
 # Define a function to generate file paths, read data, and merge animal information
-read_LEIA <- function(index, animal_info, base_location) {
+read_leia <- function(index, animal_info, base_location) {
   # Extract row as a character vector
   row_values <- as.character(unlist(animal_info[index, ]))
   
@@ -445,14 +441,15 @@ read_LEIA <- function(index, animal_info, base_location) {
 # Read LEIA data using lapply
 LEIA_Res_list <- lapply(
   seq_len(nrow(Animal_Info_ROI)),
-  function(x) read_LEIA(x, Animal_Info_ROI, loc)
+  function(x) read_leia(x, Animal_Info_ROI, loc)
 )
 
 # Combine list into a data frame
 LEIA_Res_analysis <- do.call(rbind, LEIA_Res_list)
 
 # Subset data to exclude specific columns
-LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) %in% c("X", "Image"))]
+LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) 
+                                           %in% c("X", "Image"))]
 
 # Check the resulting data
 dim(LEIA_Res_analysis) # Print dimensions of the data
