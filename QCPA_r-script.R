@@ -166,7 +166,7 @@ rm(path)
 ## ----read_qcpa function----------------------------------------------------------------------------------------------------------------
 read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = loc) {
   # Default location is assigned, but can be changed
-  
+
   # Part A: Specify arguments for different image analyses
   file_extensions <- list(
     VCA = "_Summary Results.csv",
@@ -174,34 +174,35 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = loc) {
     Clust = "_Cluster Results.csv",
     IndParticle = "_Individual Particle Results.csv"
   )
-  
+
   if (!filetype %in% names(file_extensions)) {
     stop('Specify analysis output type: filetype = "VCA", "PartAn", "Clust", or "IndParticle"')
   }
-  
+
   exnfile <- file_extensions[[filetype]]
-  
+
   # Part B: Extract data using lapply
   data_list <- lapply(seq_len(nrow(Ani_ID_dat)), function(x) {
     # Extract row information and create directory string
     dir_components <- unlist(Ani_ID_dat[x, ])
-    tmpLoc <- file.path(path, paste(dir_components[1:3], collapse = "/"), paste(dir_components[4], exnfile, sep = ""))
-    
+    tmpLoc <- file.path(path, paste(dir_components[1:3], collapse = "/"), 
+                        paste(dir_components[4], exnfile, sep = ""))
+
     # Check if file exists before trying to read it
     if (!file.exists(tmpLoc)) {
       stop("File does not exist: ", tmpLoc)
     }
-    
+
     # Read data and add animal information
     data <- read.csv(tmpLoc)
     data <- merge(Ani_ID_dat[x, ], data)
-    
+
     return(data)
   })
-  
+
   # Part C: Combine list into a data frame
   data_df <- do.call(rbind, data_list)
-  
+
   return(data_df)
 }
 
@@ -303,7 +304,8 @@ LEIA_Res_list <- lapply(
 LEIA_Res_analysis <- do.call(rbind, LEIA_Res_list)
 
 # Subset data to exclude specific columns
-LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) %in% c("X", "Image"))]
+LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) 
+                                           %in% c("X", "Image"))]
 
 # Check the resulting data
 dim(LEIA_Res_analysis) # Print dimensions of the data

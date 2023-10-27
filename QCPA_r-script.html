@@ -923,7 +923,7 @@ arguments</caption>
 </table>
 <pre class="r"><code>read_qcpa &lt;- function(Ani_ID_dat, filetype = &quot;NA&quot;, path = loc) {
   # Default location is assigned, but can be changed
-  
+
   # Part A: Specify arguments for different image analyses
   file_extensions &lt;- list(
     VCA = &quot;_Summary Results.csv&quot;,
@@ -931,34 +931,35 @@ arguments</caption>
     Clust = &quot;_Cluster Results.csv&quot;,
     IndParticle = &quot;_Individual Particle Results.csv&quot;
   )
-  
+
   if (!filetype %in% names(file_extensions)) {
     stop(&#39;Specify analysis output type: filetype = &quot;VCA&quot;, &quot;PartAn&quot;, &quot;Clust&quot;, or &quot;IndParticle&quot;&#39;)
   }
-  
+
   exnfile &lt;- file_extensions[[filetype]]
-  
+
   # Part B: Extract data using lapply
   data_list &lt;- lapply(seq_len(nrow(Ani_ID_dat)), function(x) {
     # Extract row information and create directory string
     dir_components &lt;- unlist(Ani_ID_dat[x, ])
-    tmpLoc &lt;- file.path(path, paste(dir_components[1:3], collapse = &quot;/&quot;), paste(dir_components[4], exnfile, sep = &quot;&quot;))
-    
+    tmpLoc &lt;- file.path(path, paste(dir_components[1:3], collapse = &quot;/&quot;), 
+                        paste(dir_components[4], exnfile, sep = &quot;&quot;))
+
     # Check if file exists before trying to read it
     if (!file.exists(tmpLoc)) {
       stop(&quot;File does not exist: &quot;, tmpLoc)
     }
-    
+
     # Read data and add animal information
     data &lt;- read.csv(tmpLoc)
     data &lt;- merge(Ani_ID_dat[x, ], data)
-    
+
     return(data)
   })
-  
+
   # Part C: Combine list into a data frame
   data_df &lt;- do.call(rbind, data_list)
-  
+
   return(data_df)
 }</code></pre>
 <p>To demonstrate how the stop warning works, we have implemented the
@@ -1121,7 +1122,8 @@ LEIA_Res_list &lt;- lapply(
 LEIA_Res_analysis &lt;- do.call(rbind, LEIA_Res_list)
 
 # Subset data to exclude specific columns
-LEIA_Res_analysis &lt;- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) %in% c(&quot;X&quot;, &quot;Image&quot;))]
+LEIA_Res_analysis &lt;- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis) 
+                                           %in% c(&quot;X&quot;, &quot;Image&quot;))]
 
 # Check the resulting data
 dim(LEIA_Res_analysis) # Print dimensions of the data</code></pre>
