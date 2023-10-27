@@ -23,51 +23,65 @@ print(species)
 
 
 ## ----Animal Loop-----------------------------------------------------------------------------------------------------------------------
-Animal_Info <- data.frame(NULL)  # First create an empty data frame
+# Initialize an empty data frame
+animal_info <- data.frame()
 
-# Then create a loop to iterate over the species folders,
-# extracting viewing distances and individual animal IDs
-for (i in 1:length(species)) { # Here i will be either 1 or 2
-  Ind_pth <- paste0(data_location, "/", species[i]) # Pastes the ith species from the species object
-  Indviduals_list <- list.files(path = Ind_pth) # Extracts all individual folder names
-
-  # Iterate over the number of individuals in each species folder
-  for (ind in 1:length(Indviduals_list)) {
-    # The variable dist lists all the unique viewing distance folder names
-    # identified by "cm"
-    Dists <- list.files(paste0(Ind_pth, "/", Indviduals_list[ind]), pattern = "cm")
-
-    # Add to Animal_Info a new row with species name, individual and viewing distance
-    rbind(Animal_Info, cbind(species[i], Indviduals_list[ind], c(Dists))) -> Animal_Info
+# Iterate over the species folders
+for (species_name in species) {
+  
+  species_path <- file.path(data_location, species_name)
+  individual_list <- list.files(path = species_path)
+  
+  # Iterate over the individuals in each species folder
+  for (individual_name in individual_list) {
+    
+    individual_path <- file.path(species_path, individual_name)
+    distances <- list.files(path = individual_path, pattern = "cm")
+    
+    # Add new rows to the animal_info data frame
+    new_rows <- expand.grid(
+      Species = species_name,
+      Ind = individual_name,
+      Dist = distances,
+      stringsAsFactors = FALSE
+    )
+    animal_info <- rbind(animal_info, new_rows)
   }
 }
-colnames(Animal_Info) <- c("Species", "Ind", "Dist") # Rename the column names in Animal_Info
+
+# Rename the column names in animal_info
+colnames(animal_info) <- c("Species", "Ind", "Dist")
+
 
 
 ## ----Check data, fig.align='center', fig.cap='Figure 1. Counts of individuals within species for each viewing distance.'---------------
 # Check data
-Animal_Info
+head(animal_info)
 
-# Convert character data into factors
-Animal_Info[, colnames(Animal_Info)] <- lapply(Animal_Info[, colnames(Animal_Info)], factor)
+# Convert character columns to factors
+animal_info[] <- lapply(animal_info, as.factor)
 
-str(Animal_Info) # Observe structure of the data
+# Display structure of the data
+str(animal_info)
 
 # Check the number of unique species, individuals and viewing distances
-lapply(Animal_Info, nlevels)
+sapply(animal_info, nlevels)
 
-# To visualise the experimental design, we first aggregate the data to determine the
-# number (length) of each individual by species and distance
-Ani_info_tab <- aggregate(Ind ~ Species + Dist, data = Animal_Info, length)
+# Aggregate data to count individuals by species and distance
+aggregate_counts <- aggregate(Ind ~ Species + Dist, data = animal_info, FUN = length)
+
+# Plot bar chart of individual counts by species and distance
 barplot(Ind ~ Dist + Species,
-  beside = TRUE, ylab = "Count",
-  legend.text = TRUE, data = Ani_info_tab
+  beside = TRUE, 
+  ylab = "Count",
+  legend.text = TRUE, 
+  data = aggregate_counts
 )
 
 
 ## ----Check ROIs------------------------------------------------------------------------------------------------------------------------
 # Create vector containing all the individual animal sub directories 
-tmpAnidir <- apply(Animal_Info, 1, function(x) paste(unlist(x), collapse = "/"))
+tmpAnidir <- apply(animal_info, 1, function(x) paste(unlist(x), collapse = "/"))
 
 # Paste the global file directories to the front of the sub directory paths
 tmpAnidir <- paste(data_location, tmpAnidir, sep = "/")
@@ -86,11 +100,11 @@ ROI <- c("animal", "animal+background", "background") # Add the names of ROIs
 ## ----ROI-------------------------------------------------------------------------------------------------------------------------------
 # Here, we create a character vector determining whether animal,
 # background and/or animal+background options were used
-# Using the first row of Animal_Info to specify the location to examine
+# Using the first row of animal_info to specify the location to examine
 # the number and types of _Summary Results.csv files
 
 # Find all the ROI output files for '_Summary Results.csv'
-ROI <- list.files(paste(data_location, paste(unlist(Animal_Info[1, ]), collapse = "/"),
+ROI <- list.files(paste(data_location, paste(unlist(animal_info[1, ]), collapse = "/"),
   sep = "/"
 ), pattern = "_Summary Results.csv")
 
@@ -100,8 +114,8 @@ ROI # In the QCPA batch script, we have investigated three ROIs
 
 
 ## ----merge ROI-------------------------------------------------------------------------------------------------------------------------
-# Expand each unique row of the Animal_Info data frame to included a unique ROI value
-Animal_Info_ROI <- merge(Animal_Info, ROI)
+# Expand each unique row of the animal_info data frame to included a unique ROI value
+Animal_Info_ROI <- merge(animal_info, ROI)
 
 colnames(Animal_Info_ROI)[4] <- "ROI"  # Name column 4 to ROI
 
