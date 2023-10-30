@@ -121,15 +121,15 @@ rois
 
 ## ----merge ROI--------------------------------------------------------------------------------------------------------------------------------
 # Expand each unique row of the animal_info data frame to included a unique ROI value
-Animal_Info_ROI <- merge(animal_info, rois)
+animal_info_roi <- merge(animal_info, rois)
 
-colnames(Animal_Info_ROI)[4] <- "ROI"  # Name column 4 to ROI
+colnames(animal_info_roi)[4] <- "ROI"  # Name column 4 to ROI
 
-Animal_Info_ROI$ROI <- factor(Animal_Info_ROI$ROI)  # Convert to factor
+animal_info_roi$ROI <- factor(animal_info_roi$ROI)  # Convert to factor
 
-head(Animal_Info_ROI)  # Check data
+head(animal_info_roi)  # Check data
 
-str(Animal_Info_ROI)  # Check that ROI is a factor
+str(animal_info_roi)  # Check that ROI is a factor
 
 
 ## ----reduced function-------------------------------------------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ str(Animal_Info_ROI)  # Check that ROI is a factor
 # Here, we specify what image analysis so that we can use the correct file extension
 exnfile <- "_Summary Results.csv"
 
-Ani_ID_dat <- Animal_Info_ROI # Assign our animal ID data frame
+ani_id_dat <- animal_info_roi # Assign our animal ID data frame
 
 path <- data_location # This is the global location set in section 2.1
 
@@ -145,11 +145,11 @@ path <- data_location # This is the global location set in section 2.1
 # Once the file extension condition is met, we use lapply to extract the data,
 # using a nested function within lapply
 Sum_Res_list <- lapply(
-  1:nrow(Ani_ID_dat), # for each row in Ani_ID_dat...
+  1:nrow(ani_id_dat), # for each row in ani_id_dat...
   function(x) { # start of our nested function
 
     # Extract the individual row information
-    tmpLoc <- paste(unlist(Ani_ID_dat[x, ]), collapse = "/")
+    tmpLoc <- paste(unlist(ani_id_dat[x, ]), collapse = "/")
 
     # Create a directory string
     tmpLoc <- paste0(paste(path, tmpLoc, sep = "/"), exnfile)
@@ -158,7 +158,7 @@ Sum_Res_list <- lapply(
     data <- read.csv(tmpLoc)
 
     # Add the specific animal information to the data
-    data <- merge(Ani_ID_dat[x, ], data)
+    data <- merge(ani_id_dat[x, ], data)
 
     data # Returns data
   }
@@ -173,17 +173,17 @@ Sum_Res_df <- do.call(rbind, Sum_Res_list)
 dim(Sum_Res_df) # 18 rows by 133 columns
 names(Sum_Res_df) 
 
-# Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path
+# Finally, to prevent any errors we remove the objects ani_id_dat, exnfile, path
 # from the global environment because we'll be recycling them in the second function
 rm(exnfile)
-rm(Ani_ID_dat)
+rm(ani_id_dat)
 rm(path)
 
 
 
 
 ## ----read_qcpa function-----------------------------------------------------------------------------------------------------------------------
-read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
+read_qcpa <- function(ani_id_dat, filetype = "NA", path = data_location) {
   # Default location is assigned, but can be changed
 
   # Part A: Specify arguments for different image analyses
@@ -202,9 +202,9 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
   exnfile <- file_extensions[[filetype]]
 
   # Part B: Extract data using lapply
-  data_list <- lapply(seq_len(nrow(Ani_ID_dat)), function(x) {
+  data_list <- lapply(seq_len(nrow(ani_id_dat)), function(x) {
     # Extract row information and create directory string
-    dir_components <- unlist(Ani_ID_dat[x, ])
+    dir_components <- unlist(ani_id_dat[x, ])
     tmpLoc <- file.path(path, paste(dir_components[1:3], collapse = "/"), 
                         paste(dir_components[4], exnfile, sep = ""))
 
@@ -215,7 +215,7 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
 
     # Read data and add animal information
     data <- read.csv(tmpLoc)
-    data <- merge(Ani_ID_dat[x, ], data)
+    data <- merge(ani_id_dat[x, ], data)
 
     return(data)
   })
@@ -231,9 +231,7 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
 ## ----implementing read_qcpa-------------------------------------------------------------------------------------------------------------------
 # VCA,BSA,CAA analysis:
 # Read in and assign analysis
-VCA_analysis <- read_qcpa(Animal_Info_ROI, filetype = "VCA")
-
-# head(VCA_analysis) # Inspect data
+VCA_analysis <- read_qcpa(animal_info_roi, filetype = "VCA")
 
 # Subset data excluding the column Image and X
 VCA_analysis <- VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
@@ -244,9 +242,7 @@ VCA_analysis[1:2, 1:6] # Observe the first two rows and six columns of data
 
 # Cluster Particle Analysis:
 # Read in and assign analysis
-Particle_analysis <- read_qcpa(Animal_Info_ROI, filetype = "PartAn")
-
-# head(Particle_analysis) # Inspect data
+Particle_analysis <- read_qcpa(animal_info_roi, filetype = "PartAn")
 
 dim(Particle_analysis) # 52 rows, by 20 columns
 colnames(Particle_analysis)[5]
@@ -257,7 +253,7 @@ names(Particle_analysis) # Inspect the data
 
 # Cluster Results:
 # Read in and assign analysis
-Cluster_analysis <- read_qcpa(Animal_Info_ROI, filetype = "Clust")
+Cluster_analysis <- read_qcpa(animal_info_roi, filetype = "Clust")
 
 # Subset data excluding the column Image and X
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
@@ -267,7 +263,7 @@ names(Cluster_analysis) # Inspect
 
 # Individual Particle Analysis:
 # Read in and assign analysis
-IndParticle_analysis <- read_qcpa(Animal_Info_ROI, filetype = "IndParticle")
+IndParticle_analysis <- read_qcpa(animal_info_roi, filetype = "IndParticle")
 
 # Subset data excluding the column X.1
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
@@ -304,8 +300,8 @@ read_leia <- function(index, animal_info, base_location) {
 
 # Read LEIA data using lapply
 LEIA_Res_list <- lapply(
-  seq_len(nrow(Animal_Info_ROI)),
-  function(x) read_leia(x, Animal_Info_ROI, data_location)
+  seq_len(nrow(animal_info_roi)),
+  function(x) read_leia(x, animal_info_roi, data_location)
 )
 
 # Combine list into a data frame
@@ -324,7 +320,7 @@ names(LEIA_Res_analysis)
 ## ----GabRat CSV Data--------------------------------------------------------------------------------------------------------------------------
 # Because we are not using ROI which adds three levels (rows),
 # we trim data frame using unique()
-# For each the 6 rows in Animal_Info_ROI
+# For each the 6 rows in animal_info_roi
 
 # Import GabRat results and process data
 
@@ -372,7 +368,7 @@ read_gabrat <- function(data_location, animal_info) {
 }
 
 # Call the function to read and process GabRat results
-gabrat_res_analysis <- read_gabrat(data_location, Animal_Info_ROI)
+gabrat_res_analysis <- read_gabrat(data_location, animal_info_roi)
 
 # Check the processed data
 dim(gabrat_res_analysis) # Should show 18 rows and 5 columns
@@ -624,8 +620,8 @@ list.files(out_path)
 ## ----data.table, warning=FALSE, message=FALSE-------------------------------------------------------------------------------------------------
 library(data.table)
 
-# Convert Animal_Info_ROI into data.table format
-Animal_Info_ROI_DT <- as.data.table(Animal_Info_ROI)
+# Convert animal_info_roi into data.table format
+animal_info_roi_DT <- as.data.table(animal_info_roi)
 
 # Create a function to generate the file path for LEIA analysis
 generate_filepath <- function(row) {
@@ -633,18 +629,18 @@ generate_filepath <- function(row) {
         "_Local Edge Intensity Analysis.csv", sep = "/")
 }
 
-# Read data for each row in Animal_Info_ROI_DT
-LEIA_analysis_DT <- Animal_Info_ROI_DT[, {
+# Read data for each row in animal_info_roi_DT
+LEIA_analysis_DT <- animal_info_roi_DT[, {
   file_path <- generate_filepath(.SD)
   fread(file_path)
-}, by = 1:NROW(Animal_Info_ROI_DT)]
+}, by = 1:NROW(animal_info_roi_DT)]
 
 # Remove unwanted columns
 unwanted_columns <- c("NROW", "V1", "Image", "Transform")
 LEIA_analysis_DT[, (unwanted_columns) := NULL]
 
 # Combine the original and new data
-LEIA_analysis_DT <- cbind(Animal_Info_ROI_DT, LEIA_analysis_DT)
+LEIA_analysis_DT <- cbind(animal_info_roi_DT, LEIA_analysis_DT)
 
 # Inspect the combined data
 head(LEIA_analysis_DT)
