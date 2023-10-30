@@ -171,7 +171,6 @@ Sum_Res_df <- do.call(rbind, Sum_Res_list)
 
 # Check the imported data
 dim(Sum_Res_df) # 18 rows by 133 columns
-names(Sum_Res_df) 
 
 # Finally, to prevent any errors we remove the objects ani_id_dat, exnfile, path
 # from the global environment because we'll be recycling them in the second function
@@ -249,7 +248,6 @@ colnames(Particle_analysis)[5]
 
 # Change column name to be consistent with Cluster analysis
 colnames(Particle_analysis)[5] <- "ClusterID"
-names(Particle_analysis) # Inspect the data
 
 # Cluster Results:
 # Read in and assign analysis
@@ -259,7 +257,6 @@ Cluster_analysis <- read_qcpa(animal_info_roi, filetype = "Clust")
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
 
 dim(Cluster_analysis) # 52 rows, by 21 columns
-names(Cluster_analysis) # Inspect
 
 # Individual Particle Analysis:
 # Read in and assign analysis
@@ -269,7 +266,6 @@ IndParticle_analysis <- read_qcpa(animal_info_roi, filetype = "IndParticle")
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
 
 dim(IndParticle_analysis) # 143 rows, by 23 columns
-names(IndParticle_analysis) # Inspect
 
 
 ## ----LEIA CSV Data----------------------------------------------------------------------------------------------------------------------------
@@ -426,7 +422,6 @@ v.l.gabrat_sub_analysis <- na.omit(v.l.gabrat_sub_analysis)
 
 # Inspect the cleaned data frame
 cat("Dimensions after cleaning:", dim(v.l.gabrat_sub_analysis), "\n")
-names(v.l.gabrat_sub_analysis)
 
 # Examine variance for specified columns
 variance_results <- apply(v.l.gabrat_sub_analysis[, 5:11], 2, var)
@@ -529,15 +524,14 @@ apply(v.l.gabrat_sub_analysis[, 5:11], 2, function(x) (x - mean(x)) / sd(x))
 # Function to standardize and inspect data
 standardize_data <- function(data) {
   # Standardize data
-  standardized_data <- scale(data, center = TRUE, scale = TRUE)
+  standardized_data <- round(scale(data, center = TRUE, scale = TRUE), 3)
   
   # Check and print mean and variance
   cat("Column Means (should be near zero):\n")
   print(colMeans(standardized_data))
   cat("\nColumn Variances (should be 1):\n")
   print(apply(standardized_data, 2, var))
-  
-  return(standardized_data)
+  standardized_data
 }
 
 # Update the data frame with standardized values and inspect
@@ -592,9 +586,6 @@ save_to_csv(gabrat_res_analysis, "gabrat_res_analysis.csv")
 # Get the list of objects with "analysis" in their names
 savefile_list <- ls(pattern = "analysis")
 
-# Print the object names
-savefile_list
-
 # Save each data frame in the list to a CSV file
 for (data_name in savefile_list) {
   # Generate filename with date and custom format
@@ -606,9 +597,6 @@ for (data_name in savefile_list) {
   
   save_to_csv(get(data_name), filename)
 }
-
-# List and print the saved files
-list.files(out_path)
 
 
 

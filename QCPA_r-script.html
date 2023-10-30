@@ -866,26 +866,6 @@ Sum_Res_df &lt;- do.call(rbind, Sum_Res_list)
 # Check the imported data
 dim(Sum_Res_df) # 18 rows by 133 columns</code></pre>
 <pre><code>## [1]  18 133</code></pre>
-<pre class="r"><code>names(Sum_Res_df) </code></pre>
-<pre><code>##   [1] &quot;Species&quot;         &quot;Ind&quot;             &quot;Dist&quot;            &quot;ROI&quot;             &quot;X&quot;               &quot;Image&quot;           &quot;CAA.Sc&quot;         
-##   [8] &quot;CAA.Jc&quot;          &quot;CAA.St&quot;          &quot;CAA.Jt&quot;          &quot;CAA.Hc&quot;          &quot;CAA.Qc&quot;          &quot;CAA.Ht&quot;          &quot;CAA.Qt&quot;         
-##  [15] &quot;CAA.Scpl&quot;        &quot;CAA.Qcpl&quot;        &quot;CAA.C&quot;           &quot;CAA.Sc.Hrz&quot;      &quot;CAA.Sc.Vrt&quot;      &quot;CAA.Jc.Hrz&quot;      &quot;CAA.Jc.Vrt&quot;     
-##  [22] &quot;CAA.St.Hrz&quot;      &quot;CAA.St.Vrt&quot;      &quot;CAA.Jt.Hrz&quot;      &quot;CAA.Jt.Vrt&quot;      &quot;CAA.Hc.Hrz&quot;      &quot;CAA.Hc.Vrt&quot;      &quot;CAA.Qc.Hrz&quot;     
-##  [29] &quot;CAA.Qc.Vrt&quot;      &quot;CAA.Ht.Hrz&quot;      &quot;CAA.Ht.Vrt&quot;      &quot;CAA.Qt.Hrz&quot;      &quot;CAA.Qt.Vrt&quot;      &quot;CAA.Scpl.Hrz&quot;    &quot;CAA.Scpl.Vrt&quot;   
-##  [36] &quot;CAA.Qcpl.Hrz&quot;    &quot;CAA.Qcpl.Vrt&quot;    &quot;CAA.C.Hrz&quot;       &quot;CAA.C.Vrt&quot;       &quot;CAA.PT&quot;          &quot;CAA.PT.Hrz&quot;      &quot;CAA.PT.Vrt&quot;     
-##  [43] &quot;CAA.Asp&quot;         &quot;VCA.ML&quot;          &quot;VCA.sL&quot;          &quot;VCA.CVL&quot;         &quot;VCA.MDmax&quot;       &quot;VCA.sDmax&quot;       &quot;VCA.CVDmax&quot;     
-##  [50] &quot;VCA.MSsat&quot;       &quot;VCA.sSsat&quot;       &quot;VCA.CVSsat&quot;      &quot;VCA.MSL&quot;         &quot;VCA.sSL&quot;         &quot;VCA.CVSL&quot;        &quot;VCA.MS&quot;         
-##  [57] &quot;VCA.sS&quot;          &quot;VCA.CVS&quot;         &quot;VCA.ML.Hrz&quot;      &quot;VCA.sL.Hrz&quot;      &quot;VCA.CVL.Hrz&quot;     &quot;VCA.ML.Vrt&quot;      &quot;VCA.sL.Vrt&quot;     
-##  [64] &quot;VCA.CVL.Vrt&quot;     &quot;VCA.MDmax.Hrz&quot;   &quot;VCA.sDmax.Hrz&quot;   &quot;VCA.CVDmax.Hrz&quot;  &quot;VCA.MDmax.Vrt&quot;   &quot;VCA.sDmax.Vrt&quot;   &quot;VCA.CVDmax.Vrt&quot; 
-##  [71] &quot;VCA.MSsat.Hrz&quot;   &quot;VCA.sSsat.Hrz&quot;   &quot;VCA.CVSsat.Hrz&quot;  &quot;VCA.MSsat.Vrt&quot;   &quot;VCA.sSsat.Vrt&quot;   &quot;VCA.CVSsat.Vrt&quot;  &quot;VCA.MSL.Hrz&quot;    
-##  [78] &quot;VCA.sSL.Hrz&quot;     &quot;VCA.CVSL.Hrz&quot;    &quot;VCA.MSL.Vrt&quot;     &quot;VCA.sSL.Vrt&quot;     &quot;VCA.CVSL.Vrt&quot;    &quot;VCA.MS.Hrz&quot;      &quot;VCA.sS.Hrz&quot;     
-##  [85] &quot;VCA.CVS.Hrz&quot;     &quot;VCA.MS.Vrt&quot;      &quot;VCA.sS.Vrt&quot;      &quot;VCA.CVS.Vrt&quot;     &quot;BSA.BML&quot;         &quot;BSA.BsL&quot;         &quot;BSA.BCVL&quot;       
-##  [92] &quot;BSA.BMDmax&quot;      &quot;BSA.BsDmax&quot;      &quot;BSA.BCVDmax&quot;     &quot;BSA.BMSsat&quot;      &quot;BSA.BsSsat&quot;      &quot;BSA.BCVSsat&quot;     &quot;BSA.BMSL&quot;       
-##  [99] &quot;BSA.BsSL&quot;        &quot;BSA.BCVSL&quot;       &quot;BSA.BMS&quot;         &quot;BSA.BsS&quot;         &quot;BSA.BCVS&quot;        &quot;BSA.BML.Hrz&quot;     &quot;BSA.BsL.Hrz&quot;    
-## [106] &quot;BSA.BCVL.Hrz&quot;    &quot;BSA.BML.Vrt&quot;     &quot;BSA.BsL.Vrt&quot;     &quot;BSA.BCVL.Vrt&quot;    &quot;BSA.BMDmax.Hrz&quot;  &quot;BSA.BsDmax.Hrz&quot;  &quot;BSA.BCVDmax.Hrz&quot;
-## [113] &quot;BSA.BMDmax.Vrt&quot;  &quot;BSA.BsDmax.Vrt&quot;  &quot;BSA.BCVDmax.Vrt&quot; &quot;BSA.BMSsat.Hrz&quot;  &quot;BSA.BsSsat.Hrz&quot;  &quot;BSA.BCVSsat.Hrz&quot; &quot;BSA.BMSsat.Vrt&quot; 
-## [120] &quot;BSA.BsSsat.Vrt&quot;  &quot;BSA.BCVSsat.Vrt&quot; &quot;BSA.BMSL.Hrz&quot;    &quot;BSA.BsSL.Hrz&quot;    &quot;BSA.BCVSL.Hrz&quot;   &quot;BSA.BMSL.Vrt&quot;    &quot;BSA.BsSL.Vrt&quot;   
-## [127] &quot;BSA.BCVSL.Vrt&quot;   &quot;BSA.BMS.Hrz&quot;     &quot;BSA.BsS.Hrz&quot;     &quot;BSA.BCVS.Hrz&quot;    &quot;BSA.BMS.Vrt&quot;     &quot;BSA.BsS.Vrt&quot;     &quot;BSA.BCVS.Vrt&quot;</code></pre>
 <pre class="r"><code># Finally, to prevent any errors we remove the objects ani_id_dat, exnfile, path
 # from the global environment because we&#39;ll be recycling them in the second function
 rm(exnfile)
@@ -1007,11 +987,8 @@ dim(Particle_analysis) # 52 rows, by 20 columns</code></pre>
 <pre><code>## [1] &quot;Cluster.ID&quot;</code></pre>
 <pre class="r"><code># Change column name to be consistent with Cluster analysis
 colnames(Particle_analysis)[5] &lt;- &quot;ClusterID&quot;
-names(Particle_analysis) # Inspect the data</code></pre>
-<pre><code>##  [1] &quot;Species&quot;      &quot;Ind&quot;          &quot;Dist&quot;         &quot;ROI&quot;          &quot;ClusterID&quot;    &quot;Count&quot;        &quot;Total.Area&quot;   &quot;Average.Size&quot; &quot;X.Area&quot;      
-## [10] &quot;Perim.&quot;       &quot;Major&quot;        &quot;Minor&quot;        &quot;Angle&quot;        &quot;Circ.&quot;        &quot;Solidity&quot;     &quot;Feret&quot;        &quot;FeretX&quot;       &quot;FeretY&quot;      
-## [19] &quot;FeretAngle&quot;   &quot;MinFeret&quot;</code></pre>
-<pre class="r"><code># Cluster Results:
+
+# Cluster Results:
 # Read in and assign analysis
 Cluster_analysis &lt;- read_qcpa(animal_info_roi, filetype = &quot;Clust&quot;)
 
@@ -1020,10 +997,6 @@ Cluster_analysis &lt;- Cluster_analysis[, !colnames(Cluster_analysis) %in% c(&qu
 
 dim(Cluster_analysis) # 52 rows, by 21 columns</code></pre>
 <pre><code>## [1] 52 21</code></pre>
-<pre class="r"><code>names(Cluster_analysis) # Inspect</code></pre>
-<pre><code>##  [1] &quot;Species&quot;           &quot;Ind&quot;               &quot;Dist&quot;              &quot;ROI&quot;               &quot;Pass&quot;              &quot;ClusterID&quot;         &quot;lw_mean&quot;          
-##  [8] &quot;lw_sd&quot;             &quot;mw_mean&quot;           &quot;mw_sd&quot;             &quot;sw_mean&quot;           &quot;sw_sd&quot;             &quot;dbl_mean&quot;          &quot;dbl_sd&quot;           
-## [15] &quot;Area&quot;              &quot;Coverage..pc.&quot;     &quot;RNL.X&quot;             &quot;RNL.Y&quot;             &quot;RNL.Saturation&quot;    &quot;Dmax.Chromaticity&quot; &quot;Dmax.channel&quot;</code></pre>
 <pre class="r"><code># Individual Particle Analysis:
 # Read in and assign analysis
 IndParticle_analysis &lt;- read_qcpa(animal_info_roi, filetype = &quot;IndParticle&quot;)
@@ -1033,11 +1006,6 @@ IndParticle_analysis &lt;- IndParticle_analysis[, colnames(IndParticle_analysis)
 
 dim(IndParticle_analysis) # 143 rows, by 23 columns</code></pre>
 <pre><code>## [1] 143  23</code></pre>
-<pre class="r"><code>names(IndParticle_analysis) # Inspect</code></pre>
-<pre><code>##  [1] &quot;Species&quot;             &quot;Ind&quot;                 &quot;Dist&quot;                &quot;ROI&quot;                 &quot;ClusterID_Particle.&quot; &quot;X&quot;                  
-##  [7] &quot;Y&quot;                   &quot;XM&quot;                  &quot;YM&quot;                  &quot;Perim.&quot;              &quot;Major&quot;               &quot;Minor&quot;              
-## [13] &quot;Angle&quot;               &quot;Circ.&quot;               &quot;Feret&quot;               &quot;FeretX&quot;              &quot;FeretY&quot;              &quot;FeretAngle&quot;         
-## [19] &quot;MinFeret&quot;            &quot;AR&quot;                  &quot;Round&quot;               &quot;Solidity&quot;            &quot;Area..px.&quot;</code></pre>
 </div>
 </div>
 <div id="get-a-.csv-list-from-leia-output" class="section level1" number="4">
@@ -1302,9 +1270,6 @@ v.l.gabrat_sub_analysis &lt;- na.omit(v.l.gabrat_sub_analysis)
 # Inspect the cleaned data frame
 cat(&quot;Dimensions after cleaning:&quot;, dim(v.l.gabrat_sub_analysis), &quot;\n&quot;)</code></pre>
 <pre><code>## Dimensions after cleaning: 11 11</code></pre>
-<pre class="r"><code>names(v.l.gabrat_sub_analysis)</code></pre>
-<pre><code>##  [1] &quot;Species&quot;     &quot;Ind&quot;         &quot;Dist&quot;        &quot;ROI&quot;         &quot;BSA.BsL.Hrz&quot; &quot;Lum.mean&quot;    &quot;CAA.Scpl&quot;    &quot;Lum.CoV&quot;     &quot;BSA.BML&quot;     &quot;Col.mean&quot;   
-## [11] &quot;GabRat&quot;</code></pre>
 <pre class="r"><code># Examine variance for specified columns
 variance_results &lt;- apply(v.l.gabrat_sub_analysis[, 5:11], 2, var)
 variance_results</code></pre>
@@ -1505,26 +1470,25 @@ viewing distances and ROIs using the <code>scale()</code> function.</p>
 <pre class="r"><code># Function to standardize and inspect data
 standardize_data &lt;- function(data) {
   # Standardize data
-  standardized_data &lt;- scale(data, center = TRUE, scale = TRUE)
+  standardized_data &lt;- round(scale(data, center = TRUE, scale = TRUE), 3)
   
   # Check and print mean and variance
   cat(&quot;Column Means (should be near zero):\n&quot;)
   print(colMeans(standardized_data))
   cat(&quot;\nColumn Variances (should be 1):\n&quot;)
   print(apply(standardized_data, 2, var))
-  
-  return(standardized_data)
+  standardized_data
 }
 
 # Update the data frame with standardized values and inspect
 v.l.gabrat_sub_analysis[, 5:11] &lt;- standardize_data(v.l.gabrat_sub_analysis[, 5:11])</code></pre>
 <pre><code>## Column Means (should be near zero):
 ##   BSA.BsL.Hrz      Lum.mean      CAA.Scpl       Lum.CoV       BSA.BML      Col.mean        GabRat 
-## -1.614870e-16 -6.812732e-16  6.093610e-16 -4.188569e-16 -7.872491e-16  3.229740e-16  2.926952e-16 
+## -4.037175e-17 -5.046468e-18  9.090909e-05 -2.727273e-04 -2.018587e-17 -4.037175e-17  1.818182e-04 
 ## 
 ## Column Variances (should be 1):
 ## BSA.BsL.Hrz    Lum.mean    CAA.Scpl     Lum.CoV     BSA.BML    Col.mean      GabRat 
-##           1           1           1           1           1           1           1</code></pre>
+##   1.0000410   1.0003060   1.0001089   0.9999470   0.9998648   1.0000374   1.0002974</code></pre>
 </div>
 <div id="multivaraite-outliers" class="section level3" number="6.2.4">
 <h3><span class="header-section-number">6.2.4</span> Multivaraite
@@ -1555,17 +1519,17 @@ v.l.gabrat_sub_analysis$pvalue &lt;- pchisq(v.l.gabrat_sub_analysis$mahalnobis,
 v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in% 
                           c(&quot;mahalnobis&quot;, &quot;pvalue&quot;)]</code></pre>
 <pre><code>##    mahalnobis    pvalue
-## 2    7.941035 0.2424552
-## 3    6.662854 0.3531541
-## 7    4.371090 0.6265923
-## 8    7.589055 0.2697817
-## 10   4.524537 0.6060684
-## 11   4.608575 0.5949021
-## 13   6.112840 0.4106692
-## 14   8.005528 0.2376986
-## 15   8.490756 0.2043073
-## 17   5.134891 0.5266326
-## 18   6.558839 0.3635764</code></pre>
+## 2    7.941426 0.2424261
+## 3    6.659446 0.3534922
+## 7    4.370424 0.6266817
+## 8    7.590156 0.2696926
+## 10   4.525177 0.6059831
+## 11   4.609022 0.5948430
+## 13   6.113473 0.4105997
+## 14   8.007143 0.2375804
+## 15   8.490987 0.2042923
+## 17   5.134224 0.5267169
+## 18   6.558522 0.3636084</code></pre>
 </div>
 </div>
 </div>
@@ -1611,12 +1575,7 @@ save_to_csv(gabrat_res_analysis, &quot;gabrat_res_analysis.csv&quot;)
 # Get the list of objects with &quot;analysis&quot; in their names
 savefile_list &lt;- ls(pattern = &quot;analysis&quot;)
 
-# Print the object names
-savefile_list</code></pre>
-<pre><code>##  [1] &quot;Cluster_analysis&quot;             &quot;Cluster_Particle_analysis&quot;    &quot;gabrat_res_analysis&quot;          &quot;IndParticle_analysis&quot;        
-##  [5] &quot;LEIA_analysis_DT&quot;             &quot;LEIA_Res_analysis&quot;            &quot;Particle_analysis&quot;            &quot;v.l.gabrat_sub_analysis&quot;     
-##  [9] &quot;v.l.gabrat_sub_analysis_long&quot; &quot;VCA_analysis&quot;                 &quot;VCA_LEIA_GabRat_analysis&quot;</code></pre>
-<pre class="r"><code># Save each data frame in the list to a CSV file
+# Save each data frame in the list to a CSV file
 for (data_name in savefile_list) {
   # Generate filename with date and custom format
   filename &lt;- paste0(
@@ -1626,15 +1585,7 @@ for (data_name in savefile_list) {
   )
   
   save_to_csv(get(data_name), filename)
-}
-
-# List and print the saved files
-list.files(out_path)</code></pre>
-<pre><code>##  [1] &quot;Cluster_data_30_Oct_2023.csv&quot;             &quot;Cluster_Particle_data_30_Oct_2023.csv&quot;    &quot;gabrat_res_analysis.csv&quot;                 
-##  [4] &quot;gabrat_res_data_30_Oct_2023.csv&quot;          &quot;IndParticle_data_30_Oct_2023.csv&quot;         &quot;LEIA_data_DT_30_Oct_2023.csv&quot;            
-##  [7] &quot;LEIA_DT_data_30_Oct_2023.csv&quot;             &quot;LEIA_Res_data_30_Oct_2023.csv&quot;            &quot;Particle_data_30_Oct_2023.csv&quot;           
-## [10] &quot;v.l.gabrat_sub_data_30_Oct_2023.csv&quot;      &quot;v.l.gabrat_sub_data_long_30_Oct_2023.csv&quot; &quot;VCA_data_30_Oct_2023.csv&quot;                
-## [13] &quot;VCA_LEIA_GabRat_data_30_Oct_2023.csv&quot;</code></pre>
+}</code></pre>
 </div>
 <div id="fast-import-for-large-data-sets-using-data.table-optional---advanced" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Fast import for large
