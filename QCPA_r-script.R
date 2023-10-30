@@ -171,8 +171,7 @@ Sum_Res_df <- do.call(rbind, Sum_Res_list)
 
 # Check the imported data
 dim(Sum_Res_df) # 18 rows by 133 columns
-
-head(Sum_Res_df)[, 1:12] # check the first six rows and first twelve columns
+names(Sum_Res_df) 
 
 # Finally, to prevent any errors we remove the objects Ani_ID_dat, exnfile, path
 # from the global environment because we'll be recycling them in the second function
@@ -250,39 +249,31 @@ Particle_analysis <- read_qcpa(Animal_Info_ROI, filetype = "PartAn")
 # head(Particle_analysis) # Inspect data
 
 dim(Particle_analysis) # 52 rows, by 20 columns
-
 colnames(Particle_analysis)[5]
 
 # Change column name to be consistent with Cluster analysis
 colnames(Particle_analysis)[5] <- "ClusterID"
-
-Particle_analysis[1:2, ] # Observe the first two rows of data
+names(Particle_analysis) # Inspect the data
 
 # Cluster Results:
 # Read in and assign analysis
 Cluster_analysis <- read_qcpa(Animal_Info_ROI, filetype = "Clust")
 
-# head(Cluster_Analysis) # Inspect data
-
 # Subset data excluding the column Image and X
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
 
 dim(Cluster_analysis) # 52 rows, by 21 columns
-
-Cluster_analysis[1:2, ] # Observe the first two rows of data
+names(Cluster_analysis) # Inspect
 
 # Individual Particle Analysis:
 # Read in and assign analysis
 IndParticle_analysis <- read_qcpa(Animal_Info_ROI, filetype = "IndParticle")
 
-# head(Cluster_Analysis) # Inspect data
-
 # Subset data excluding the column X.1
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
 
 dim(IndParticle_analysis) # 143 rows, by 23 columns
-
-IndParticle_analysis[1:2, ] # Observe the first two rows of data
+names(IndParticle_analysis) # Inspect
 
 
 ## ----LEIA CSV Data------------------------------------------------------------
@@ -326,7 +317,7 @@ LEIA_Res_analysis <- LEIA_Res_analysis[, !(colnames(LEIA_Res_analysis)
 
 # Check the resulting data
 dim(LEIA_Res_analysis) # Print dimensions of the data
-head(LEIA_Res_analysis, 2) # Print the first two rows of data
+names(LEIA_Res_analysis)
 
 
 
@@ -396,8 +387,7 @@ Cluster_Particle_analysis <- merge(Cluster_analysis, Particle_analysis,
 )
 
 dim(Cluster_Particle_analysis) # 52 rows and 36 columns
-
-Cluster_Particle_analysis[1:2, ] # Inspect data
+names(Cluster_Particle_analysis) # Inspect data
 
 
 ## ----combine VCA LEIA and GabRat----------------------------------------------
@@ -430,7 +420,6 @@ v.l.gabrat_sub_analysis <- VCA_LEIA_GabRat_analysis[, column_names]
 
 # Inspect the dimensions and provide an initial summary
 cat("Dimensions before cleaning:", dim(v.l.gabrat_sub_analysis), "\n")
-print(summary(v.l.gabrat_sub_analysis))
 
 # Replace infinite values with NA
 infinite_indices <- sapply(v.l.gabrat_sub_analysis, is.infinite)
@@ -441,11 +430,11 @@ v.l.gabrat_sub_analysis <- na.omit(v.l.gabrat_sub_analysis)
 
 # Inspect the cleaned data frame
 cat("Dimensions after cleaning:", dim(v.l.gabrat_sub_analysis), "\n")
-print(summary(v.l.gabrat_sub_analysis))
+names(v.l.gabrat_sub_analysis)
 
 # Examine variance for specified columns
 variance_results <- apply(v.l.gabrat_sub_analysis[, 5:11], 2, var)
-print(variance_results)
+variance_results
 
 
 
@@ -578,7 +567,8 @@ v.l.gabrat_sub_analysis$pvalue <- pchisq(v.l.gabrat_sub_analysis$mahalnobis,
 )
 
 # Inspect Mahalnobis distances and p-values
-v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in% c("mahalnobis", "pvalue")]
+v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in% 
+                          c("mahalnobis", "pvalue")]
 
 
 ## ----Output files-------------------------------------------------------------
@@ -607,7 +597,7 @@ save_to_csv(gabrat_res_analysis, "gabrat_res_analysis.csv")
 savefile_list <- ls(pattern = "analysis")
 
 # Print the object names
-print(savefile_list)
+savefile_list
 
 # Save each data frame in the list to a CSV file
 for (data_name in savefile_list) {
@@ -622,7 +612,7 @@ for (data_name in savefile_list) {
 }
 
 # List and print the saved files
-print(list.files(out_path))
+list.files(out_path)
 
 
 
