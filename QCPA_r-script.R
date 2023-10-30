@@ -453,100 +453,89 @@ print(variance_results)
 
 
 ## ----Normalising data, fig.align='center', fig.height=7, fig.width=8, fig.cap='Figure 2. Histograms of seven colour variables.'----
-# Part A:
-# Test for normality Shapiro-Wilk test
-lapply(v.l.gabrat_sub_analysis[, 5:11], shapiro.test)
+# Subset column names for analysis
+colnames_subset <- colnames(v.l.gabrat_sub_analysis[, 5:11])
 
-# Part B:
-# Visualise distribution of the data using histograms
-Colnames_subset <- colnames(v.l.gabrat_sub_analysis[, 5:11]) # Select only the colour variables
+# Part A: Test for normality using the Shapiro-Wilk test
+normality_results <- lapply(v.l.gabrat_sub_analysis[colnames_subset], shapiro.test)
+print(normality_results)
 
-# Set the plot dimensions to display plots as 3 rows by 3 columns
+# Part B: Visualize distribution of the data using histograms
+# Set up plot layout to display histograms as 3 rows by 3 columns
 par(mfrow = c(3, 3))
 
-# Use a for loop to iterate over the column names
-for (i in Colnames_subset) {
-  # Plot the histogram, using 10 bins, and the colour variable as the main title
-  hist(v.l.gabrat_sub_analysis[, i],
-    breaks = 10,
-    main = i, xlab = ""
-  )
+# Create histograms for each column in the subset
+for (column in colnames_subset) {
+  hist(v.l.gabrat_sub_analysis[, column], 
+       breaks = 10, 
+       main = column, 
+       xlab = "")
 }
+
 
 
 ## ----Pairs and correlation plot, warning=FALSE, fig.align='center', fig.height=7, fig.width=9, fig.cap="Figure 3. Paired scatter plots of seven colour variables. Lower off-diagonal are the paired scatterplots where coloured points represent regions of interest (animal+background is yellow, bacground is red and animal is blue). Upper off-diagonal represents Pearson's correlation between paired colur varaibles."----
-# Correlation panel
-panel.cor <- function(x, y) {
-  usr <- par("usr")
-  on.exit(par(usr))
+# Define function for correlation panel
+panel_correlation <- function(x, y) {
+  # Set up the plotting area
   par(usr = c(0, 1, 0, 1))
-
-  # Calculate Pearson's correlation
-  r <- round(cor(x, y, method = "pearson"), digits = 2)
-
-  # Save as text
-  txt <- paste0("R = ", r)
-
-  # Plot the text
-  text(0.5, 0.5, txt, cex = 1)
+  
+  # Calculate and format the Pearson correlation
+  correlation <- round(cor(x, y, method = "pearson"), 2)
+  correlation_text <- paste0("R = ", correlation)
+  
+  # Display the correlation on the panel
+  text(0.5, 0.5, correlation_text, cex = 1)
 }
 
+# Define function for scatter plot panel
+panel_scatter <- function(x, y) {
+  points(x, y, 
+         col = my_cols[v.l.gabrat_sub_analysis$ROI], 
+         cex = 1.1, pch = 19)
+}
+
+# Define colors
 my_cols <- c("#00AFBB", "#E7B800", "#FC4E07")
 
-# Scatter plot panel
-panel.scat <- function(x, y) {
-  # Specify scatter plot points to colour by ROI
-  points(x, y,
-    col = my_cols[v.l.gabrat_sub_analysis$ROI],
-    cex = 1.1, pch = 19
-  )
-}
+# Create scatter plot matrix for the specified columns
+pairs(v.l.gabrat_sub_analysis[, 5:11], 
+      main = "Seven colour variables for two viewing distances", 
+      upper.panel = panel_correlation, 
+      lower.panel = panel_scatter, 
+      oma = c(5, 5, 6, 18), gap = 0)
 
-pairs(v.l.gabrat_sub_analysis[, 5:11],
-  # Set title
-  main = "Seven colour variables for two viewing distances",
-
-  # Parse in the new panels
-  upper.panel = panel.cor,
-  lower.panel = panel.scat,
-
-  # Add margin space and reduce gaps between plots
-  oma = c(5, 5, 6, 18), gap = 0
-)
-
-# Use the data to create a figure legend
-Colour_ID <- unique(data.frame(
-  as.character(v.l.gabrat_sub_analysis$ROI),
-  my_cols[v.l.gabrat_sub_analysis$ROI]
+# Create legend data
+legend_data <- unique(data.frame(
+  ROI_Label = as.character(v.l.gabrat_sub_analysis$ROI), 
+  Color = my_cols[v.l.gabrat_sub_analysis$ROI]
 ))
 
-# Add figure legend to plot
-legend("right", Colour_ID[, 1],
-  xpd = TRUE,
-  pch = 19, cex = 1.1, bty = "n", col = Colour_ID[, 2]
-)
+# Display the legend
+legend("right", legend_data$ROI_Label, 
+       xpd = TRUE, 
+       pch = 19, cex = 1.1, bty = "n", col = legend_data$Color)
 
 
 
 ## ----Boxplots, fig.align='center', fig.height=6.5, fig.width=9, fig.cap="Figure 4. Boxplots of the seven colour variables."----
-# Part A:
-# For the boxplot function, the data has to be in long format
-# We need the reshape package for this
-library(reshape2)
+# Convert data to long format using base R's 'reshape'
+v.l.gabrat_sub_analysis_long <- reshape(v.l.gabrat_sub_analysis, 
+                            varying = list(names(v.l.gabrat_sub_analysis)[5:11]), 
+                            v.names = "value", 
+                            timevar = "variable", 
+                            idvar = c("Species", "Ind", "Dist", "ROI"), 
+                            direction = "long")
 
-# Here we 'melt' the data to long format
-v.l.gabrat_sub_analysis_lng <- melt(v.l.gabrat_sub_analysis,
-  id.vars = c("Species", "Ind", "Dist", "ROI")
-)
-
-# Set the plot dimensions to display a single plot, correcting outer margins
+# Reset plot parameters for a single plot
 par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
 
-# Inspect boxplots for outliers
-boxplot(value ~ variable,
-  pch = 16, boxwex = 0.5, xlab = "Colour variable",
-  data = v.l.gabrat_sub_analysis_lng
-)
+# Create boxplots to inspect for outliers
+boxplot(value ~ variable, 
+        data = v.l.gabrat_sub_analysis_long, 
+        pch = 16, boxwex = 0.5, 
+        xlab = "Colour variable")
+
 
 
 ## ----outliers-----------------------------------------------------------------
