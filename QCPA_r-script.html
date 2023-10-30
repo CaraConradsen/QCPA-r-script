@@ -1658,49 +1658,28 @@ data</h3>
 to facilitate model convergence. Here we variance standardised (mean =
 0, standard deviation = 1) each colour pattern variable across both
 viewing distances and ROIs using the <code>scale()</code> function.</p>
-<pre class="r"><code># Inspect scaled values and column means
-scale(v.l.gabrat_sub_analysis[, 5:11], center = TRUE, scale = TRUE)</code></pre>
-<pre><code>##    BSA.BsL.Hrz    Lum.mean   CAA.Scpl    Lum.CoV     BSA.BML    Col.mean     GabRat
-## 2   0.01615151 -0.87259277  1.0447329  0.5434126  0.07370189 -0.03748558  1.2575825
-## 3  -1.04912193 -1.42120580 -1.1591094 -0.4793016 -0.04606569 -0.50269435  0.2949464
-## 7  -0.68927858  1.80698261  1.3944807 -1.2187555 -0.67822953  1.44389073 -1.3922980
-## 8   0.46902751 -0.03805163 -1.9965592  1.5533929  0.72545366  0.30774049  1.1835279
-## 10 -1.09924489  1.73650453  1.0175188 -1.6615115 -1.19110556  1.30323751 -1.5085298
-## 11  1.47594374  0.27164927 -0.1664538  1.3104953  0.60802358  0.21417235  0.2588835
-## 13 -0.21669972 -0.62888125  0.2343956 -0.9445464 -1.93327402  1.20297119  0.2669827
-## 14  0.14299748 -0.39271849 -0.6773729  0.2623784 -0.42764791 -0.74177818  0.7306342
-## 15  1.63571008 -0.51469509  0.1198638  0.1861873  1.46361125 -1.30800444  0.6787438
-## 17  0.61625213  0.17954864  0.2065297  0.1893369  0.41346282 -0.52704120 -0.9760417
-## 18 -1.30173733 -0.12654002 -0.0180262  0.2589115  0.99206954 -1.35500854 -0.7944315
-## attr(,&quot;scaled:center&quot;)
-## BSA.BsL.Hrz    Lum.mean    CAA.Scpl     Lum.CoV     BSA.BML    Col.mean      GabRat 
-##   0.0946824   1.0176215   0.5261440   1.9830285   0.2831279   0.2178738   0.3774653 
-## attr(,&quot;scaled:scale&quot;)
-## BSA.BsL.Hrz    Lum.mean    CAA.Scpl     Lum.CoV     BSA.BML    Col.mean      GabRat 
-##  0.03782548  0.29528483  0.11261644  0.30092964  0.07755922  0.04698890  0.12384203</code></pre>
-<pre class="r"><code># Update the v.l.gabrat_sub_analysis data frame with the standardised values
-v.l.gabrat_sub_analysis[, 5:11] &lt;- scale(v.l.gabrat_sub_analysis[, 5:11],
-  center = TRUE, scale = TRUE
-)
+<pre class="r"><code># Function to standardize and inspect data
+standardize_data &lt;- function(data) {
+  # Standardize data
+  standardized_data &lt;- scale(data, center = TRUE, scale = TRUE)
+  
+  # Check and print mean and variance
+  cat(&quot;Column Means (should be near zero):\n&quot;)
+  print(colMeans(standardized_data))
+  cat(&quot;\nColumn Variances (should be 1):\n&quot;)
+  print(apply(standardized_data, 2, var))
+  
+  return(standardized_data)
+}
 
-# Check standardisation
-summary(v.l.gabrat_sub_analysis) # Mean values are zero</code></pre>
-<pre><code>##               Species                              Ind      Dist                  ROI     BSA.BsL.Hrz          Lum.mean          CAA.Scpl      
-##  aphelodoris_varia:6   3_AphelodorisVaria_10_NF_D_RAW:2   30cm:7   animal           :3   Min.   :-1.30174   Min.   :-1.4212   Min.   :-1.9966  
-##  aplysia_sp       :5   3_AphelodorisVaria_11_NF_D_RAW:4   50cm:4   animal+background:5   1st Qu.:-0.86920   1st Qu.:-0.5718   1st Qu.:-0.4219  
-##                        4_Aplysiasp_1_NL_N_RAW        :5            background       :3   Median : 0.01615   Median :-0.1265   Median : 0.1199  
-##                                                                                          Mean   : 0.00000   Mean   : 0.0000   Mean   : 0.0000  
-##                                                                                          3rd Qu.: 0.54264   3rd Qu.: 0.2256   3rd Qu.: 0.6260  
-##                                                                                          Max.   : 1.63571   Max.   : 1.8070   Max.   : 1.3945  
-##     Lum.CoV           BSA.BML           Col.mean            GabRat       
-##  Min.   :-1.6615   Min.   :-1.9333   Min.   :-1.35501   Min.   :-1.5085  
-##  1st Qu.:-0.7119   1st Qu.:-0.5529   1st Qu.:-0.63441   1st Qu.:-0.8852  
-##  Median : 0.1893   Median : 0.0737   Median :-0.03749   Median : 0.2670  
-##  Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.00000   Mean   : 0.0000  
-##  3rd Qu.: 0.4029   3rd Qu.: 0.6667   3rd Qu.: 0.75536   3rd Qu.: 0.7047  
-##  Max.   : 1.5534   Max.   : 1.4636   Max.   : 1.44389   Max.   : 1.2576</code></pre>
-<pre class="r"><code>apply(v.l.gabrat_sub_analysis[, 5:11], 2, var) # Confirm variances are 1</code></pre>
-<pre><code>## BSA.BsL.Hrz    Lum.mean    CAA.Scpl     Lum.CoV     BSA.BML    Col.mean      GabRat 
+# Update the data frame with standardized values and inspect
+v.l.gabrat_sub_analysis[, 5:11] &lt;- standardize_data(v.l.gabrat_sub_analysis[, 5:11])</code></pre>
+<pre><code>## Column Means (should be near zero):
+##   BSA.BsL.Hrz      Lum.mean      CAA.Scpl       Lum.CoV       BSA.BML      Col.mean        GabRat 
+## -1.614870e-16 -6.812732e-16  6.093610e-16 -4.188569e-16 -7.872491e-16  3.229740e-16  2.926952e-16 
+## 
+## Column Variances (should be 1):
+## BSA.BsL.Hrz    Lum.mean    CAA.Scpl     Lum.CoV     BSA.BML    Col.mean      GabRat 
 ##           1           1           1           1           1           1           1</code></pre>
 </div>
 <div id="multivaraite-outliers" class="section level3" number="6.2.4">
@@ -1751,7 +1730,7 @@ v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in% c(&quot;mahalno
 multiple ways to save the image analysis data files as csvs in the
 folder ‘Output’. First, we use <code>dir.create()</code> to create the
 folder ‘Output’ in the <code>test_data</code> folder, and save this new
-folder location as <code>Out_path</code>. To save a single file, you can
+folder location as <code>out_path</code>. To save a single file, you can
 use <code>write.csv()</code>, where we have used the argument
 <code>row.names = FALSE</code> to make sure that the row numbers in the
 dataframe aren’t included in the csv file.</p>
@@ -1763,45 +1742,53 @@ all our image analysis dataframes. Then, using a for loop, we iterate
 over each dataframe, rename it using the current date, and then output
 the csv file. Finally, we use <code>list.files()</code> to check that
 the files have been created.</p>
-<pre class="r"><code>dir.create(paste(c(data_location, &quot;Output&quot;), collapse = &quot;/&quot;)) # Create the Output directory
+<pre class="r"><code># Function to create and return a directory path
+create_directory &lt;- function(path_components) {
+  directory_path &lt;- paste(path_components, collapse = &quot;/&quot;)
+  if (!dir.exists(directory_path)) {
+    dir.create(directory_path)
+  }
+  return(directory_path)
+}
 
-Out_path &lt;- paste(c(data_location, &quot;Output&quot;), collapse = &quot;/&quot;) # Save Output directory path
+# Create and get the Output directory path
+out_path &lt;- create_directory(c(data_location, &quot;Output&quot;))
 
-# For a single file:
-write.csv(gabrat_res_analysis,
-  row.names = FALSE, # Remove row names
-  file = paste(c(Out_path, &quot;gabrat_res_analysis.csv&quot;),
-    collapse = &quot;/&quot;
-  )
-) # Save to the folder Output in test_data
+# Save a single data frame to CSV
+save_to_csv &lt;- function(data, filename) {
+  file_path &lt;- paste0(out_path, &quot;/&quot;, filename)
+  write.csv(data, file = file_path, row.names = FALSE)
+}
 
-# For multiple files:
-savefile_list &lt;- ls(pattern = &quot;analysis&quot;) # Save all objects with &quot;analysis&quot; in the name
+# Save the gabrat_res_analysis data frame
+save_to_csv(gabrat_res_analysis, &quot;gabrat_res_analysis.csv&quot;)
 
-savefile_list # Inspect object names</code></pre>
+# Get the list of objects with &quot;analysis&quot; in their names
+savefile_list &lt;- ls(pattern = &quot;analysis&quot;)
+
+# Print the object names
+print(savefile_list)</code></pre>
 <pre><code>##  [1] &quot;Cluster_analysis&quot;             &quot;Cluster_Particle_analysis&quot;    &quot;gabrat_res_analysis&quot;          &quot;IndParticle_analysis&quot;        
 ##  [5] &quot;LEIA_analysis_DT&quot;             &quot;LEIA_Res_analysis&quot;            &quot;Particle_analysis&quot;            &quot;v.l.gabrat_sub_analysis&quot;     
 ##  [9] &quot;v.l.gabrat_sub_analysis_long&quot; &quot;VCA_analysis&quot;                 &quot;VCA_LEIA_GabRat_analysis&quot;</code></pre>
-<pre class="r"><code># Iterate over each data frame in savefile_list
-for (i in savefile_list) {
-  # Create file name and add the .csv extension
-  # Add date of creation using format(Sys.time(), &quot;_%d_%b_%Y&quot;)
-  # Remove &quot;_analysis&quot; using gsub and add &quot;_data&quot; and date created
-  fname &lt;- paste0(gsub(&quot;_analysis&quot;, &quot;&quot;, i), &quot;_data&quot;, format(Sys.time(), &quot;_%d_%b_%Y&quot;), &quot;.csv&quot;)
-
-  # Save to the folder Output in test_data
-  write.csv(gabrat_res_analysis,
-    row.names = FALSE, # Remove row names
-    file = paste(c(Out_path, fname), collapse = &quot;/&quot;)
+<pre class="r"><code># Save each data frame in the list to a CSV file
+for (data_name in savefile_list) {
+  # Generate filename with date and custom format
+  filename &lt;- paste0(
+    gsub(&quot;_analysis&quot;, &quot;_data&quot;, data_name), 
+    format(Sys.time(), &quot;_%d_%b_%Y&quot;), 
+    &quot;.csv&quot;
   )
+  
+  save_to_csv(get(data_name), filename)
 }
 
-# Check that your files have saved
-list.files(Out_path)</code></pre>
+# List and print the saved files
+print(list.files(out_path))</code></pre>
 <pre><code>##  [1] &quot;Cluster_data_30_Oct_2023.csv&quot;             &quot;Cluster_Particle_data_30_Oct_2023.csv&quot;    &quot;gabrat_res_analysis.csv&quot;                 
-##  [4] &quot;gabrat_res_data_30_Oct_2023.csv&quot;          &quot;IndParticle_data_30_Oct_2023.csv&quot;         &quot;LEIA_DT_data_30_Oct_2023.csv&quot;            
+##  [4] &quot;gabrat_res_data_30_Oct_2023.csv&quot;          &quot;IndParticle_data_30_Oct_2023.csv&quot;         &quot;LEIA_data_DT_30_Oct_2023.csv&quot;            
 ##  [7] &quot;LEIA_Res_data_30_Oct_2023.csv&quot;            &quot;Particle_data_30_Oct_2023.csv&quot;            &quot;v.l.gabrat_sub_data_30_Oct_2023.csv&quot;     
-## [10] &quot;v.l.gabrat_sub_long_data_30_Oct_2023.csv&quot; &quot;VCA_data_30_Oct_2023.csv&quot;                 &quot;VCA_LEIA_GabRat_data_30_Oct_2023.csv&quot;</code></pre>
+## [10] &quot;v.l.gabrat_sub_data_long_30_Oct_2023.csv&quot; &quot;VCA_data_30_Oct_2023.csv&quot;                 &quot;VCA_LEIA_GabRat_data_30_Oct_2023.csv&quot;</code></pre>
 </div>
 <div id="fast-import-for-large-data-sets-using-data.table-optional---advanced" class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Fast import for large
@@ -1818,66 +1805,67 @@ DT  [i,     j,      by]</code></pre>
 <p>Here we will provide a quick demonstration by importing the LEIA QCPA
 batch script output. First, we convert our <code>Animal_Info_ROI</code>
 into <code>data.table</code> format using the function
-<code>setDT</code>. Then we will input our data using the dedicated
-<code>data.table</code> read function <code>fread</code>. Finally, we
-can output large data.tables fast using the <code>fwrite</code>
-function.</p>
+<code>as.data.table()</code>. Then we will input our data using the
+dedicated <code>data.table</code> read function <code>fread()</code>.
+Finally, we can output large data.tables fast using the
+<code>fwrite()</code> function.</p>
 <pre class="r"><code>library(data.table)
 
 # Convert Animal_Info_ROI into data.table format
-Animal_Info_ROI_DT &lt;- setDT(Animal_Info_ROI)
+Animal_Info_ROI_DT &lt;- as.data.table(Animal_Info_ROI)
 
-# From Animal_Info_ROI we can paste the column information together
-# and then read in data row by row, specifying &#39;by=1:NROW(Animal_Info_ROI)&#39;
-LEIA_analysis_DT &lt;- Animal_Info_ROI[, fread(paste(data_location, Species, Ind, Dist, &quot;LEIA&quot;, ROI,
-  &quot;_Local Edge Intensity Analysis.csv&quot;,
-  sep = &quot;/&quot;
-)),
-by = 1:NROW(Animal_Info_ROI)
-]
+# Create a function to generate the file path for LEIA analysis
+generate_filepath &lt;- function(row) {
+  paste(row$data_location, row$Species, row$Ind, row$Dist, &quot;LEIA&quot;, row$ROI,
+        &quot;_Local Edge Intensity Analysis.csv&quot;, sep = &quot;/&quot;)
+}
 
-# Remove unwanted columns, and automatically assign using &#39;:=&#39;
-LEIA_analysis_DT[, c(&quot;NROW&quot;, &quot;V1&quot;, &quot;Image&quot;, &quot;Transform&quot;) := NULL]
+# Read data for each row in Animal_Info_ROI_DT
+LEIA_analysis_DT &lt;- Animal_Info_ROI_DT[, {
+  file_path &lt;- generate_filepath(.SD)
+  fread(file_path)
+}, by = 1:NROW(Animal_Info_ROI_DT)]</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW/30cm/LEIA/animal/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW/50cm/LEIA/animal/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_11_NF_D_RAW/30cm/LEIA/animal/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_11_NF_D_RAW/50cm/LEIA/animal/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aplysia_sp/4_Aplysiasp_1_NL_N_RAW/30cm/LEIA/animal/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aplysia_sp/4_Aplysiasp_1_NL_N_RAW/50cm/LEIA/animal/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW/30cm/LEIA/animal+background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW/50cm/LEIA/animal+background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_11_NF_D_RAW/30cm/LEIA/animal+background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_11_NF_D_RAW/50cm/LEIA/animal+background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aplysia_sp/4_Aplysiasp_1_NL_N_RAW/30cm/LEIA/animal+background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aplysia_sp/4_Aplysiasp_1_NL_N_RAW/50cm/LEIA/animal+background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW/30cm/LEIA/background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW/50cm/LEIA/background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_11_NF_D_RAW/30cm/LEIA/background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aphelodoris_varia/3_AphelodorisVaria_11_NF_D_RAW/50cm/LEIA/background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aplysia_sp/4_Aplysiasp_1_NL_N_RAW/30cm/LEIA/background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre><code>## Taking input= as a system command (&#39;/aplysia_sp/4_Aplysiasp_1_NL_N_RAW/50cm/LEIA/background/_Local Edge Intensity Analysis.csv&#39;) and a variable has been used in the expression passed to `input=`. Please use fread(cmd=...). There is a security concern if you are creating an app, and the app could have a malicious user, and the app is not running in a secure environment; e.g. the app is running as root. Please read item 5 in the NEWS file for v1.11.6 for more information and for the option to suppress this message.</code></pre>
+<pre class="r"><code># Remove unwanted columns
+unwanted_columns &lt;- c(&quot;NROW&quot;, &quot;V1&quot;, &quot;Image&quot;, &quot;Transform&quot;)
+LEIA_analysis_DT[, (unwanted_columns) := NULL]
 
-# Add the Animal_Info_ROI information
-LEIA_analysis_DT &lt;- cbind(Animal_Info_ROI, LEIA_analysis_DT)
+# Combine the original and new data
+LEIA_analysis_DT &lt;- cbind(Animal_Info_ROI_DT, LEIA_analysis_DT)
 
-# Inspect the data.table
+# Inspect the combined data
 head(LEIA_analysis_DT)</code></pre>
-<pre><code>##              Species                            Ind Dist    ROI  Col mean    Col sd  Col CoV  Col skew Col kurtosis  Lum mean   Lum sd  Lum CoV
-## 1: aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal 0.1736449 0.2851837 1.642339 2.3513009     9.700354 0.8928419 1.431054 1.602808
-## 2: aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal 0.1663600 0.2695337 1.620183 2.2863201     9.671851 0.8987935 1.380676 1.536144
-## 3: aphelodoris_varia 3_AphelodorisVaria_11_NF_D_RAW 30cm animal 0.2857206 0.4620673 1.617200 2.1109772     8.397064 1.5511960 2.507150 1.616269
-## 4: aphelodoris_varia 3_AphelodorisVaria_11_NF_D_RAW 50cm animal 0.2791115 0.4172110 1.494782 1.6695742     5.947408 1.5303849 2.269607 1.483030
-## 5:        aplysia_sp         4_Aplysiasp_1_NL_N_RAW 30cm animal 0.2744001 0.5186319 1.890057 0.9863623     3.941409 0.8319224 1.413259 1.698786
-## 6:        aplysia_sp         4_Aplysiasp_1_NL_N_RAW 50cm animal 0.1879060 0.3406233 1.812732 0.8951362     3.821529 0.9877660 1.719976 1.741279
-##     Lum skew Lum kurtosis Col mean hrz Col sd hrz Col CoV hrz Col skew hrz Col kurtosis hrz Col mean vrt Col sd vrt Col CoV vrt Col skew vrt
-## 1: 2.2559735     9.558368   0.08770301  0.1856711    2.117043     3.926095         22.61682   0.08907545  0.1942661    2.180916     3.913759
-## 2: 2.0603133     8.282279   0.08205933  0.1756506    2.140532     3.887552         22.67175   0.08694090  0.1873940    2.155418     3.881844
-## 3: 2.5463566    12.453982   0.15267951  0.3221450    2.109943     3.683355         20.80604   0.13751606  0.2817287    2.048696     3.515951
-## 4: 2.0211324     8.743586   0.14939446  0.2985774    1.998584     3.244117         16.06562   0.13517600  0.2483763    1.837429     2.907237
-## 5: 0.4658983     2.619744   0.13644481  0.3012997    2.208217     2.138189         11.13582   0.13592239  0.3143010    2.312356     2.280570
-## 6: 0.6844910     3.147853   0.09580569  0.1994786    2.082117     2.279845         13.36001   0.09162023  0.2063477    2.252207     2.295968
-##    Col kurtosis vrt Lum mean hrz Lum sd hrz Lum CoV hrz Lum skew hrz Lum kurtosis hrz Lum mean vrt Lum sd vrt Lum CoV vrt Lum skew vrt
-## 1:         22.07321    0.4355562  0.8958863    2.056879     3.612730        20.015200    0.4563516  0.9904756    2.170422     3.852029
-## 2:         22.90526    0.4406635  0.8761384    1.988225     3.493638        19.455513    0.4573795  0.9806892    2.144148     3.690217
-## 3:         18.79095    0.8198832  1.7714397    2.160600     4.465145        31.933329    0.7301569  1.4871986    2.036821     3.836817
-## 4:         14.14649    0.8071571  1.6670532    2.065339     3.871669        23.224363    0.7215794  1.3089950    1.814069     3.191745
-## 5:         10.90464    0.4030806  0.7863049    1.950739     1.070465         4.311739    0.3949017  0.8047263    2.037789     1.771279
-## 6:         11.87647    0.4673162  0.9458438    2.023991     1.530686         7.331437    0.4531541  1.0669676    2.354536     2.801707
-##    Lum kurtosis vrt Col thresh Lum thresh
-## 1:         22.42973          0          0
-## 2:         20.01364          0          0
-## 3:         23.39465          0          0
-## 4:         18.53788          0          0
-## 5:         10.55201          0          0
-## 6:         15.67831          0          0</code></pre>
-<pre class="r"><code># Create save filename
+<pre><code>##              Species                            Ind Dist    ROI
+## 1: aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 30cm animal
+## 2: aphelodoris_varia 3_AphelodorisVaria_10_NF_D_RAW 50cm animal
+## 3: aphelodoris_varia 3_AphelodorisVaria_11_NF_D_RAW 30cm animal
+## 4: aphelodoris_varia 3_AphelodorisVaria_11_NF_D_RAW 50cm animal
+## 5:        aplysia_sp         4_Aplysiasp_1_NL_N_RAW 30cm animal
+## 6:        aplysia_sp         4_Aplysiasp_1_NL_N_RAW 50cm animal</code></pre>
+<pre class="r"><code># Define the filename for saving
 fname &lt;- paste0(
-  Out_path, &quot;/&quot;, gsub(&quot;_analysis&quot;, &quot;&quot;, &quot;LEIA_analysis_DT&quot;),
+  out_path, &quot;/&quot;, gsub(&quot;_analysis&quot;, &quot;&quot;, &quot;LEIA_analysis_DT&quot;),
   &quot;_data&quot;, format(Sys.time(), &quot;_%d_%b_%Y&quot;), &quot;.csv&quot;
 )
-# Save output
+
+# Save the data to a CSV file
 fwrite(LEIA_analysis_DT, file = fname, row.names = FALSE)</code></pre>
 <div style="page-break-after: always;"></div>
 </div>

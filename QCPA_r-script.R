@@ -544,17 +544,23 @@ apply(v.l.gabrat_sub_analysis[, 5:11], 2, function(x) (x - mean(x)) / sd(x))
 
 
 ## ----Standardising data-------------------------------------------------------
-# Inspect scaled values and column means
-scale(v.l.gabrat_sub_analysis[, 5:11], center = TRUE, scale = TRUE)
+# Function to standardize and inspect data
+standardize_data <- function(data) {
+  # Standardize data
+  standardized_data <- scale(data, center = TRUE, scale = TRUE)
+  
+  # Check and print mean and variance
+  cat("Column Means (should be near zero):\n")
+  print(colMeans(standardized_data))
+  cat("\nColumn Variances (should be 1):\n")
+  print(apply(standardized_data, 2, var))
+  
+  return(standardized_data)
+}
 
-# Update the v.l.gabrat_sub_analysis data frame with the standardised values
-v.l.gabrat_sub_analysis[, 5:11] <- scale(v.l.gabrat_sub_analysis[, 5:11],
-  center = TRUE, scale = TRUE
-)
+# Update the data frame with standardized values and inspect
+v.l.gabrat_sub_analysis[, 5:11] <- standardize_data(v.l.gabrat_sub_analysis[, 5:11])
 
-# Check standardisation
-summary(v.l.gabrat_sub_analysis) # Mean values are zero
-apply(v.l.gabrat_sub_analysis[, 5:11], 2, var) # Confirm variances are 1
 
 
 ## ----Mahalanobis--------------------------------------------------------------
@@ -579,39 +585,48 @@ v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in% c("mahalnobis",
 
 
 ## ----Output files-------------------------------------------------------------
-dir.create(paste(c(data_location, "Output"), collapse = "/")) # Create the Output directory
-
-Out_path <- paste(c(data_location, "Output"), collapse = "/") # Save Output directory path
-
-# For a single file:
-write.csv(gabrat_res_analysis,
-  row.names = FALSE, # Remove row names
-  file = paste(c(Out_path, "gabrat_res_analysis.csv"),
-    collapse = "/"
-  )
-) # Save to the folder Output in test_data
-
-# For multiple files:
-savefile_list <- ls(pattern = "analysis") # Save all objects with "analysis" in the name
-
-savefile_list # Inspect object names
-
-# Iterate over each data frame in savefile_list
-for (i in savefile_list) {
-  # Create file name and add the .csv extension
-  # Add date of creation using format(Sys.time(), "_%d_%b_%Y")
-  # Remove "_analysis" using gsub and add "_data" and date created
-  fname <- paste0(gsub("_analysis", "", i), "_data", format(Sys.time(), "_%d_%b_%Y"), ".csv")
-
-  # Save to the folder Output in test_data
-  write.csv(gabrat_res_analysis,
-    row.names = FALSE, # Remove row names
-    file = paste(c(Out_path, fname), collapse = "/")
-  )
+# Function to create and return a directory path
+create_directory <- function(path_components) {
+  directory_path <- paste(path_components, collapse = "/")
+  if (!dir.exists(directory_path)) {
+    dir.create(directory_path)
+  }
+  return(directory_path)
 }
 
-# Check that your files have saved
-list.files(Out_path)
+# Create and get the Output directory path
+out_path <- create_directory(c(data_location, "Output"))
+
+# Save a single data frame to CSV
+save_to_csv <- function(data, filename) {
+  file_path <- paste0(out_path, "/", filename)
+  write.csv(data, file = file_path, row.names = FALSE)
+}
+
+# Save the gabrat_res_analysis data frame
+save_to_csv(gabrat_res_analysis, "gabrat_res_analysis.csv")
+
+# Get the list of objects with "analysis" in their names
+savefile_list <- ls(pattern = "analysis")
+
+# Print the object names
+print(savefile_list)
+
+# Save each data frame in the list to a CSV file
+for (data_name in savefile_list) {
+  # Generate filename with date and custom format
+  filename <- paste0(
+    gsub("_analysis", "_data", data_name), 
+    format(Sys.time(), "_%d_%b_%Y"), 
+    ".csv"
+  )
+  
+  save_to_csv(get(data_name), filename)
+}
+
+# List and print the saved files
+print(list.files(out_path))
+
 
 
 ## ----eval=FALSE---------------------------------------------------------------
@@ -623,31 +638,37 @@ list.files(Out_path)
 library(data.table)
 
 # Convert Animal_Info_ROI into data.table format
-Animal_Info_ROI_DT <- setDT(Animal_Info_ROI)
+Animal_Info_ROI_DT <- as.data.table(Animal_Info_ROI)
 
-# From Animal_Info_ROI we can paste the column information together
-# and then read in data row by row, specifying 'by=1:NROW(Animal_Info_ROI)'
-LEIA_analysis_DT <- Animal_Info_ROI[, fread(paste(data_location, Species, Ind, Dist, "LEIA", ROI,
-  "_Local Edge Intensity Analysis.csv",
-  sep = "/"
-)),
-by = 1:NROW(Animal_Info_ROI)
-]
+# Create a function to generate the file path for LEIA analysis
+generate_filepath <- function(row) {
+  paste(row$data_location, row$Species, row$Ind, row$Dist, "LEIA", row$ROI,
+        "_Local Edge Intensity Analysis.csv", sep = "/")
+}
 
-# Remove unwanted columns, and automatically assign using ':='
-LEIA_analysis_DT[, c("NROW", "V1", "Image", "Transform") := NULL]
+# Read data for each row in Animal_Info_ROI_DT
+LEIA_analysis_DT <- Animal_Info_ROI_DT[, {
+  file_path <- generate_filepath(.SD)
+  fread(file_path)
+}, by = 1:NROW(Animal_Info_ROI_DT)]
 
-# Add the Animal_Info_ROI information
-LEIA_analysis_DT <- cbind(Animal_Info_ROI, LEIA_analysis_DT)
+# Remove unwanted columns
+unwanted_columns <- c("NROW", "V1", "Image", "Transform")
+LEIA_analysis_DT[, (unwanted_columns) := NULL]
 
-# Inspect the data.table
+# Combine the original and new data
+LEIA_analysis_DT <- cbind(Animal_Info_ROI_DT, LEIA_analysis_DT)
+
+# Inspect the combined data
 head(LEIA_analysis_DT)
 
-# Create save filename
+# Define the filename for saving
 fname <- paste0(
-  Out_path, "/", gsub("_analysis", "", "LEIA_analysis_DT"),
+  out_path, "/", gsub("_analysis", "", "LEIA_analysis_DT"),
   "_data", format(Sys.time(), "_%d_%b_%Y"), ".csv"
 )
-# Save output
+
+# Save the data to a CSV file
 fwrite(LEIA_analysis_DT, file = fname, row.names = FALSE)
+
 
