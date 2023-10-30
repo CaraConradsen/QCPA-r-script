@@ -106,7 +106,8 @@ ROI <- c("animal", "animal+background", "background") # Add the names of ROIs
 # the number and types of _Summary Results.csv files
 
 # Use the first row of animal_info to specify the location to examine
-first_animal_path <- file.path(data_location, paste(unlist(animal_info[1, ]), collapse = "/"))
+first_animal_path <- file.path(data_location, 
+                               paste(unlist(animal_info[1, ]), collapse = "/"))
 
 # Find all the ROI output files for '_Summary Results.csv'
 roi_files <- list.files(first_animal_path, pattern = "_Summary Results.csv")
@@ -195,7 +196,8 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
   )
 
   if (!filetype %in% names(file_extensions)) {
-    stop('Specify analysis output type: filetype = "VCA", "PartAn", "Clust", or "IndParticle"')
+    stop('Specify analysis output type: 
+         filetype = "VCA", "PartAn", "Clust", or "IndParticle"')
   }
 
   exnfile <- file_extensions[[filetype]]
@@ -227,10 +229,6 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
 
 
 
-## ----empty read_qcpa, error=TRUE----------------------------------------------
-read_qcpa(Animal_Info_ROI) # We include only the animal id data set
-
-
 ## ----implementing read_qcpa---------------------------------------------------
 # VCA,BSA,CAA analysis:
 # Read in and assign analysis
@@ -243,7 +241,7 @@ VCA_analysis <- VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
 
 dim(VCA_analysis) # 18 rows, by 131 columns
 
-VCA_analysis[1:2, ] # Observe the first two rows of data
+VCA_analysis[1:2, 1:6] # Observe the first two rows and six columns of data
 
 # Cluster Particle Analysis:
 # Read in and assign analysis
@@ -408,7 +406,6 @@ VCA_LEIA_GabRat_analysis <- merge(VCA_analysis, LEIA_Res_analysis,
   by = c("Species", "Ind", "Dist", "ROI")
 )
 
-VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data
 dim(VCA_LEIA_GabRat_analysis) # 18 rows and 164 columns
 
 # Merge the new data frame (VCA_LEIA_GabRat_analysis) with gabrat_res_analysis
@@ -416,9 +413,9 @@ VCA_LEIA_GabRat_analysis <- merge(VCA_LEIA_GabRat_analysis, gabrat_res_analysis,
   by = c("Species", "Ind", "Dist", "ROI")
 )
 
-VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data again
-
 dim(VCA_LEIA_GabRat_analysis) # 18 rows and 165 columns
+names(VCA_LEIA_GabRat_analysis) # Inspect data structure
+
 
 
 ## ----Removing NAs-------------------------------------------------------------
@@ -634,7 +631,7 @@ print(list.files(out_path))
 ## DT  [i,     j,      by]
 
 
-## ----data.table, warning=FALSE------------------------------------------------
+## ----data.table, warning=FALSE, message=FALSE---------------------------------
 library(data.table)
 
 # Convert Animal_Info_ROI into data.table format

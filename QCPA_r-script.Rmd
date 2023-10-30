@@ -210,7 +210,8 @@ We can then extract any particular image analysis `.csv` data files names using 
 # the number and types of _Summary Results.csv files
 
 # Use the first row of animal_info to specify the location to examine
-first_animal_path <- file.path(data_location, paste(unlist(animal_info[1, ]), collapse = "/"))
+first_animal_path <- file.path(data_location, 
+                               paste(unlist(animal_info[1, ]), collapse = "/"))
 
 # Find all the ROI output files for '_Summary Results.csv'
 roi_files <- list.files(first_animal_path, pattern = "_Summary Results.csv")
@@ -302,7 +303,7 @@ rm(path)
 
 ## Dynamic function to read in various image analysis files
 
-To dynamically import data, we are going to create the function `read_qcpa()`, which will take an animal ID data frame (`Ani_ID_dat`), the specific image analysis that we are interested in (`filetype`), and a folder directory (where we set the default `path` to the `data_location` defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the `exnfile` object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the `else` level), we have used the `stop` function which will occur if `filetype` has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used `merge` here instead of `rbind()` (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the `return` function to output our newly imported data. 
+To dynamically import data, we are going to create the function `read_qcpa()`, which will take an animal ID data frame (`Ani_ID_dat`), the specific image analysis that we are interested in (`filetype`), and a folder directory (where we set the default `path` to the `data_location` defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the `exnfile` object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the `else` level), we have used the `stop()` function which will occur if `filetype` has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used `merge` here instead of `rbind()` (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the `return` function to output our newly imported data. 
 
 ```{r kable table ftyp, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
 ftyp <- data.frame(
@@ -331,7 +332,8 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
   )
 
   if (!filetype %in% names(file_extensions)) {
-    stop('Specify analysis output type: filetype = "VCA", "PartAn", "Clust", or "IndParticle"')
+    stop('Specify analysis output type: 
+         filetype = "VCA", "PartAn", "Clust", or "IndParticle"')
   }
 
   exnfile <- file_extensions[[filetype]]
@@ -363,12 +365,6 @@ read_qcpa <- function(Ani_ID_dat, filetype = "NA", path = data_location) {
 
 ```
 
-To demonstrate how the stop warning works, we have implemented the `read_qcpa()` function here without specifying the image analysis file type. 
-
-```{r empty read_qcpa, error=TRUE}
-read_qcpa(Animal_Info_ROI) # We include only the animal id data set
-```
-
 We can then import our data using our function and do some data cleaning by removing unnecessary columns.  
 
 ```{r implementing read_qcpa}
@@ -383,7 +379,7 @@ VCA_analysis <- VCA_analysis[, !colnames(VCA_analysis) %in% c("X", "Image")]
 
 dim(VCA_analysis) # 18 rows, by 131 columns
 
-VCA_analysis[1:2, ] # Observe the first two rows of data
+VCA_analysis[1:2, 1:6] # Observe the first two rows and six columns of data
 
 # Cluster Particle Analysis:
 # Read in and assign analysis
@@ -570,7 +566,6 @@ VCA_LEIA_GabRat_analysis <- merge(VCA_analysis, LEIA_Res_analysis,
   by = c("Species", "Ind", "Dist", "ROI")
 )
 
-VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data
 dim(VCA_LEIA_GabRat_analysis) # 18 rows and 164 columns
 
 # Merge the new data frame (VCA_LEIA_GabRat_analysis) with gabrat_res_analysis
@@ -578,9 +573,9 @@ VCA_LEIA_GabRat_analysis <- merge(VCA_LEIA_GabRat_analysis, gabrat_res_analysis,
   by = c("Species", "Ind", "Dist", "ROI")
 )
 
-VCA_LEIA_GabRat_analysis[1:2, ] # Inspect data again
-
 dim(VCA_LEIA_GabRat_analysis) # 18 rows and 165 columns
+names(VCA_LEIA_GabRat_analysis) # Inspect data structure
+
 ```
 
 ## Data cleaning
@@ -833,7 +828,7 @@ DT  [i,     j,      by]
 
 Here we will provide a quick demonstration by importing the LEIA QCPA batch script output. First, we convert our `Animal_Info_ROI` into `data.table` format using the function `as.data.table()`. Then we will input our data using the dedicated `data.table` read function `fread()`. Finally, we can output large data.tables fast using the `fwrite()` function. 
 
-```{r data.table, warning=FALSE}
+```{r data.table, warning=FALSE, message=FALSE}
 library(data.table)
 
 # Convert Animal_Info_ROI into data.table format
