@@ -1,0 +1,12 @@
+"Species","Ind","Dist","ROI","BSA.BsL.Hrz","Lum.mean","CAA.Scpl","Lum.CoV","BSA.BML","Col.mean","GabRat","mahalnobis","pvalue"
+"aphelodoris_varia","3_AphelodorisVaria_10_NF_D_RAW","30cm","animal+background",0.016,-0.873,1.045,0.543,0.074,-0.037,1.258,7.94142612564411,0.242426072942775
+"aphelodoris_varia","3_AphelodorisVaria_10_NF_D_RAW","30cm","background",-1.049,-1.421,-1.159,-0.479,-0.046,-0.503,0.295,6.65944604536459,0.353492196377819
+"aphelodoris_varia","3_AphelodorisVaria_11_NF_D_RAW","30cm","animal",-0.689,1.807,1.394,-1.219,-0.678,1.444,-1.392,4.37042397329537,0.626681668397922
+"aphelodoris_varia","3_AphelodorisVaria_11_NF_D_RAW","30cm","animal+background",0.469,-0.038,-1.997,1.553,0.725,0.308,1.184,7.59015565175889,0.269692619460359
+"aphelodoris_varia","3_AphelodorisVaria_11_NF_D_RAW","50cm","animal",-1.099,1.737,1.018,-1.662,-1.191,1.303,-1.509,4.52517693739739,0.605983149548795
+"aphelodoris_varia","3_AphelodorisVaria_11_NF_D_RAW","50cm","animal+background",1.476,0.272,-0.166,1.31,0.608,0.214,0.259,4.60902169163031,0.594842972270462
+"aplysia_sp","4_Aplysiasp_1_NL_N_RAW","30cm","animal",-0.217,-0.629,0.234,-0.945,-1.933,1.203,0.267,6.11347264522911,0.410599697522009
+"aplysia_sp","4_Aplysiasp_1_NL_N_RAW","30cm","animal+background",0.143,-0.393,-0.677,0.262,-0.428,-0.742,0.731,8.0071433937097,0.237580429441709
+"aplysia_sp","4_Aplysiasp_1_NL_N_RAW","30cm","background",1.636,-0.515,0.12,0.186,1.464,-1.308,0.679,8.49098745487274,0.204292298743126
+"aplysia_sp","4_Aplysiasp_1_NL_N_RAW","50cm","animal+background",0.616,0.18,0.207,0.189,0.413,-0.527,-0.976,5.1342239318921,0.526716907179749
+"aplysia_sp","4_Aplysiasp_1_NL_N_RAW","50cm","background",-1.302,-0.127,-0.018,0.259,0.992,-1.355,-0.794,6.55852214920575,0.363608445545696
