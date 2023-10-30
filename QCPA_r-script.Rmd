@@ -302,7 +302,7 @@ rm(path)
 
 ## Dynamic function to read in various image analysis files
 
-To dynamically import data, we are going to create the function `read_qcpa()`, which will take an animal ID data frame (`Ani_ID_dat`), the specific image analysis that we are interested in (`filetype`), and a folder directory (where we set the default `path` to the `data_location` defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the `exnfile` object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the `else` level), we have used the `stop()` function which will occur if `filetype` has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used `merge` here instead of `rbind()` (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the `return` function to output our newly imported data. 
+To dynamically import data, we are going to create the function `read_qcpa()`, which will take an animal ID data frame (`Ani_ID_dat`), the specific image analysis that we are interested in (`filetype`), and a folder directory (where we set the default `path` to the `data_location` defined in section 1.2). For Part A of the function, we can conditionally set what image analysis we are interested in and set the `exnfile` object to the correct file extension. We have listed each image analysis and the argument name to be specified as the filetype in Table 2. As the last conditional (at the `else` level), we have used the `stop()` function which will occur if `filetype` has not been specified, and will report an error. Part B is the same as in section 3.1 above however it is worth noting that we used `merge()` here instead of `rbind()` (section 2.1) because this allows our function to handle data in both long and wide format. Then, in Part C, we use the `return()` function to output our newly imported data. 
 
 ```{r kable table ftyp, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
 ftyp <- data.frame(
@@ -759,7 +759,7 @@ v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in%
 
 # Export files
 
-Depending on what image analysis sets you are using, we have provided multiple ways to save the image analysis data files as csvs in the folder 'Output'. First, we use `dir.create()` to create the folder 'Output' in the `test_data` folder, and save this new folder location as `out_path`. To save a single file, you can use `write.csv()`, where we have used the argument `row.names = FALSE` to make sure that the row numbers in the dataframe aren't included in the csv file. 
+Depending on what image analysis sets you are using, we have provided multiple ways to save the image analysis data files as csvs in the folder `/output`. First, we use `dir.create()` to create the folder `/output` in the `/test_data` folder, and save this new folder location as `out_path`. To save a single file, you can use `write.csv()`, where we have used the argument `row.names = FALSE` to make sure that the row numbers in the dataframe aren't included in the csv file. 
 
 To save mutliple files, we utilise the fact that our naming convention in this R tutorial specifies image analysis data files with `_analysis`. Using the `ls()` function with the pattern argument set to `_analysis`, we can create a list of all our image analysis dataframes. Then, using a for loop, we iterate over each dataframe, rename it using the current date, and then output the csv file. Finally, we use `list.files()` to check that the files have been created. 
 
@@ -774,7 +774,7 @@ create_directory <- function(path_components) {
 }
 
 # Create and get the Output directory path
-out_path <- create_directory(c(data_location, "Output"))
+out_path <- create_directory(c(data_location, "output"))
 
 # Save a single data frame to CSV
 save_to_csv <- function(data, filename) {
