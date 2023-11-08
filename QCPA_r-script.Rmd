@@ -2,13 +2,15 @@
 title: 'Quantitative Colour Pattern Analysis (QCPA)'
 subtitle: "Example post-batch processing and analysis in R"
 output:
-  pdf_document:
-    number_sections: yes
-    toc: yes
   html_document:
     css: styles.css
     number_sections: yes
     toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    includes:
+      in_header: "legend_fix.tex"
 toc-title: Contents
 bibliography: QCPA_r_bib.bib
 editor_options:
@@ -846,7 +848,7 @@ fwrite(LEIA_analysis_DT, file = fname, row.names = FALSE)
 # References
 
 ```{r hidden, include=FALSE, purl=FALSE}
-unlink(list.dirs()[endsWith(list.dirs(), "Output")], recursive = TRUE)
+unlink(list.dirs()[endsWith(list.dirs(), "output")], recursive = TRUE)
 # Run this at the end to create a R file
 options(knitr.duplicate.label = "allow")
 knitr::purl("QCPA_r-script.Rmd")
