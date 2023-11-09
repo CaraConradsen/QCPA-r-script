@@ -1,0 +1,2 @@
+ ,Image,Pass,ClusterID,lw_mean,lw_sd,mw_mean,mw_sd,sw_mean,sw_sd,dbl_mean,dbl_sd,Area,Coverage (pc),RNL X,RNL Y,RNL Saturation,Dmax Chromaticity,Dmax channel
+1,3_AphelodorisVaria_11_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3,7,1,0.027672060,0.006235854,0.026059125,0.004988172,0.030638991,0.007988771,0.027010962,0.005716620,17110,100,0.849309402,2.153555171,2.314978690,0.080776328,mw:sw

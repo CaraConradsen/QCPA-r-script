@@ -1,0 +1,17 @@
+Chosen ROI =animal+background
+________________________________
+------Gaussian Acuity Control------
+Acuity = 3
+Distance = 300
+MRA = 0.3333
+Image angular height = 20.1423
+Image Region = animal+background
+________________________________
+lw 0.05
+mw 0.05
+sw 0.05
+Measuring selected area
+x min: 0.16602786 max: 7.6685796
+y min: -6.024373 max: 3.0734255
+x map min: -4 max: 12
+y map min: -12 max: 8
