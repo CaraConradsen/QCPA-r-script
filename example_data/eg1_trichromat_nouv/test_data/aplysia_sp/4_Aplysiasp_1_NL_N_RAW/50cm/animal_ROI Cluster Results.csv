@@ -1,3 +1,0 @@
- ,Image,ClusterID,Area,Coverage (pc),lw_mean,mw_mean,sw_mean,dbl_mean,RNL X,RNL Y,RNL Chromaticity,Dmax Chromaticity,Dmax channel,Adj1,Adj2,hAdj1,hAdj2,vAdj1,vAdj2
-1,4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0,1,12,1.857585139,0.011423276,0.009505085,0.011149402,0.010637010,2.599694168,1.104653527,2.824653816,0.091655113,lw:mw,12,4,5,0,7,4
-2,4_AplysiaParvula_1_NL_N_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0,2,634,98.142414861,0.033170554,0.025971124,0.032228396,0.030219511,3.460258759,1.527240504,3.782308057,0.121731917,lw:mw,4,1182,0,594,4,588

@@ -1,3 +1,0 @@
- ,Image,ClusterID,Area,Coverage (pc),lw_mean,mw_mean,sw_mean,dbl_mean,RNL X,RNL Y,RNL Chromaticity,Dmax Chromaticity,Dmax channel,Adj1,Adj2,hAdj1,hAdj2,vAdj1,vAdj2
-1,3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0,1,12196,92.393939394,0.032092812,0.028888794,0.034186734,0.030779551,1.487445681,1.890920368,2.405841743,0.083993586,mw:sw,23854,196,11896,103,11958,93
-2,3_AphelodorisVaria_10_NF_D_RAW.ORF_Acuity3_Dist500_0_WeberFiltered_itr5_rad5_fall3_0,2,1004,7.606060606,0.058269033,0.048266941,0.050996383,0.054169244,2.663302253,-0.639384340,2.738976310,0.093884643,lw:mw,196,1878,103,941,93,937
