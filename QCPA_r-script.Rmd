@@ -2,6 +2,11 @@
 title: 'Quantitative Colour Pattern Analysis (QCPA)'
 subtitle: "Example post-batch processing and analysis in R"
 output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    includes:
+      in_header: "legend_fix.tex"
   html_document:
     css: styles.css
     number_sections: yes
@@ -25,7 +30,7 @@ The following R script uses the trichromatic example without UV (sea slugs seen 
 
 For the following R script to run, please ensure that you have implemented the QPCA batch script methods. In the following folder 
 
-`Worked example data/Example1_tri-chromat_no_UV/Test Data`
+`Worked_example_data/Example1_tri-chromat_no_UV/Test Data`
 
 there should be two subfolders for the two species, *Aphelodoris varia* and *Aplysia sp*. Within these subdirectories, please confirm that data has been generated. As you proceed through the next few steps, we provide code that checks the data completeness. If you are uncertain that you uniformly named files, we have additionally provided script to check region of interest names (see section 2.3).
 
@@ -34,9 +39,9 @@ It is important to note that the QCPA batch script folder and file names contain
 
 ```{r Rename files and folders}
 # Level 1: 
-# We first correct the file name of the parent directory 'Worked example data'
+# We first correct the file name of the parent directory 'Worked_example_data'
 # Specify the old file name and the new file name
-old_name <- "Worked example data"
+old_name <- "Worked_example_data"
 new_name <- "example_data"
 # Then use base function file.name to correct the file name to snake case
 file.rename(old_name,new_name)
@@ -248,7 +253,7 @@ nocite: |
 ```{r kable table exn out, echo=FALSE, warning=FALSE,comment=FALSE,error=FALSE, purl=FALSE}
 library("kableExtra")
 exns <- sort(unique(gsub("^[^_]+", "", list.files(
-  paste0(data_location, "/aphelodoris_varia/3_AphelodorisVaria_10_NF_D_RAW"),
+  paste0(data_location, "/aplysia_sp/4_Aplysiasp_1_NL_N_RAW"),
   pattern = ".csv", recursive = TRUE
 ))), method="radix")
 
@@ -452,7 +457,7 @@ VCA_analysis[1:2, 1:6] # Observe the first two rows and six columns of data
 # Read in and assign analysis
 Particle_analysis <- read_qcpa(animal_info_roi, filetype = "PartAn")
 
-dim(Particle_analysis) # 52 rows, by 20 columns
+dim(Particle_analysis) # 62 rows, by 20 columns
 colnames(Particle_analysis)[5]
 
 # Change column name to be consistent with Cluster analysis
@@ -465,7 +470,7 @@ Cluster_analysis <- read_qcpa(animal_info_roi, filetype = "Clust")
 # Subset data excluding the column Image and X
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
 
-dim(Cluster_analysis) # 52 rows, by 21 columns
+dim(Cluster_analysis) # 62 rows, by 21 columns
 
 # Individual Particle Analysis:
 # Read in and assign analysis
@@ -474,7 +479,7 @@ IndParticle_analysis <- read_qcpa(animal_info_roi, filetype = "IndParticle")
 # Subset data excluding the column X.1
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
 
-dim(IndParticle_analysis) # 143 rows, by 23 columns
+dim(IndParticle_analysis) # 214 rows, by 23 columns
 ```
 
 # Get a .csv list from LEIA output
@@ -587,7 +592,7 @@ gabrat_res_analysis <- read_gabrat(data_location, animal_info_roi)
 
 # Check the processed data
 dim(gabrat_res_analysis) # Should show 18 rows and 5 columns
-print(head(gabrat_res_analysis)) # Displays first two rows of data
+print(head(gabrat_res_analysis)) # Displays first six rows of data
 
 ```
 
@@ -605,7 +610,7 @@ Cluster_Particle_analysis <- merge(Cluster_analysis, Particle_analysis,
   by = c("Species", "Ind", "Dist", "ROI", "ClusterID")
 )
 
-dim(Cluster_Particle_analysis) # 52 rows and 36 columns
+dim(Cluster_Particle_analysis) # 62 rows and 36 columns
 names(Cluster_Particle_analysis) # Inspect data
 ```
 
@@ -785,7 +790,7 @@ boxplot(value ~ variable,
 apply(v.l.gabrat_sub_analysis[, 5:11], 2, function(x) (x - mean(x)) / sd(x))
 ```
 
-Although in Figure 4, there are two points in Lum.mean that exceed 1.5 times the interquartile range (the outer whiskers of the boxplot), none of the points exceed 3 standard deviations. 
+Although in Figure 4, there are points that exceed 1.5 times the interquartile range (the outer whiskers of the boxplot), none of the points exceed 3 standard deviations. 
 
 ### Standardising data
 
@@ -936,3 +941,12 @@ fwrite(LEIA_analysis_DT, file = fname, row.names = FALSE)
 
 # References
 
+
+```{r hidden, include=FALSE, purl=FALSE}
+# The following code resets the output of the tutorial
+
+# Run this at the end to create a R file
+options(knitr.duplicate.label = "allow")
+knitr::purl("QCPA_r-script.Rmd", documentation = 1L)
+
+```

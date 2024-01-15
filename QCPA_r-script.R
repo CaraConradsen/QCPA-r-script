@@ -1,8 +1,8 @@
-## ----Rename files and folders-----------------------------------------------------------------------------------------------------------------
+## ----Rename files and folders------------------------------------------------------------------------------------------------------------
 # Level 1: 
-# We first correct the file name of the parent directory 'Worked example data'
+# We first correct the file name of the parent directory 'Worked_example_data'
 # Specify the old file name and the new file name
-old_name <- "Worked example data"
+old_name <- "Worked_example_data"
 new_name <- "example_data"
 # Then use base function file.name to correct the file name to snake case
 file.rename(old_name,new_name)
@@ -59,7 +59,7 @@ new_species_names <- tolower(new_species_names) # Convert to lowercase
 file.rename(old_species_names, new_species_names)
 
 
-## ----animal_ids-------------------------------------------------------------------------------------------------------------------------------
+## ----animal_ids--------------------------------------------------------------------------------------------------------------------------
 # Construct the global data location path. This assumes the R script is in the
 # project root
 data_location <- file.path(getwd(), "example_data/eg1_trichromat_no_uv/test_data")
@@ -81,7 +81,7 @@ species <- species_folders[!endsWith(species_folders, "Log.txt")]
 print(species)
 
 
-## ----animal_loop------------------------------------------------------------------------------------------------------------------------------
+## ----animal_loop-------------------------------------------------------------------------------------------------------------------------
 # Initialize an empty data frame
 animal_info <- data.frame()
 
@@ -113,7 +113,7 @@ colnames(animal_info) <- c("Species", "Ind", "Dist")
 
 
 
-## ----Check data-------------------------------------------------------------------------------------------------------------------------------
+## ----Check data--------------------------------------------------------------------------------------------------------------------------
 # Check data
 head(animal_info)
 
@@ -138,7 +138,7 @@ barplot(Ind ~ Dist + Species,
 )
 
 
-## ----Check ROIs-------------------------------------------------------------------------------------------------------------------------------
+## ----Check ROIs--------------------------------------------------------------------------------------------------------------------------
 # Generate individual animal sub-directories paths
 animal_sub_dirs <- apply(animal_info, 1, function(x) paste(x, collapse = "/"))
 
@@ -152,13 +152,13 @@ roi_names <- unique(unlist(strsplit(tif_files, "_"))[c(TRUE, FALSE)])
 roi_names
 
 
-## ----simple ROIs------------------------------------------------------------------------------------------------------------------------------
+## ----simple ROIs-------------------------------------------------------------------------------------------------------------------------
 ROI <- c("animal", "animal+background", "background") # Add the names of ROIs
 
 
 
 
-## ----ROI--------------------------------------------------------------------------------------------------------------------------------------
+## ----ROI---------------------------------------------------------------------------------------------------------------------------------
 # Here, we create a character vector determining whether animal,
 # background and/or animal+background options were used
 # Using the first row of animal_info to specify the location to examine
@@ -178,7 +178,7 @@ rois
 # Note: In the QCPA batch script, three ROIs were investigated.
 
 
-## ----merge ROI--------------------------------------------------------------------------------------------------------------------------------
+## ----merge ROI---------------------------------------------------------------------------------------------------------------------------
 # Expand each unique row of the animal_info data frame to included a unique ROI value
 animal_info_roi <- merge(animal_info, rois)
 
@@ -191,7 +191,7 @@ head(animal_info_roi)  # Check data
 str(animal_info_roi)  # Check that ROI is a factor
 
 
-## ----reduced function-------------------------------------------------------------------------------------------------------------------------
+## ----reduced function--------------------------------------------------------------------------------------------------------------------
 # Part A:
 # Here, we specify what image analysis so that we can use the correct file extension
 exnfile <- "_Summary Results.csv"
@@ -240,7 +240,7 @@ rm(path)
 
 
 
-## ----read_qcpa function-----------------------------------------------------------------------------------------------------------------------
+## ----read_qcpa function------------------------------------------------------------------------------------------------------------------
 read_qcpa <- function(ani_id_dat, filetype = "NA", path = data_location) {
   # Default location is assigned, but can be changed
 
@@ -286,7 +286,7 @@ read_qcpa <- function(ani_id_dat, filetype = "NA", path = data_location) {
 
 
 
-## ----implementing read_qcpa-------------------------------------------------------------------------------------------------------------------
+## ----implementing read_qcpa--------------------------------------------------------------------------------------------------------------
 # VCA,BSA,CAA analysis:
 # Read in and assign analysis
 VCA_analysis <- read_qcpa(animal_info_roi, filetype = "VCA")
@@ -302,7 +302,7 @@ VCA_analysis[1:2, 1:6] # Observe the first two rows and six columns of data
 # Read in and assign analysis
 Particle_analysis <- read_qcpa(animal_info_roi, filetype = "PartAn")
 
-dim(Particle_analysis) # 52 rows, by 20 columns
+dim(Particle_analysis) # 62 rows, by 20 columns
 colnames(Particle_analysis)[5]
 
 # Change column name to be consistent with Cluster analysis
@@ -315,7 +315,7 @@ Cluster_analysis <- read_qcpa(animal_info_roi, filetype = "Clust")
 # Subset data excluding the column Image and X
 Cluster_analysis <- Cluster_analysis[, !colnames(Cluster_analysis) %in% c("X", "Image")]
 
-dim(Cluster_analysis) # 52 rows, by 21 columns
+dim(Cluster_analysis) # 62 rows, by 21 columns
 
 # Individual Particle Analysis:
 # Read in and assign analysis
@@ -324,10 +324,10 @@ IndParticle_analysis <- read_qcpa(animal_info_roi, filetype = "IndParticle")
 # Subset data excluding the column X.1
 IndParticle_analysis <- IndParticle_analysis[, colnames(IndParticle_analysis) != "X.1"]
 
-dim(IndParticle_analysis) # 143 rows, by 23 columns
+dim(IndParticle_analysis) # 214 rows, by 23 columns
 
 
-## ----LEIA CSV Data----------------------------------------------------------------------------------------------------------------------------
+## ----LEIA CSV Data-----------------------------------------------------------------------------------------------------------------------
 # Define a function to generate file paths, read data, and merge animal information
 read_leia <- function(index, animal_info, base_location) {
   # Extract row as a character vector
@@ -372,7 +372,7 @@ names(LEIA_Res_analysis)
 
 
 
-## ----GabRat CSV Data--------------------------------------------------------------------------------------------------------------------------
+## ----GabRat CSV Data---------------------------------------------------------------------------------------------------------------------
 # Because we are not using ROI which adds three levels (rows),
 # we trim data frame using unique()
 # For each the 6 rows in animal_info_roi
@@ -427,21 +427,21 @@ gabrat_res_analysis <- read_gabrat(data_location, animal_info_roi)
 
 # Check the processed data
 dim(gabrat_res_analysis) # Should show 18 rows and 5 columns
-print(head(gabrat_res_analysis)) # Displays first two rows of data
+print(head(gabrat_res_analysis)) # Displays first six rows of data
 
 
 
-## ----merge two particle analyses files--------------------------------------------------------------------------------------------------------
+## ----merge two particle analyses files---------------------------------------------------------------------------------------------------
 # Merging two files together
 Cluster_Particle_analysis <- merge(Cluster_analysis, Particle_analysis,
   by = c("Species", "Ind", "Dist", "ROI", "ClusterID")
 )
 
-dim(Cluster_Particle_analysis) # 52 rows and 36 columns
+dim(Cluster_Particle_analysis) # 62 rows and 36 columns
 names(Cluster_Particle_analysis) # Inspect data
 
 
-## ----combine VCA LEIA and GabRat--------------------------------------------------------------------------------------------------------------
+## ----combine VCA LEIA and GabRat---------------------------------------------------------------------------------------------------------
 # Merge the first two data frames (VCA_analysis and LEIA_Res_analysis) together
 VCA_LEIA_GabRat_analysis <- merge(VCA_analysis, LEIA_Res_analysis,
   by = c("Species", "Ind", "Dist", "ROI")
@@ -459,7 +459,7 @@ names(VCA_LEIA_GabRat_analysis) # Inspect data structure
 
 
 
-## ----Removing NAs-----------------------------------------------------------------------------------------------------------------------------
+## ----Removing NAs------------------------------------------------------------------------------------------------------------------------
 # Column names specification
 column_names <- c(
   "Species", "Ind", "Dist", "ROI", "BSA.BsL.Hrz", "Lum.mean",
@@ -488,7 +488,7 @@ variance_results
 
 
 
-## ----Normalising data-------------------------------------------------------------------------------------------------------------------------
+## ----Normalising data--------------------------------------------------------------------------------------------------------------------
 # Subset column names for analysis
 colnames_subset <- colnames(v.l.gabrat_sub_analysis[, 5:11])
 
@@ -510,7 +510,7 @@ for (column in colnames_subset) {
 
 
 
-## ----Pairs and correlation plot---------------------------------------------------------------------------------------------------------------
+## ----Pairs and correlation plot----------------------------------------------------------------------------------------------------------
 # Define function for correlation panel
 panel_correlation <- function(x, y) {
   # Set up the plotting area
@@ -554,7 +554,7 @@ legend("right", legend_data$ROI_Label,
 
 
 
-## ----Boxplots---------------------------------------------------------------------------------------------------------------------------------
+## ----Boxplots----------------------------------------------------------------------------------------------------------------------------
 # Convert data to long format using base R's 'reshape'
 v.l.gabrat_sub_analysis_long <- reshape(v.l.gabrat_sub_analysis, 
                             varying = list(names(v.l.gabrat_sub_analysis)[5:11]), 
@@ -578,12 +578,12 @@ boxplot(value ~ variable,
 
 
 
-## ----outliers---------------------------------------------------------------------------------------------------------------------------------
+## ----outliers----------------------------------------------------------------------------------------------------------------------------
 # Calculate z-scores and look for outliers
 apply(v.l.gabrat_sub_analysis[, 5:11], 2, function(x) (x - mean(x)) / sd(x))
 
 
-## ----Standardising data-----------------------------------------------------------------------------------------------------------------------
+## ----Standardising data------------------------------------------------------------------------------------------------------------------
 # Function to standardize and inspect data
 standardize_data <- function(data) {
   # Standardize data
@@ -602,7 +602,7 @@ v.l.gabrat_sub_analysis[, 5:11] <- standardize_data(v.l.gabrat_sub_analysis[, 5:
 
 
 
-## ----Mahalanobis------------------------------------------------------------------------------------------------------------------------------
+## ----Mahalanobis-------------------------------------------------------------------------------------------------------------------------
 # Using R's Mahalanobis function, add a new column to your data
 v.l.gabrat_sub_analysis$mahalanobis <- mahalanobis(
   v.l.gabrat_sub_analysis[, 5:11],
@@ -624,7 +624,7 @@ v.l.gabrat_sub_analysis[, colnames(v.l.gabrat_sub_analysis) %in%
                           c("mahalanobis", "pvalue")]
 
 
-## ----Output files-----------------------------------------------------------------------------------------------------------------------------
+## ----Output files------------------------------------------------------------------------------------------------------------------------
 # Function to create and return a directory path
 create_directory <- function(path_components) {
   directory_path <- paste(path_components, collapse = "/")
@@ -665,7 +665,7 @@ for (data_name in savefile_list) {
 
 
 
-## ----data.table-------------------------------------------------------------------------------------------------------------------------------
+## ----data.table--------------------------------------------------------------------------------------------------------------------------
 library(data.table)
 
 # Convert animal_info_roi into data.table format
