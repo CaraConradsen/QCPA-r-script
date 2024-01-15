@@ -941,12 +941,26 @@ fwrite(LEIA_analysis_DT, file = fname, row.names = FALSE)
 
 # References
 
-
 ```{r hidden, include=FALSE, purl=FALSE}
 # The following code resets the output of the tutorial
+
+# remove the output directory
+unlink(list.dirs()[endsWith(list.dirs(), "output")], recursive = TRUE)
 
 # Run this at the end to create a R file
 options(knitr.duplicate.label = "allow")
 knitr::purl("QCPA_r-script.Rmd", documentation = 1L)
 
+# Reset file names
+species_names_old <- list.files("example_data/eg1_trichromat_no_uv/test_data", full.names = T)
+species_names_new <- gsub("ap", "Ap", gsub("is_va", "is va", gsub("ia_sp", "ia sp", species_names_old)))
+file.rename(species_names_old, species_names_new)
+old_test <- list.files(list.files("example_data", full.names = T), full.names = T)
+new_test <- gsub("test_data", "Test Data", gsub("cone_mapping_models", "cone mapping models",old_test))
+file.rename(old_test, new_test)
+file.rename("example_data/eg1_trichromat_no_uv","example_data/Example1_tri-chromat_no_UV")
+file.rename("example_data/eg2_tetrachromat_with_uv","example_data/Example2_tetra-chromat with UV")
+file.rename("example_data","Worked_example_data")
+rm(species_names_old, species_names_new, old_test, new_test)
 ```
+
