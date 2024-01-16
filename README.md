@@ -1,5 +1,5 @@
 # QCPA-r-script
-Tailored R script enabling the extraction and compilation of batch QCPA output data into .csv tables that can be used for downstream analysis in R.
+Tailored R script guiding novice R users in the extraction and compilation of batch QCPA output data into .csv tables that can be used for downstream analysis in R.
 This R script is a companion script for:
 > van den Berg, C.P. et al. Automated workflows using Quantitative Colour Pattern Analysis (QPCA) A guide to batch processing and downstream data analysis 
 
@@ -17,10 +17,9 @@ For users with limited data, we recommend downloading the unprocessed data and i
 2.	Implement the [QCPA-batch-script]( https://github.com/cedricvandenberg/QCPA-batch-script) following the [QCPA-batch-script pdf manual]( https://github.com/cedricvandenberg/QCPA-batch-script/blob/main/Manual%20v1.0.pdf)
 3.	Rename the folder to “Worked_example_data”
 ## Using QCPA-r-script
-### For fledgling R users
-If you are a relatively new R user, we would recommend downloading and using the [`QCPA_r-script.R`](https://github.com/CaraConradsen/QCPA-r-script/blob/main/QCPA_r-script.R) script in R. You can then follow either the [QCPA_R pdf manual](https://github.com/CaraConradsen/QCPA-r-script/blob/gh-pages/QCPA_r-script.pdf) or the [QCPA_R html manual](https://caraconradsen.github.io/QCPA-r-script/QCPA_r-script.html). 
+We would recommend downloading and using the [`QCPA_r-script.R`](https://github.com/CaraConradsen/QCPA-r-script/blob/main/QCPA_r-script.R) script in R. You can then follow either the [QCPA_R pdf manual](https://github.com/CaraConradsen/QCPA-r-script/blob/gh-pages/QCPA_r-script.pdf) or the [QCPA_R html manual](https://caraconradsen.github.io/QCPA-r-script/QCPA_r-script.html). 
 ### Markdown version
-For users using the R Markdown version of **QCPA-r-script** the dependency scripts are:
+For users using the R Markdown version of **QCPA-r-script**, the dependency scripts are:
 * `QCPA_r-script.Rmd` bibliography uses the `QCPA_r_bib.bib`
 * `pdf_document` uses `legend_fix.tex` to fix figure and table legends 
 * `html_document` uses `styles.css` to modify the table of contents and manual headers
