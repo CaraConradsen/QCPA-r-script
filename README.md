@@ -1,9 +1,11 @@
 # QCPA-r-script
 Tailored R script guiding novice R users in the extraction and compilation of batch QCPA output data into .csv tables that can be used for downstream analysis in R.
 This R script is a companion script for:
-> van den Berg, C.P. et al. Automated workflows using Quantitative Colour Pattern Analysis (QPCA) A guide to batch processing and downstream data analysis 
+> van den Berg, C.P. et al. 2024 Automated workflows using Quantitative Colour Pattern Analysis (QPCA): a guide to batch processing and downstream data analysis. Evolutionary Ecology.
+[View and download PDF](https://doi.org/10.1007/s10682-024-10291-7)
 
-Check out the _bioRXiv_ [paper](https://doi.org/10.1101/2023.02.02.526788) associated with the first version of this script (_November 16, 2023_).
+<!-- Original bioRXiv paper:
+Check out the _bioRXiv_ [paper](https://doi.org/10.1101/2023.02.02.526788) associated with the first version of this script (_November 16, 2023_).-->
 ## Data
 Data used in this example is accessible [here](https://doi.org/10.48610/3cdcc1f) from UQ eSpace. To account for varying data download capacities, particularly for users with limited data caps, bandwidth, or unstable connections, we offer two options for downloading data. 
 ### Option 1
